@@ -50,7 +50,7 @@ Ces choix viennent du questionnaire du 6 novembre 2026 ; la colonne « Origine �
 | Stack | Go + Ebitengine, interface maison, passerelles natives iOS/Android | Questionnaire |
 | Ton | Décalé / humoristique | Questionnaire |
 | Langues | Français et anglais au lancement | Comblé |
-| Monétisation | F2P éthique : pubs récompensées optionnelles, cosmétiques, aucune monnaie premium | Questionnaire + détail comblé |
+| Monétisation | F2P éthique : pubs récompensées optionnelles, cosmétiques, monnaie premium (Étincelles) aussi gagnée en jeu, généreusement | Questionnaire + détail comblé |
 
 ## 3. Boucle de jeu
 
@@ -422,9 +422,18 @@ Le jeu est gratuit et entièrement finissable sans payer ni regarder de pub ; on
 | Cosmétiques | Skins de stations par ère, thèmes de particules, tenues de PNJ, cadres de frise | Aucun effet sur le gameplay |
 | Pack Soutien | Gros pack cosmétique + nom dans les crédits de l'Archiviste | Achat unique |
 
-- Aucune monnaie premium, aucune loot box, aucune offre à durée limitée qui met la pression.
+- Aucune loot box, aucune offre à durée limitée qui met la pression.
 - Aucune pub interstitielle ni bannière.
 - Les mises à jour de contenu (nouvelles planètes) restent gratuites ; un pack cosmétique thématique les accompagne.
+
+### Monnaie premium : les Étincelles
+
+Les Étincelles s'achètent, mais se gagnent aussi en jouant, à un rythme généreux : on ne fait pas payer chaque cosmétique, et un joueur qui ne paie jamais peut quand même s'offrir ce qu'il aime.
+
+- **Sources en jeu** : quêtes principales (petites quantités), fin d'ère (gros montant), chaque Brevet, contrats livrés parfaitement, succès, connexion quotidienne (sans perdre sa série si on rate un jour).
+- **Dépenses** : cosmétiques uniquement (skins de stations, thèmes de particules, tenues de PNJ, cadres de frise). Jamais de ressources, de temps ou de progression.
+- **Cible de générosité** (piste) : un joueur régulier gagne de quoi s'offrir environ un cosmétique moyen par ère, et peut débloquer 60 à 70 % du catalogue en finissant la v1 sans payer.
+- **Bonnes pratiques** : packs alignés sur les prix des cosmétiques (pas de reliquat inutilisable), équivalent en argent réel affiché à côté du prix en Étincelles, aucune remise « dernière chance ».
 
 ## 14. Technique : Go + Ebitengine
 
