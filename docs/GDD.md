@@ -417,7 +417,7 @@ Le jeu est gratuit et entièrement finissable sans payer ni regarder de pub ; on
 
 | Levier | Contenu | Limite |
 | --- | --- | --- |
-| Pubs récompensées | ×2 gains hors-ligne · boost de production ×2 pendant 1 h · reconversion instantanée · relance d'un contrat expiré | 6 par jour, toujours au choix du joueur |
+| Pubs récompensées | ×2 gains hors-ligne · boost de production ×2 pendant 1 h, cumulable sans limite (chaque pub ajoute 1 h) · reconversion instantanée · relance d'un contrat expiré | 6 par jour (sauf le boost de production, illimité), toujours au choix du joueur |
 | Pack « Sans pub » | Accorde toutes les récompenses de pub sans les regarder | Achat unique (environ 5 €) |
 | Cosmétiques | Skins de stations par ère, thèmes de particules, tenues de PNJ, cadres de frise | Aucun effet sur le gameplay |
 | Pack Soutien | Gros pack cosmétique + nom dans les crédits de l'Archiviste | Achat unique |
