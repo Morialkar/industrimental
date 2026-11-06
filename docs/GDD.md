@@ -142,7 +142,7 @@ Passer une ère donne un héritage ciblé (Brevet + Savoir-faire), et l'ère qui
 
 - Le joueur peut revisiter une ère passée pour finir une autre branche et gagner son Brevet.
 - L'ère reprend là où il l'a laissée : pas de reset. Les nœuds restants gardent leur plein coût : compléter toutes les branches d'une ancienne ère est un gros avantage pour les ères suivantes, et le travail demandé doit être à la hauteur.
-- Coût croissant : chaque Brevet obtenu, toutes ères confondues, augmente le coût de toutes les branches encore ouvertes (piste d'équilibrage : ×2,5 par Brevet déjà obtenu dans la même ère, et +10 % par Brevet obtenu ailleurs, pour que la facture ne devienne pas impossible avec 40 Brevets). On ne peut donc pas tout avoir vite : l'ordre dans lequel on prend les Brevets devient une stratégie, et le temps idle sert à financer les plus chers.
+- Coût croissant : chaque Brevet obtenu dans une ère augmente le coût des autres branches de cette même ère (piste d'équilibrage : ×2,5 par Brevet déjà obtenu dans l'ère). Les Brevets des autres ères n'ont aucun effet. On ne peut donc pas tout avoir vite : l'ordre dans lequel on prend les Brevets devient une stratégie, et le temps idle sert à financer les plus chers.
 - Collectionner les 40+ Brevets de la v1 devient l'objectif de fin de jeu, sans prestige.
 
 ## 6. Économie
