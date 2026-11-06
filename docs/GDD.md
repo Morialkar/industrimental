@@ -209,11 +209,12 @@ La v1 couvre 10 ères, du Troc à l'ère Spatiale ; les fins sont listées dans 
 | 7 | Électricité | 1870 – 1945 | Billets | Électricité, pétrole, caoutchouc, acier laminé, automobiles, téléphones | Centrale, Raffinerie, Chaîne de montage, Laminoir, Central téléphonique, Grand magasin | Réclame & grands magasins / Chaîne totale / Laboratoire de recherche / Cités-jardins |
 | 8 | Plastique & atome | 1945 – 1980 | Dollars | Plastique, transistors, conteneurs, électroménager, électricité nucléaire, téléviseurs | Pétrochimie, Port à conteneurs, Usine d'électroménager, Centrale, Studio TV, Supermarché | Mondialisation / Production de masse / Course à l'atome / Trente Glorieuses |
 | 9 | Numérique | 1980 – 2040 | Crédits | Silicium, données, robots, batteries, logiciels, fibre | Fonderie de puces, Datacenter, Usine robotisée, Gigafactory, Studio logiciel, Entrepôt | Plateforme marchande / Usine sans lumière / Laboratoire d'IA / Coopératives open source |
-| 10 | Spatiale & robotique | 2040 → | Jetons orbitaux | Terres rares, alliages orbitaux, carburant, IA autonomes, satellites, habitats | Pas de tir réutilisable, Usine orbitale, Mine d'astéroïdes, Fonderie de robots, Constellation, Habitat | Commerce interplanétaire / Essaim de réplicateurs / Ascenseur spatial / Première colonie |
+| 10 | Spatiale & robotique | 2040 → | Jetons orbitaux | Terres rares, alliages orbitaux, carburant, IA autonomes, satellites, modules de colonie | Pas de tir réutilisable, Usine orbitale, Mine d'astéroïdes, Fonderie de robots, Habitat d'essai, Ascenseur spatial (fin d'ère) | Route du fret martien / Essaim de réplicateurs / Vaisseau colonial / Colons pionniers |
 
 - Chaque ère compte environ 10 stations au total ; le tableau ne montre que les 6 plus parlantes visuellement.
 - Les fins hybrides secrètes (ères 3 à 10) seront nommées pendant l'écriture de chaque ère.
 - La fin de l'ère 10 boucle l'histoire : le joueur construit l'Archiviste, le robot narrateur qui commente la frise depuis le début (voir section 12).
+- L'ère 10 prépare la colonisation d'une autre planète du système solaire : ses quêtes principales mènent à la construction de l'Ascenseur spatial, dernière station de l'ère, qui sert de pont vers l'ère 11 (colonisation du système solaire, première mise à jour). Les 4 fins orientent la colonie de départ : fret, production automatisée, vaisseau ou population.
 
 ## 8. Ère 1 détaillée : le Troc
 
@@ -514,11 +515,9 @@ La v1 contient les 10 ères ; les mises à jour ajoutent des « saisons », chac
 
 | Saison | Lieu | Ères prévues |
 | --- | --- | --- |
-| 1 | La Lune | Base lunaire, Industrie du régolithe |
-| 2 | Mars | Colonisation, Terraformation, Cités martiennes |
-| 3 | Ceinture d'astéroïdes et lunes de Jupiter | Minage profond, Chantiers de vaisseaux générationnels |
-| 4 | Exoplanètes | Première colonie stellaire, Économie interstellaire |
-| 5 et + | Autres galaxies | Sphères de Dyson, Économies galactiques |
+| 1 | Système solaire | Ère 11 : colonisation (Lune, Mars), départ par l'Ascenseur spatial ; puis Terraformation, Ceinture d'astéroïdes et lunes de Jupiter |
+| 2 | Exoplanètes | Première colonie stellaire, Économie interstellaire |
+| 3 et + | Autres galaxies | Sphères de Dyson, Économies galactiques |
 
 Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Brevets) et peut ajouter une mécanique propre, comme la gravité ou les délais de communication.
 
