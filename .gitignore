@@ -8,6 +8,7 @@ scene.png
 *.aar
 *.xcframework/
 ios/build/
+xcuserdata/
 
 # OS / editors
 .DS_Store

@@ -20,6 +20,7 @@ Jeu incremental mobile (portrait, iOS et Android) : l'industrie humaine du troc 
 | `internal/fx` | Système de particules (logique pure, testée) |
 | `internal/game` | Boucle Ebitengine ; pour l'instant la scène de test de la phase 0 |
 | `android` | Coquille Kotlin minimale qui héberge le jeu |
+| `ios` | Coquille Swift minimale qui héberge le jeu |
 
 ## Démarrage rapide
 

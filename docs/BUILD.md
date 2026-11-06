@@ -55,9 +55,19 @@ Téléphones de référence : Xiaomi Mi A2 (entrée de gamme), Xiaomi Mi A3 (mil
    ebitenmobile bind -target ios -o ios/Industrimental.xcframework ./mobile
    ```
 
-2. Dans Xcode, créer un projet *App* (interface Storyboard, langage Swift) dans `ios/`, nommé `Industrimental`, orientation portrait uniquement.
-3. Glisser `Industrimental.xcframework` dans le projet (cible : *Embed & Sign*).
-4. Dans `Main.storyboard`, donner au contrôleur de vue initial la classe `MobileEbitenViewController` (module : `Industrimental`).
-5. Lancer sur un iPhone branché.
+   Le framework est ignoré par git : refaire cette étape après un clone et à chaque changement du code Go.
 
-La coquille iOS sera versionnée dans `ios/` une fois créée sur le Mac.
+2. Ouvrir `ios/Industrimental.xcodeproj` dans Xcode, choisir son équipe dans *Signing & Capabilities* et lancer sur un iPhone branché. En ligne de commande, depuis `ios/` :
+
+   ```sh
+   xcodebuild -project Industrimental.xcodeproj -scheme Industrimental \
+     -destination 'id=<UDID>' -derivedDataPath build \
+     DEVELOPMENT_TEAM=<ÉQUIPE> -allowProvisioningUpdates build
+   xcrun devicectl device install app --device <UDID> \
+     build/Build/Products/Debug-iphoneos/Industrimental.app
+   xcrun devicectl device process launch --device <UDID> com.morialkar.industrimental
+   ```
+
+   `xcrun devicectl list devices` donne l'UDID. L'équipe de signature n'est pas versionnée.
+
+Le framework est une bibliothèque statique : il est lié à l'app sans être embarqué, ne pas le passer en *Embed & Sign*.
