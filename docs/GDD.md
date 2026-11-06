@@ -475,6 +475,7 @@ C'est le plus gros chantier technique, à prévoir dès le départ.
 - JSON compressé, schéma versionné avec migrations, somme de contrôle. Sauvegarde automatique toutes les 30 s et à chaque mise en pause.
 - Gains hors-ligne calculés analytiquement (régime stable), pas en rejouant des ticks.
 - Garde-fou léger contre la manipulation de l'horloge : un saut d'heure vers l'arrière gèle les gains jusqu'au rattrapage. Pas de serveur en v1.
+- Sauvegarde cloud sans coût : iCloud (clé-valeur / CloudKit) sur iOS et Saved Games de Play Games sur Android, gratuits et sans serveur à nous. Pour passer d'iOS à Android, un code de transfert : la sauvegarde compressée devient un texte ou un QR code à copier sur l'autre appareil. Si un vrai compte multiplateforme devient nécessaire plus tard, l'offre gratuite d'un service hébergé (Firebase, Supabase) suffit pour démarrer.
 
 ### Cibles de performance
 
@@ -537,6 +538,6 @@ Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Brevets) et 
 - [x] Une semaine par ère, soit environ 10 semaines pour la v1 : est-ce que l'ère 1 courte (1 à 2 jours) te convient comme onboarding ? Réponse : oui.
 - [x] La fin hybride secrète à partir de l'ère 3 : on la garde, ou on reste strictement à 4 fins ? Réponse : on la garde.
 - [ ] Les noms de travail des fins et des Brevets sont à valider, ère par ère. Travail en cours dans [Industrimental — Textes de travail](https://claude.ai/artifact/SrEyhPwfVWoBEWxoScEeiS).
-- [ ] Une sauvegarde cloud multiplateforme (iOS ↔ Android) demanderait un petit serveur : en v1 ou plus tard ?
-- [ ] Marchés du soft launch à choisir.
-- [ ] Nom définitif du jeu : Industrimental est-il le titre final ?
+- [x] Une sauvegarde cloud multiplateforme (iOS ↔ Android) demanderait un petit serveur : en v1 ou plus tard ? Réponse : solution sans coût en v1 (voir section 14, Sauvegarde et temps).
+- [ ] Marchés du soft launch à choisir. Le soft launch est une sortie discrète dans un ou deux petits pays avant le lancement mondial, pour mesurer la rétention et ajuster l'équilibrage. Proposition : le Canada (français et anglais, comme le jeu), avec éventuellement la Nouvelle-Zélande pour plus de joueurs anglophones.
+- [x] Nom définitif du jeu : Industrimental est-il le titre final ? Réponse : oui.
