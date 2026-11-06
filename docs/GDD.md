@@ -400,6 +400,7 @@ Le ton est celui d'une satire bienveillante : on rit des travers éternels du co
 
 ### Garde-fous
 
+- Pas d'humour noir, ni de blague discriminatoire ou blessante (origine, genre, orientation, religion, handicap, apparence, classe sociale…). L'humour reste léger et bon enfant : on se moque des situations et des institutions, jamais des gens pour ce qu'ils sont.
 - Pas d'humour sur l'esclavage, la colonisation, les guerres ou le travail des enfants. Ces réalités ne sont pas cachées, mais traitées sobrement (une ligne factuelle de l'Archiviste) et jamais transformées en mécanique de jeu.
 - L'ère des Comptoirs maritimes met en avant la navigation, l'imprimerie, la banque et la cartographie.
 - Aucune marque ni personne réelle caricaturée ; les clins d'œil restent génériques.
