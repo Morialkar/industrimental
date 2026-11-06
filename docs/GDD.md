@@ -266,7 +266,7 @@ Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre 
 
 - **Bob**, chef comptable du clan. Il compte sur ses doigts et panique au-delà de 10. Il guide le tutoriel.
 - **Amna**, inventrice. Elle invente la roue 4000 ans trop tôt, et personne n'en veut (« ça roule, et alors ? »).
-- **Tok**, marchand nomade. Il vend des « cailloux premium » et fixe les prix les plus fous du marché.
+- **Nick**, marchand nomade. Il vend des « cailloux premium » et fixe les prix les plus fous du marché.
 - **L'Ancienne**, conteuse. Elle confie les quêtes narratives et commente les fresques du joueur.
 
 ### Exemples de quêtes
@@ -295,7 +295,7 @@ Chaque ère compte environ 25 quêtes principales (obligatoires pour la complét
 
 - 3 à 5 PNJ par ère, chacun lié à un axe (un marchand pour le Négoce, un inventeur pour l'Ingéniosité…).
 - Chacun a une **jauge d'affinité** : plus elle monte, meilleurs sont ses prix, ses contrats et ses répliques.
-- Des PNJ récurrents traversent les ères sous de nouvelles incarnations (Tok le marchand devient banquier florentin, puis courtier, puis influenceur crypto, puis trader d'astéroïdes).
+- Des PNJ récurrents traversent les ères sous de nouvelles incarnations (Nick le marchand devient banquier florentin, puis courtier, puis influenceur crypto, puis trader d'astéroïdes).
 - **L'Archiviste**, robot du futur, commente la frise d'un bout à l'autre. Le joueur le construit à la fin de l'ère 10.
 
 ### Événements
