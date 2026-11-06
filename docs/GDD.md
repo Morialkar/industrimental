@@ -539,5 +539,5 @@ Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Brevets) et 
 - [x] La fin hybride secrète à partir de l'ère 3 : on la garde, ou on reste strictement à 4 fins ? Réponse : on la garde.
 - [ ] Les noms de travail des fins et des Brevets sont à valider, ère par ère. Travail en cours dans [Industrimental — Textes de travail](https://claude.ai/artifact/SrEyhPwfVWoBEWxoScEeiS).
 - [x] Une sauvegarde cloud multiplateforme (iOS ↔ Android) demanderait un petit serveur : en v1 ou plus tard ? Réponse : solution sans coût en v1 (voir section 14, Sauvegarde et temps).
-- [ ] Marchés du soft launch à choisir. Le soft launch est une sortie discrète dans un ou deux petits pays avant le lancement mondial, pour mesurer la rétention et ajuster l'équilibrage. Proposition : le Canada (français et anglais, comme le jeu), avec éventuellement la Nouvelle-Zélande pour plus de joueurs anglophones.
+- [x] Marchés du soft launch à choisir. Le soft launch est une sortie discrète dans un ou deux petits pays avant le lancement mondial, pour mesurer la rétention et ajuster l'équilibrage. Réponse : Canada et États-Unis.
 - [x] Nom définitif du jeu : Industrimental est-il le titre final ? Réponse : oui.
