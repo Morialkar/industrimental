@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Tests, desktop build and screenshot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install Ebitengine desktop dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxxf86vm-dev libasound2-dev pkg-config xvfb
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+      - run: go vet ./...
+      - run: go test ./...
+      - name: Build desktop
+        run: go build -o industrimental-desktop ./cmd/desktop
+      - name: Capture the test scene
+        run: LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x1024x24" ./industrimental-desktop -screenshot scene.png -frames 20 -warmup 4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scene-screenshot
+          path: scene.png
+
+  android:
+    name: Android debug APK
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+      - name: Bind the Go game to an Android library
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@v2.10.5
+          ebitenmobile bind -target android -androidapi 24 \
+            -javapkg com.morialkar.industrimental \
+            -o android/app/libs/industrimental.aar ./mobile
+      - name: Build the APK
+        run: gradle -p android assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: industrimental-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk

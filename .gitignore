@@ -1,0 +1,15 @@
+# Go build outputs
+/industrimental-desktop
+/desktop
+*.test
+scene.png
+
+# Mobile build outputs
+*.aar
+*.xcframework/
+ios/build/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

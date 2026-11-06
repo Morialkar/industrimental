@@ -1,0 +1,796 @@
+{
+  "id": "e01",
+  "index": 1,
+  "nameKey": "era.e01",
+  "currency": "coquillages",
+  "resources": [
+    {
+      "id": "coquillages",
+      "nameKey": "res.coquillages",
+      "kind": "currency"
+    },
+    {
+      "id": "baies",
+      "nameKey": "res.baies",
+      "kind": "base",
+      "basePrice": 1,
+      "elasticity": 0.6
+    },
+    {
+      "id": "bois",
+      "nameKey": "res.bois",
+      "kind": "base",
+      "basePrice": 1,
+      "elasticity": 0.5
+    },
+    {
+      "id": "silex",
+      "nameKey": "res.silex",
+      "kind": "base",
+      "basePrice": 1.5,
+      "elasticity": 0.6
+    },
+    {
+      "id": "viande",
+      "nameKey": "res.viande",
+      "kind": "base",
+      "basePrice": 2,
+      "elasticity": 0.7
+    },
+    {
+      "id": "peaux-brutes",
+      "nameKey": "res.peaux-brutes",
+      "kind": "base",
+      "basePrice": 2,
+      "elasticity": 0.7
+    },
+    {
+      "id": "outils-silex",
+      "nameKey": "res.outils-silex",
+      "kind": "critical",
+      "basePrice": 6,
+      "elasticity": 0.8
+    },
+    {
+      "id": "peaux-tannees",
+      "nameKey": "res.peaux-tannees",
+      "kind": "critical",
+      "basePrice": 8,
+      "elasticity": 0.8
+    },
+    {
+      "id": "grain",
+      "nameKey": "res.grain",
+      "kind": "critical",
+      "basePrice": 3,
+      "elasticity": 0.5
+    },
+    {
+      "id": "sel",
+      "nameKey": "res.sel",
+      "kind": "critical",
+      "basePrice": 5,
+      "elasticity": 0.4
+    },
+    {
+      "id": "parures",
+      "nameKey": "res.parures",
+      "kind": "critical",
+      "basePrice": 10,
+      "elasticity": 1.1
+    },
+    {
+      "id": "ocre",
+      "nameKey": "res.ocre",
+      "kind": "critical",
+      "basePrice": 7,
+      "elasticity": 0.9
+    },
+    {
+      "id": "poteries-crues",
+      "nameKey": "res.poteries-crues",
+      "kind": "critical",
+      "basePrice": 9,
+      "elasticity": 0.9
+    },
+    {
+      "id": "fresques",
+      "nameKey": "res.fresques",
+      "kind": "critical",
+      "basePrice": 12,
+      "elasticity": 1.2
+    }
+  ],
+  "stations": [
+    {
+      "id": "cueillette",
+      "nameKey": "st.cueillette",
+      "variants": [
+        {
+          "id": "juteuses",
+          "nameKey": "var.cueillette.juteuses",
+          "recipe": {
+            "outputs": {
+              "baies": 2,
+              "bois": 1
+            },
+            "seconds": 2
+          }
+        },
+        {
+          "id": "herbes",
+          "nameKey": "var.cueillette.herbes",
+          "recipe": {
+            "outputs": {
+              "baies": 1,
+              "bois": 1
+            },
+            "seconds": 2
+          }
+        },
+        {
+          "id": "fibres",
+          "nameKey": "var.cueillette.fibres",
+          "recipe": {
+            "outputs": {
+              "bois": 2
+            },
+            "seconds": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "carriere-silex",
+      "nameKey": "st.carriere-silex",
+      "unlockCost": {
+        "baies": 10
+      },
+      "variants": [
+        {
+          "id": "silex-fin",
+          "nameKey": "var.carriere-silex.silex-fin",
+          "recipe": {
+            "outputs": {
+              "silex": 2
+            },
+            "seconds": 3
+          }
+        },
+        {
+          "id": "meules",
+          "nameKey": "var.carriere-silex.meules",
+          "recipe": {
+            "outputs": {
+              "silex": 1
+            },
+            "seconds": 2
+          }
+        },
+        {
+          "id": "galets",
+          "nameKey": "var.carriere-silex.galets",
+          "recipe": {
+            "outputs": {
+              "silex": 1
+            },
+            "seconds": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "camp-chasse",
+      "nameKey": "st.camp-chasse",
+      "unlockCost": {
+        "baies": 25,
+        "silex": 10
+      },
+      "variants": [
+        {
+          "id": "gros-gibier",
+          "nameKey": "var.camp-chasse.gros-gibier",
+          "recipe": {
+            "outputs": {
+              "viande": 1,
+              "peaux-brutes": 2
+            },
+            "seconds": 4
+          }
+        },
+        {
+          "id": "peche",
+          "nameKey": "var.camp-chasse.peche",
+          "recipe": {
+            "outputs": {
+              "viande": 1,
+              "coquillages": 1
+            },
+            "seconds": 4
+          }
+        },
+        {
+          "id": "pieges",
+          "nameKey": "var.camp-chasse.pieges",
+          "recipe": {
+            "outputs": {
+              "viande": 1,
+              "peaux-brutes": 1
+            },
+            "seconds": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "atelier-taille",
+      "nameKey": "st.atelier-taille",
+      "unlockCost": {
+        "silex": 20
+      },
+      "variants": [
+        {
+          "id": "pointes",
+          "nameKey": "var.atelier-taille.pointes",
+          "recipe": {
+            "outputs": {
+              "outils-silex": 1
+            },
+            "seconds": 3,
+            "inputs": {
+              "silex": 2
+            }
+          }
+        },
+        {
+          "id": "outils-agricoles",
+          "nameKey": "var.atelier-taille.outils-agricoles",
+          "recipe": {
+            "outputs": {
+              "outils-silex": 1
+            },
+            "seconds": 3,
+            "inputs": {
+              "silex": 2
+            }
+          }
+        },
+        {
+          "id": "parures",
+          "nameKey": "var.atelier-taille.parures",
+          "recipe": {
+            "outputs": {
+              "parures": 1
+            },
+            "seconds": 4,
+            "inputs": {
+              "silex": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "feu-camp",
+      "nameKey": "st.feu-camp",
+      "unlockCost": {
+        "bois": 20
+      },
+      "variants": [
+        {
+          "id": "fumoir",
+          "nameKey": "var.feu-camp.fumoir",
+          "recipe": {
+            "outputs": {
+              "viande": 2
+            },
+            "seconds": 4,
+            "inputs": {
+              "bois": 1,
+              "viande": 1
+            }
+          }
+        },
+        {
+          "id": "four-ocre",
+          "nameKey": "var.feu-camp.four-ocre",
+          "recipe": {
+            "outputs": {
+              "ocre": 1
+            },
+            "seconds": 4,
+            "inputs": {
+              "bois": 2
+            }
+          }
+        },
+        {
+          "id": "veillee",
+          "nameKey": "var.feu-camp.veillee",
+          "recipe": {
+            "outputs": {
+              "fresques": 1
+            },
+            "seconds": 6,
+            "inputs": {
+              "bois": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tannerie",
+      "nameKey": "st.tannerie",
+      "unlockCost": {
+        "coquillages": 30,
+        "peaux-brutes": 10
+      },
+      "variants": [
+        {
+          "id": "cuir-epais",
+          "nameKey": "var.tannerie.cuir-epais",
+          "recipe": {
+            "outputs": {
+              "peaux-tannees": 1
+            },
+            "seconds": 5,
+            "inputs": {
+              "peaux-brutes": 2,
+              "sel": 1
+            }
+          }
+        },
+        {
+          "id": "fourrures",
+          "nameKey": "var.tannerie.fourrures",
+          "recipe": {
+            "outputs": {
+              "peaux-tannees": 1
+            },
+            "seconds": 6,
+            "inputs": {
+              "peaux-brutes": 2,
+              "sel": 1
+            }
+          }
+        },
+        {
+          "id": "outres",
+          "nameKey": "var.tannerie.outres",
+          "recipe": {
+            "outputs": {
+              "peaux-tannees": 1
+            },
+            "seconds": 4,
+            "inputs": {
+              "peaux-brutes": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "champ",
+      "nameKey": "st.champ",
+      "unlockCost": {
+        "outils-silex": 5
+      },
+      "variants": [
+        {
+          "id": "ble",
+          "nameKey": "var.champ.ble",
+          "recipe": {
+            "outputs": {
+              "grain": 2
+            },
+            "seconds": 4
+          }
+        },
+        {
+          "id": "lentilles",
+          "nameKey": "var.champ.lentilles",
+          "recipe": {
+            "outputs": {
+              "grain": 1,
+              "baies": 1
+            },
+            "seconds": 4
+          }
+        },
+        {
+          "id": "lin",
+          "nameKey": "var.champ.lin",
+          "recipe": {
+            "outputs": {
+              "grain": 1
+            },
+            "seconds": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "source-salee",
+      "nameKey": "st.source-salee",
+      "unlockCost": {
+        "coquillages": 40
+      },
+      "variants": [
+        {
+          "id": "evaporation",
+          "nameKey": "var.source-salee.evaporation",
+          "recipe": {
+            "outputs": {
+              "sel": 1
+            },
+            "seconds": 3
+          }
+        },
+        {
+          "id": "mine-sel",
+          "nameKey": "var.source-salee.mine-sel",
+          "recipe": {
+            "outputs": {
+              "sel": 2
+            },
+            "seconds": 5
+          }
+        },
+        {
+          "id": "sel-marin",
+          "nameKey": "var.source-salee.sel-marin",
+          "recipe": {
+            "outputs": {
+              "sel": 1,
+              "coquillages": 1
+            },
+            "seconds": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "fosse-argile",
+      "nameKey": "st.fosse-argile",
+      "unlockCost": {
+        "coquillages": 50,
+        "bois": 30
+      },
+      "variants": [
+        {
+          "id": "jarres",
+          "nameKey": "var.fosse-argile.jarres",
+          "recipe": {
+            "outputs": {
+              "poteries-crues": 1
+            },
+            "seconds": 5,
+            "inputs": {
+              "bois": 1
+            }
+          }
+        },
+        {
+          "id": "figurines",
+          "nameKey": "var.fosse-argile.figurines",
+          "recipe": {
+            "outputs": {
+              "parures": 1
+            },
+            "seconds": 5,
+            "inputs": {
+              "bois": 1
+            }
+          }
+        },
+        {
+          "id": "tuiles",
+          "nameKey": "var.fosse-argile.tuiles",
+          "recipe": {
+            "outputs": {
+              "poteries-crues": 1
+            },
+            "seconds": 4,
+            "inputs": {
+              "bois": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "cercle-troc",
+      "nameKey": "st.cercle-troc",
+      "unlockCost": {
+        "coquillages": 20
+      },
+      "variants": [
+        {
+          "id": "pierre-echanges",
+          "nameKey": "var.cercle-troc.pierre-echanges",
+          "recipe": {
+            "outputs": {
+              "coquillages": 3
+            },
+            "seconds": 5,
+            "inputs": {
+              "parures": 1
+            }
+          }
+        },
+        {
+          "id": "foire",
+          "nameKey": "var.cercle-troc.foire",
+          "recipe": {
+            "outputs": {
+              "coquillages": 3
+            },
+            "seconds": 5,
+            "inputs": {
+              "peaux-tannees": 1
+            }
+          }
+        },
+        {
+          "id": "conseil",
+          "nameKey": "var.cercle-troc.conseil",
+          "recipe": {
+            "outputs": {
+              "coquillages": 2
+            },
+            "seconds": 4,
+            "inputs": {
+              "grain": 2
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "tree": [
+    {
+      "id": "main-habile",
+      "nameKey": "node.main-habile",
+      "branch": "trunk",
+      "cost": {
+        "baies": 10
+      }
+    },
+    {
+      "id": "feu-apprivoise",
+      "nameKey": "node.feu-apprivoise",
+      "branch": "trunk",
+      "cost": {
+        "bois": 25
+      },
+      "requiresAll": [
+        "main-habile"
+      ]
+    },
+    {
+      "id": "premiers-paniers",
+      "nameKey": "node.premiers-paniers",
+      "branch": "trunk",
+      "cost": {
+        "baies": 60,
+        "bois": 40
+      },
+      "requiresAll": [
+        "feu-apprivoise"
+      ]
+    },
+    {
+      "id": "langage-troc",
+      "nameKey": "node.langage-troc",
+      "branch": "trunk",
+      "cost": {
+        "coquillages": 40
+      },
+      "requiresAll": [
+        "premiers-paniers"
+      ]
+    },
+    {
+      "id": "sedentarisation",
+      "nameKey": "node.sedentarisation",
+      "branch": "trunk",
+      "cost": {
+        "grain": 30,
+        "outils-silex": 10
+      },
+      "requiresAll": [
+        "langage-troc"
+      ]
+    },
+    {
+      "id": "le-cercle",
+      "nameKey": "node.le-cercle",
+      "branch": "trunk",
+      "cost": {
+        "coquillages": 150,
+        "parures": 10
+      },
+      "requiresAll": [
+        "sedentarisation"
+      ]
+    },
+    {
+      "id": "porteurs",
+      "nameKey": "node.porteurs",
+      "branch": "trade",
+      "cost": {
+        "peaux-tannees": 20
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "foires",
+      "nameKey": "node.foires",
+      "branch": "trade",
+      "cost": {
+        "parures": 20
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "grand-cercle",
+      "nameKey": "node.grand-cercle",
+      "branch": "trade",
+      "cost": {
+        "parures": 100,
+        "sel": 100,
+        "peaux-tannees": 100
+      },
+      "requiresAny": [
+        "porteurs",
+        "foires"
+      ],
+      "eraKey": true
+    },
+    {
+      "id": "champs",
+      "nameKey": "node.champs",
+      "branch": "throughput",
+      "cost": {
+        "grain": 40
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "ateliers",
+      "nameKey": "node.ateliers",
+      "branch": "throughput",
+      "cost": {
+        "outils-silex": 20
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "village-agricole",
+      "nameKey": "node.village-agricole",
+      "branch": "throughput",
+      "cost": {
+        "sel": 100,
+        "grain": 200,
+        "outils-silex": 100
+      },
+      "requiresAny": [
+        "champs",
+        "ateliers"
+      ],
+      "eraKey": true
+    },
+    {
+      "id": "four",
+      "nameKey": "node.four",
+      "branch": "ingenuity",
+      "cost": {
+        "poteries-crues": 20
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "pigments",
+      "nameKey": "node.pigments",
+      "branch": "ingenuity",
+      "cost": {
+        "ocre": 20
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "maitrise-feu",
+      "nameKey": "node.maitrise-feu",
+      "branch": "ingenuity",
+      "cost": {
+        "outils-silex": 100,
+        "poteries-crues": 100,
+        "ocre": 100
+      },
+      "requiresAny": [
+        "four",
+        "pigments"
+      ],
+      "eraKey": true
+    },
+    {
+      "id": "veillees",
+      "nameKey": "node.veillees",
+      "branch": "community",
+      "cost": {
+        "fresques": 15
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "anciens",
+      "nameKey": "node.anciens",
+      "branch": "community",
+      "cost": {
+        "ocre": 20
+      },
+      "requiresAll": [
+        "le-cercle"
+      ]
+    },
+    {
+      "id": "clan-conteurs",
+      "nameKey": "node.clan-conteurs",
+      "branch": "community",
+      "cost": {
+        "ocre": 100,
+        "fresques": 80,
+        "parures": 100
+      },
+      "requiresAny": [
+        "veillees",
+        "anciens"
+      ],
+      "eraKey": true
+    }
+  ],
+  "quests": [
+    {
+      "id": "premier-troc",
+      "nameKey": "quest.premier-troc",
+      "kind": "production",
+      "main": true,
+      "goal": {
+        "coquillages": 5
+      }
+    },
+    {
+      "id": "bob-compte",
+      "nameKey": "quest.bob-compte",
+      "kind": "production",
+      "main": true,
+      "goal": {
+        "baies": 100
+      }
+    },
+    {
+      "id": "clan-voisin",
+      "nameKey": "quest.clan-voisin",
+      "kind": "contract",
+      "main": true,
+      "goal": {
+        "peaux-tannees": 20
+      }
+    }
+  ]
+}
