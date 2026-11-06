@@ -223,7 +223,7 @@ L'ère du Troc sert de tutoriel long : 1 à 2 jours, 10 stations, 8 ressources c
 ### Ouverture (10 premières minutes)
 
 1. Le joueur tape sur un buisson pour cueillir des baies (le seul moment « clicker » du jeu).
-2. Grog propose d'échanger 5 baies contre 1 silex : premier troc.
+2. Bob propose d'échanger 5 baies contre 1 silex : premier troc.
 3. Le premier silex débloque la Carrière, et la récolte devient automatique.
 4. L'Atelier de taille introduit la première recette, puis le premier choix de variante.
 5. Le Cercle de troc ouvre le marché. L'arbre apparaît à la 20ᵉ minute environ.
@@ -264,14 +264,14 @@ Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre 
 
 ### PNJ de l'ère
 
-- **Grog**, chef comptable du clan. Il compte sur ses doigts et panique au-delà de 10. Il guide le tutoriel.
+- **Bob**, chef comptable du clan. Il compte sur ses doigts et panique au-delà de 10. Il guide le tutoriel.
 - **Amna**, inventrice. Elle invente la roue 4000 ans trop tôt, et personne n'en veut (« ça roule, et alors ? »).
 - **Tok**, marchand nomade. Il vend des « cailloux premium » et fixe les prix les plus fous du marché.
 - **L'Ancienne**, conteuse. Elle confie les quêtes narratives et commente les fresques du joueur.
 
 ### Exemples de quêtes
 
-- *Production* : « Grog veut compter jusqu'à 100 baies. Il n'a que 10 doigts. Aide-le quand même. »
+- *Production* : « Bob veut compter jusqu'à 100 baies. Il n'a que 10 doigts. Aide-le quand même. »
 - *Contrat* : « Le clan d'à côté veut 20 peaux tannées avant la nuit. Il paie en coquillages, ou en promesses. »
 - *Narrative* : « Amna a inventé la roue. Trouve-lui une utilité avant qu'elle ne la transforme en table. »
 
