@@ -534,7 +534,7 @@ Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Brevets) et 
 ## 17. Questions ouvertes
 
 - [x] Taille de l'équipe et calendrier visé : les durées de la section 16 en dépendent. Réponse : pas de contrainte, les durées restent indicatives.
-- [ ] Une semaine par ère, soit environ 10 semaines pour la v1 : est-ce que l'ère 1 courte (1 à 2 jours) te convient comme onboarding ?
+- [x] Une semaine par ère, soit environ 10 semaines pour la v1 : est-ce que l'ère 1 courte (1 à 2 jours) te convient comme onboarding ? Réponse : oui.
 - [ ] La fin hybride secrète à partir de l'ère 3 : on la garde, ou on reste strictement à 4 fins ?
 - [ ] Les noms de travail des fins et des Brevets sont à valider, ère par ère.
 - [ ] Une sauvegarde cloud multiplateforme (iOS ↔ Android) demanderait un petit serveur : en v1 ou plus tard ?
