@@ -265,7 +265,7 @@ Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre 
 ### PNJ de l'ère
 
 - **Grog**, chef comptable du clan. Il compte sur ses doigts et panique au-delà de 10. Il guide le tutoriel.
-- **Ama**, inventrice. Elle invente la roue 4000 ans trop tôt, et personne n'en veut (« ça roule, et alors ? »).
+- **Amna**, inventrice. Elle invente la roue 4000 ans trop tôt, et personne n'en veut (« ça roule, et alors ? »).
 - **Tok**, marchand nomade. Il vend des « cailloux premium » et fixe les prix les plus fous du marché.
 - **L'Ancienne**, conteuse. Elle confie les quêtes narratives et commente les fresques du joueur.
 
@@ -273,7 +273,7 @@ Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre 
 
 - *Production* : « Grog veut compter jusqu'à 100 baies. Il n'a que 10 doigts. Aide-le quand même. »
 - *Contrat* : « Le clan d'à côté veut 20 peaux tannées avant la nuit. Il paie en coquillages, ou en promesses. »
-- *Narrative* : « Ama a inventé la roue. Trouve-lui une utilité avant qu'elle ne la transforme en table. »
+- *Narrative* : « Amna a inventé la roue. Trouve-lui une utilité avant qu'elle ne la transforme en table. »
 
 ## 9. Quêtes, PNJ et événements
 
