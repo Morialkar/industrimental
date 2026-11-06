@@ -536,7 +536,7 @@ Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Brevets) et 
 - [x] Taille de l'équipe et calendrier visé : les durées de la section 16 en dépendent. Réponse : pas de contrainte, les durées restent indicatives.
 - [x] Une semaine par ère, soit environ 10 semaines pour la v1 : est-ce que l'ère 1 courte (1 à 2 jours) te convient comme onboarding ? Réponse : oui.
 - [x] La fin hybride secrète à partir de l'ère 3 : on la garde, ou on reste strictement à 4 fins ? Réponse : on la garde.
-- [ ] Les noms de travail des fins et des Brevets sont à valider, ère par ère.
+- [ ] Les noms de travail des fins et des Brevets sont à valider, ère par ère. Travail en cours dans [Industrimental — Textes de travail](https://claude.ai/artifact/SrEyhPwfVWoBEWxoScEeiS).
 - [ ] Une sauvegarde cloud multiplateforme (iOS ↔ Android) demanderait un petit serveur : en v1 ou plus tard ?
 - [ ] Marchés du soft launch à choisir.
 - [ ] Nom définitif du jeu : Industrimental est-il le titre final ?
