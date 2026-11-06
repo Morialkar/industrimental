@@ -141,7 +141,7 @@ Passer une ère donne un héritage ciblé (Brevet + Savoir-faire), et l'ère qui
 ### Archives : revenir sans recommencer
 
 - Le joueur peut revisiter une ère passée pour finir une autre branche et gagner son Brevet.
-- L'ère reprend là où il l'a laissée : pas de reset. Les coûts des nœuds restants sont réduits de 40 % pour que ce soit une affaire de quelques heures.
+- L'ère reprend là où il l'a laissée : pas de reset. Les nœuds restants gardent leur plein coût : compléter toutes les branches d'une ancienne ère est un gros avantage pour les ères suivantes, et le travail demandé doit être à la hauteur.
 - Collectionner les 40+ Brevets de la v1 devient l'objectif de fin de jeu, sans prestige.
 
 ## 6. Économie
