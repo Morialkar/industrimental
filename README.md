@@ -7,6 +7,7 @@ Jeu incremental mobile (portrait, iOS et Android) : l'industrie humaine du troc 
 - [Game Design Document](docs/GDD.md) — copie du [document vivant](https://claude.ai/artifact/F1vkuWbsfuwMhCVuMZG82a)
 - [Plan de développement](docs/PLAN.md) — copie du [document vivant](https://claude.ai/artifact/3kYaVD4YnBafY64h1hp46t)
 - [Compiler et lancer le jeu](docs/BUILD.md)
+- [Essai du kit d'interface](docs/INTERFACE.md)
 
 ## Structure
 
@@ -18,7 +19,11 @@ Jeu incremental mobile (portrait, iOS et Android) : l'industrie humaine du troc 
 | `internal/content/data` | Données du jeu : `eras/*.json` et textes `locales/fr.json`, `locales/en.json` |
 | `internal/save` | Sauvegarde versionnée, compressée, vérifiée, sur 3 emplacements tournants |
 | `internal/fx` | Système de particules (logique pure, testée) |
-| `internal/game` | Boucle Ebitengine ; pour l'instant la scène de test de la phase 0 |
+| `internal/sim` | Économie d'une ère en Go pur : stations, goulets, marché, arbre, quêtes, hors-ligne |
+| `internal/balance` | Joueur simulé : une stratégie par fin, sur le rythme d'un joueur régulier |
+| `internal/ui` | Kit d'interface maison (voir [l'essai](docs/INTERFACE.md)) |
+| `internal/game` | Boucle Ebitengine : panorama, panneau à onglets, sauvegarde, absences |
+| `cmd/balance` | Durée de chaque fin et courbes de progression, sans écran |
 | `android` | Coquille Kotlin minimale qui héberge le jeu |
 | `ios` | Coquille Swift minimale qui héberge le jeu |
 

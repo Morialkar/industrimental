@@ -12,13 +12,23 @@
 go run ./cmd/desktop
 ```
 
-La fenêtre a le format d'un téléphone. Glisse à la souris pour faire défiler le panorama, `R` pour revenir au début.
+La fenêtre a le format d'un téléphone. Glisse à la souris pour faire défiler le panorama. La sauvegarde est dans le dossier de configuration de l'utilisateur, sous `Industrimental`.
 
 Capture d'écran sans fenêtre (utilisée par l'intégration continue) :
 
 ```sh
 go run ./cmd/desktop -screenshot scene.png -frames 20 -warmup 4
 ```
+
+Pour voir un onglet sur une partie avancée sans toucher à la sauvegarde : `-demo -tab 2` (0 stations, 1 marché, 2 arbre, 3 quêtes, 4 ère).
+
+## Équilibrage
+
+```sh
+go run ./cmd/balance
+```
+
+Joue l'ère une fois par fin, sur 5 sessions de 5 minutes par jour, et affiche le temps de chacune. `-v` détaille les étapes et l'état final, `-curves dossier` écrit les courbes en CSV. `go test ./internal/balance` échoue si une fin de l'ère 1 sort de la plage de 24 à 48 h.
 
 ## Tests
 
