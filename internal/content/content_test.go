@@ -27,16 +27,20 @@ func TestLoadEmbedded(t *testing.T) {
 }
 
 const minimalLocales = `{"era.x":"X","res.cur":"C","res.a":"A","st.s":"S","var.s.v1":"V1","var.s.v2":"V2",
-"n.root":"R","n.t":"T","n.th":"TH","n.i":"I","n.c":"C"}`
+"n.root":"R","n.t":"T","n.th":"TH","n.i":"I","n.c":"C","end":"E","pat":"P","pd":"PD"}`
 
 func minimalEra(tree string) string {
 	return `{"id":"x","index":1,"nameKey":"era.x","currency":"cur",
 "resources":[{"id":"cur","nameKey":"res.cur","kind":"currency"},
-             {"id":"a","nameKey":"res.a","kind":"base","basePrice":1,"elasticity":0.5}],
+             {"id":"a","nameKey":"res.a","kind":"base","basePrice":1,"elasticity":0.5,"demand":10}],
 "stations":[{"id":"s","nameKey":"st.s","variants":[
    {"id":"v1","nameKey":"var.s.v1","recipe":{"outputs":{"a":1},"seconds":1}},
    {"id":"v2","nameKey":"var.s.v2","recipe":{"inputs":{"a":1},"outputs":{"cur":1},"seconds":1}}]}],
-"tree":` + tree + `,"quests":[]}`
+"tree":` + tree + `,"quests":[],"npcs":[],"contracts":[],"endings":[
+ {"axis":"trade","nameKey":"end","patentKey":"pat","patentDescKey":"pd"},
+ {"axis":"throughput","nameKey":"end","patentKey":"pat","patentDescKey":"pd"},
+ {"axis":"ingenuity","nameKey":"end","patentKey":"pat","patentDescKey":"pd"},
+ {"axis":"community","nameKey":"end","patentKey":"pat","patentDescKey":"pd"}]}`
 }
 
 const validTree = `[

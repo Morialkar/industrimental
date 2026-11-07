@@ -59,8 +59,11 @@ func validateEra(e Era, add func(string, ...any), checkKey func(string, string))
 		default:
 			add("%s: resource %q has unknown kind %q", where, r.ID, r.Kind)
 		}
-		if r.Kind != KindCurrency && (r.BasePrice <= 0 || r.Elasticity <= 0) {
-			add("%s: resource %q needs a positive basePrice and elasticity", where, r.ID)
+		if r.Kind != KindCurrency && (r.BasePrice <= 0 || r.Elasticity <= 0 || r.Demand <= 0) {
+			add("%s: resource %q needs a positive basePrice, elasticity and demand", where, r.ID)
+		}
+		if r.DescKey != "" {
+			checkKey(where+" resource "+r.ID, r.DescKey)
 		}
 	}
 	if c, ok := res[e.Currency]; !ok || c.Kind != KindCurrency {
@@ -81,9 +84,54 @@ func validateEra(e Era, add func(string, ...any), checkKey func(string, string))
 		}
 	}
 
+	nodeIDs := map[string]bool{}
+	for _, n := range e.Tree {
+		nodeIDs[n.ID] = true
+	}
+	stationSet := map[string]bool{}
+	for _, s := range e.Stations {
+		stationSet[s.ID] = true
+	}
+	checkEffects := func(ctx string, effects []Effect) {
+		for _, fx := range effects {
+			switch fx.Kind {
+			case EffectStationRate:
+				if fx.Station != "*" && !stationSet[fx.Station] {
+					add("%s: effect on unknown station %q", ctx, fx.Station)
+				}
+			case EffectResourceRate, EffectInputSaving:
+				if _, ok := res[fx.Resource]; !ok {
+					add("%s: effect on unknown resource %q", ctx, fx.Resource)
+				}
+			case EffectSellPrice, EffectDemand:
+				if _, ok := res[fx.Resource]; !ok && fx.Resource != "*" {
+					add("%s: effect on unknown resource %q", ctx, fx.Resource)
+				}
+			case EffectContractReward, EffectQuestReward, EffectRetoolDiscount:
+			default:
+				add("%s: unknown effect kind %q", ctx, fx.Kind)
+			}
+			if fx.Value <= 0 {
+				add("%s: effect %q needs a positive value", ctx, fx.Kind)
+			}
+		}
+	}
+	marketStations := 0
+
 	stationIDs := map[string]bool{}
 	for _, s := range e.Stations {
 		sw := where + " station " + s.ID
+		if s.Market {
+			marketStations++
+		}
+		if s.RequiresNode != "" && !nodeIDs[s.RequiresNode] {
+			add("%s: requires unknown node %q", sw, s.RequiresNode)
+		}
+		checkAmounts(sw+" levelCost", s.LevelCost, true)
+		checkAmounts(sw+" harvest", s.Harvest, true)
+		if s.DescKey != "" {
+			checkKey(sw, s.DescKey)
+		}
 		if stationIDs[s.ID] {
 			add("%s: duplicate station", sw)
 		}
@@ -106,10 +154,104 @@ func validateEra(e Era, add func(string, ...any), checkKey func(string, string))
 			if v.Recipe.Seconds <= 0 {
 				add("%s: recipe seconds must be positive", vw)
 			}
+			checkEffects(vw, v.Effects)
 		}
 	}
 
-	validateTree(e, where, add, checkKey, checkAmounts)
+	if marketStations > 1 {
+		add("%s: at most one station may open the market, %d do", where, marketStations)
+	}
+
+	validateTree(e, where, add, checkKey, checkAmounts, checkEffects)
+
+	npcs := map[string]bool{}
+	for _, n := range e.NPCs {
+		nw := where + " npc " + n.ID
+		if npcs[n.ID] {
+			add("%s: duplicate npc", nw)
+		}
+		npcs[n.ID] = true
+		checkKey(nw, n.NameKey)
+		if n.DescKey != "" {
+			checkKey(nw, n.DescKey)
+		}
+		if n.RequiresStation != "" && !stationSet[n.RequiresStation] {
+			add("%s: requires unknown station %q", nw, n.RequiresStation)
+		}
+		for id := range n.Buys {
+			if _, ok := res[id]; !ok {
+				add("%s buys: unknown resource %q", nw, id)
+			}
+		}
+		for _, d := range n.Deals {
+			checkKey(nw+" deal "+d.ID, d.NameKey)
+			checkAmounts(nw+" deal "+d.ID+" give", d.Give, false)
+			checkAmounts(nw+" deal "+d.ID+" get", d.Get, false)
+		}
+	}
+
+	for _, c := range e.Contracts {
+		cw := where + " contract " + c.ID
+		checkKey(cw, c.NameKey)
+		if !npcs[c.NPC] {
+			add("%s: unknown npc %q", cw, c.NPC)
+		}
+		if _, ok := res[c.Resource]; !ok {
+			add("%s: unknown resource %q", cw, c.Resource)
+		}
+		if c.Amount <= 0 || c.Premium <= 0 || c.Seconds <= 0 {
+			add("%s: amount, premium and seconds must be positive", cw)
+		}
+	}
+
+	endings := map[Axis]bool{}
+	for _, end := range e.Endings {
+		ew := where + " ending " + string(end.Axis)
+		if !slices.Contains(Axes, end.Axis) || endings[end.Axis] {
+			add("%s: unknown or duplicate axis", ew)
+		}
+		endings[end.Axis] = true
+		checkKey(ew, end.NameKey)
+		checkKey(ew, end.PatentKey)
+		checkKey(ew, end.PatentDescKey)
+		if end.DescKey != "" {
+			checkKey(ew, end.DescKey)
+		}
+	}
+	for _, axis := range Axes {
+		if !endings[axis] {
+			add("%s: missing ending for axis %q", where, axis)
+		}
+	}
+
+	var checkGoal func(ctx string, g Goal)
+	checkGoal = func(ctx string, g Goal) {
+		checkAmounts(ctx+" have", g.Have, true)
+		checkAmounts(ctx+" produced", g.Produced, true)
+		checkAmounts(ctx+" deliver", g.Deliver, true)
+		for _, id := range g.Stations {
+			if !stationSet[id] {
+				add("%s: unknown station %q", ctx, id)
+			}
+		}
+		for id := range g.Levels {
+			if !stationSet[id] {
+				add("%s: unknown station %q", ctx, id)
+			}
+		}
+		for _, id := range g.Nodes {
+			if !nodeIDs[id] {
+				add("%s: unknown node %q", ctx, id)
+			}
+		}
+		empty := len(g.Have)+len(g.Produced)+len(g.Deliver)+len(g.Stations)+len(g.Levels)+len(g.Nodes)+len(g.Any) == 0 && g.Earned == 0
+		if empty {
+			add("%s: goal must not be empty", ctx)
+		}
+		for _, alt := range g.Any {
+			checkGoal(ctx+" alternative", alt)
+		}
+	}
 
 	questIDs := map[string]bool{}
 	for _, q := range e.Quests {
@@ -124,11 +266,35 @@ func validateEra(e Era, add func(string, ...any), checkKey func(string, string))
 		default:
 			add("%s: unknown kind %q", qw, q.Kind)
 		}
-		checkAmounts(qw+" goal", q.Goal, false)
+		if q.NPC != "" && !npcs[q.NPC] {
+			add("%s: unknown npc %q", qw, q.NPC)
+		}
+		if q.Branch != "" && !slices.Contains(Axes, Axis(q.Branch)) {
+			add("%s: unknown branch %q", qw, q.Branch)
+		}
+		if q.Kind == QuestContract && q.Seconds <= 0 {
+			add("%s: a contract needs a delay in seconds", qw)
+		}
+		if len(q.Steps) == 0 {
+			add("%s: needs at least one step", qw)
+		}
+		for i, step := range q.Steps {
+			sw := fmt.Sprintf("%s step %d", qw, i)
+			checkKey(sw, step.TextKey)
+			checkGoal(sw, step.Goal)
+		}
+		checkAmounts(qw+" reward", q.Reward, true)
+	}
+	for _, q := range e.Quests {
+		for _, r := range q.Requires {
+			if !questIDs[r] {
+				add("%s quest %s: requires unknown quest %q", where, q.ID, r)
+			}
+		}
 	}
 }
 
-func validateTree(e Era, where string, add func(string, ...any), checkKey func(string, string), checkAmounts func(string, Amounts, bool)) {
+func validateTree(e Era, where string, add func(string, ...any), checkKey func(string, string), checkAmounts func(string, Amounts, bool), checkEffects func(string, []Effect)) {
 	nodes := map[string]Node{}
 	for _, n := range e.Tree {
 		if _, dup := nodes[n.ID]; dup {
@@ -142,6 +308,13 @@ func validateTree(e Era, where string, add func(string, ...any), checkKey func(s
 		nw := where + " node " + n.ID
 		checkKey(nw, n.NameKey)
 		checkAmounts(nw+" cost", n.Cost, false)
+		checkEffects(nw, n.Effects)
+		if n.DescKey != "" {
+			checkKey(nw, n.DescKey)
+		}
+		if n.BridgeTo != "" && (n.Branch == BranchTrunk || !slices.Contains(Axes, Axis(n.BridgeTo)) || n.BridgeTo == n.Branch) {
+			add("%s: invalid bridge to %q", nw, n.BridgeTo)
+		}
 		if n.Branch != BranchTrunk && !slices.Contains(Axes, Axis(n.Branch)) {
 			add("%s: unknown branch %q", nw, n.Branch)
 		}

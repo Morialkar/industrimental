@@ -10,13 +10,21 @@ import (
 	"github.com/morialkar/industrimental/internal/game"
 )
 
+var theGame *game.Game
+
 func init() {
 	g, err := game.New(game.Options{})
 	if err != nil {
 		panic(err)
 	}
+	theGame = g
 	mobile.SetGame(g)
 }
 
-// Dummy is required: gomobile only binds packages that export a symbol.
-func Dummy() {}
+// SetDataDir tells the game where to keep its saves. The native shell calls it
+// once, at startup, before the first frame.
+func SetDataDir(dir string) { theGame.SetDataDir(dir) }
+
+// Save writes the game to disk. The native shell calls it when the app goes to
+// the background: a suspended app may never get another chance.
+func Save() { theGame.Save() }

@@ -4,6 +4,8 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -14,9 +16,20 @@ func main() {
 	shot := flag.String("screenshot", "", "save a PNG of the screen after -frames frames, then quit")
 	frames := flag.Int("frames", 30, "frame at which -screenshot is taken")
 	warmup := flag.Float64("warmup", 0, "seconds of simulation to run before the first frame")
+	demo := flag.Bool("demo", false, "start from an advanced game, without saving")
+	tab := flag.Int("tab", 0, "panel tab to open: 0 stations, 1 market, 2 tree, 3 quests, 4 era")
 	flag.Parse()
 
-	g, err := game.New(game.Options{ScreenshotPath: *shot, ScreenshotFrame: *frames, Warmup: *warmup})
+	opts := game.Options{ScreenshotPath: *shot, ScreenshotFrame: *frames, Warmup: *warmup, Demo: *demo, Tab: *tab}
+	if *shot == "" && !*demo {
+		// Captures and demos never touch the real save.
+		dir, err := os.UserConfigDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		opts.DataDir = filepath.Join(dir, "Industrimental")
+	}
+	g, err := game.New(opts)
 	if err != nil {
 		log.Fatal(err)
 	}

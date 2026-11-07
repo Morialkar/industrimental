@@ -10,6 +10,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = scene as? UIWindowScene else { return }
+        if let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            MobileSetDataDir(dir.path)
+        }
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = gameController
         window.makeKeyAndVisible()
@@ -18,6 +21,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillResignActive(_ scene: UIScene) {
         gameController.suspendGame()
+        MobileSave()
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {

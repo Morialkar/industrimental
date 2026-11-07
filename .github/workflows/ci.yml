@@ -23,7 +23,8 @@ jobs:
       - uses: golangci/golangci-lint-action@v8
         with:
           version: v2.15.0
-      - run: go test ./...
+      - name: Run the tests (the interface tests need a display)
+        run: LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x1024x24" go test ./...
       - name: Build desktop
         run: go build -o industrimental-desktop ./cmd/desktop
       - name: Capture the test scene

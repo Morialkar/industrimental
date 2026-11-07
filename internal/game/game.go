@@ -1,7 +1,6 @@
 // Package game is the Ebitengine entry point shared by the desktop and mobile
-// builds. In phase 0 it shows a test scene: a procedural low-poly station with
-// moving parts, a parallax panorama that scrolls under the finger, and a
-// continuous smoke plume of about 500 particles.
+// builds: the panorama on top, the management panel below, and the link to the
+// simulation, the saves and the clock.
 package game
 
 import (
@@ -9,16 +8,20 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"log"
 	"math"
 	"math/rand/v2"
 	"os"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
 	"github.com/morialkar/industrimental/internal/content"
 	"github.com/morialkar/industrimental/internal/fx"
+	"github.com/morialkar/industrimental/internal/save"
+	"github.com/morialkar/industrimental/internal/sim"
+	"github.com/morialkar/industrimental/internal/ui"
 )
 
 // Logical resolution: portrait, 9:19.5, scaled to the device screen.
@@ -27,6 +30,11 @@ const (
 	ScreenH = 1560
 	tps     = 60
 	dt      = 1.0 / tps
+
+	simEvery     = 6 // ticks of the game per tick of the simulation (10 Hz)
+	autosaveTick = 30 * tps
+	awayMinimum  = 5.0 // seconds of silence that count as an absence
+	currentEra   = "e01"
 )
 
 // Options tweak the game for tooling (screenshots in CI, benchmarks).
@@ -38,19 +46,42 @@ type Options struct {
 	// Warmup simulates this many seconds before the first frame, so that a
 	// capture shows the scene in its steady state (smoke already formed).
 	Warmup float64
+	// DataDir is where saves go. Empty: nothing is saved.
+	DataDir string
+	// Demo starts from an advanced game, Tab on the given panel tab: it shows
+	// every screen in a capture without playing for two days.
+	Demo bool
+	Tab  int
 }
 
 // Game implements ebiten.Game.
 type Game struct {
-	opts    Options
-	eraName string
+	opts   Options
+	bundle *content.Bundle
+	era    *content.Era
+	sim    *sim.Sim
+	kit    *ui.Kit
+	locale string
+
+	mu       sync.Mutex // guards the save, which the native shell can request
+	store    *save.Store
+	lastTick timeState
+	started  bool
 
 	frame   int
 	t       float64 // seconds since start
 	scrollX float64 // panorama offset, in logical pixels
 	velX    float64 // inertia after a drag
-	dragX   int
+	dragX   float64
 	drag    bool
+
+	tab      int
+	contentH [tabCount]float64
+	sheet    string // station whose sheet is open
+	sheetT   float64
+	report   *sim.OfflineReport
+	toast    string
+	toastT   int
 
 	sky       *ebiten.Image
 	hills     [3]ridge
@@ -63,19 +94,27 @@ type Game struct {
 	done bool
 }
 
-// New loads the content and builds the test scene.
+// New loads the content and builds the scene.
 func New(opts Options) (*Game, error) {
 	b, err := content.LoadEmbedded()
 	if err != nil {
 		return nil, fmt.Errorf("content: %w", err)
 	}
-	era, ok := b.Era("e01")
+	era, ok := b.Era(currentEra)
 	if !ok {
-		return nil, fmt.Errorf("content: era e01 missing")
+		return nil, fmt.Errorf("content: era %s missing", currentEra)
+	}
+	kit, err := ui.New()
+	if err != nil {
+		return nil, fmt.Errorf("ui: %w", err)
 	}
 	g := &Game{
 		opts:      opts,
-		eraName:   b.Text("fr", era.NameKey),
+		bundle:    b,
+		era:       era,
+		kit:       kit,
+		locale:    "fr",
+		tab:       opts.Tab,
 		particles: fx.NewSystem(2000, 1),
 		sky:       newSky(),
 		puff:      newPuff(64),
@@ -95,10 +134,22 @@ func New(opts Options) (*Game, error) {
 		SpeedMin: 40, SpeedMax: 80, LifeMin: 2.5, LifeMax: 3.5,
 		SizeMin: 18, SizeMax: 30, Grow: 22, Gravity: -6,
 	}
+	g.sim = sim.New(era, 1)
+	if opts.Demo {
+		g.prepareDemo()
+	}
 	for i := 0; i < int(opts.Warmup*tps); i++ {
 		g.step()
 	}
 	return g, nil
+}
+
+// SetDataDir chooses where saves go. The native shells call it at startup,
+// before the first frame, once they know their sandbox.
+func (g *Game) SetDataDir(dir string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.opts.DataDir = dir
 }
 
 // Update runs at a fixed 60 ticks per second.
@@ -106,47 +157,67 @@ func (g *Game) Update() error {
 	if g.done {
 		return ebiten.Termination
 	}
-	g.frame++
-	g.handleDrag()
-	g.step()
+	g.kit.Update()
+	g.tickWith()
 	return nil
 }
 
-// step advances the scene simulation by one tick.
+// tickWith runs one tick with the input the kit already holds.
+func (g *Game) tickWith() {
+	if !g.started {
+		g.start()
+	}
+	g.catchUp()
+	g.frame++
+	g.layout(nil)
+	if g.frame%simEvery == 0 {
+		g.sim.Tick()
+	}
+	g.step()
+	if g.frame%autosaveTick == 0 {
+		g.Save()
+	}
+}
+
+// step advances the scene by one tick.
 func (g *Game) step() {
 	g.t += dt
+	g.moveCamera()
 	// Smoke: about 170 particles per second x 3 s of life = ~500 alive.
 	g.emitAcc += 170 * dt
 	n := int(g.emitAcc)
 	g.emitAcc -= float64(n)
-	sx, sy := g.chimneyTop()
-	g.smoke.X, g.smoke.Y = sx, sy
-	g.particles.Emit(g.smoke, n)
+	if slot, ok := g.visibleWorkshop(); ok {
+		g.smoke.X, g.smoke.Y = slotX(slot)-g.scrollX+120, groundY-330
+		g.particles.Emit(g.smoke, n)
+	}
 	g.particles.Update(dt)
 }
 
-func (g *Game) handleDrag() {
-	x, _ := ebiten.CursorPosition()
-	if ids := ebiten.AppendTouchIDs(nil); len(ids) > 0 {
-		x, _ = ebiten.TouchPosition(ids[0])
-	}
-	pressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0
+// moveCamera lets the finger scroll the panorama, with inertia.
+func (g *Game) moveCamera() {
+	x, _, down := g.kit.Pointer()
+	inPanorama := down && g.sheet == "" && g.report == nil && g.kit.PressedIn(panoramaRect)
 	switch {
-	case pressed && !g.drag:
+	case inPanorama && !g.drag:
 		g.drag, g.dragX, g.velX = true, x, 0
-	case pressed && g.drag:
-		d := float64(x - g.dragX)
+	case inPanorama && g.drag:
+		d := x - g.dragX
 		g.scrollX -= d
 		g.velX = -d / dt
 		g.dragX = x
-	case !pressed && g.drag:
+	case !down && g.drag:
 		g.drag = false
 	default:
 		g.scrollX += g.velX * dt
 		g.velX *= math.Pow(0.05, dt) // inertia decays to 5% per second
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+	limit := slotX(len(g.era.Stations)-1) - slotX(0)
+	if g.scrollX < 0 {
 		g.scrollX, g.velX = 0, 0
+	}
+	if g.scrollX > limit {
+		g.scrollX, g.velX = limit, 0
 	}
 }
 
@@ -156,18 +227,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for i := range g.hills {
 		g.hills[i].draw(screen, g.white, g.scrollX)
 	}
-	g.drawStation(screen)
+	g.drawStations(screen)
 	g.drawParticles(screen)
-	g.drawPanel(screen)
-
-	ebitenutil.DebugPrintAt(screen, fmt.Sprintf(
-		"Industrimental - phase 0\nEre : %s\nFPS %.0f  TPS %.0f\nParticules : %d / %d\nGlisse pour faire defiler",
-		g.eraName, ebiten.ActualFPS(), ebiten.ActualTPS(), g.particles.Len(), g.particles.Cap()), 16, 16)
+	g.layout(screen)
+	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("FPS %.0f  TPS %.0f  P %d", ebiten.ActualFPS(), ebiten.ActualTPS(), g.particles.Len()), 16, 128)
 
 	if g.opts.ScreenshotPath != "" && g.frame >= g.opts.ScreenshotFrame && !g.done {
 		g.done = true
 		if err := saveScreenshot(screen, g.opts.ScreenshotPath); err != nil {
-			fmt.Fprintln(os.Stderr, "screenshot:", err)
+			log.Println("screenshot:", err)
 		}
 	}
 }
@@ -175,23 +243,75 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // Layout keeps a fixed logical resolution; Ebitengine scales it to the screen.
 func (g *Game) Layout(_, _ int) (int, int) { return ScreenW, ScreenH }
 
-// --- station -----------------------------------------------------------
+// --- stations of the panorama ---------------------------------------------
 
 const (
-	stationX = 360.0 // world position of the station (scrolls with the ground)
-	groundY  = 780.0
+	groundY     = 780.0
+	slotSpacing = 760.0
 )
 
-func (g *Game) stationScreenX() float64 { return stationX - g.scrollX }
+func slotX(i int) float64 { return 360 + float64(i)*slotSpacing }
 
-func (g *Game) chimneyTop() (float64, float64) {
-	return g.stationScreenX() + 120, groundY - 330
+func (g *Game) visibleWorkshop() (int, bool) {
+	for i := range g.era.Stations {
+		if i == 0 || !g.sim.Station(g.era.Stations[i].ID).Built {
+			continue // the first slot holds the bush: no chimney
+		}
+		if x := slotX(i) - g.scrollX; x > -250 && x < ScreenW+250 {
+			return i, true
+		}
+	}
+	return 0, false
 }
 
-// drawStation draws a flat-shaded "workshop" made of separate layers: base,
-// chimney, a rotating wheel and an oscillating hammer arm.
-func (g *Game) drawStation(dst *ebiten.Image) {
-	x, y := g.stationScreenX(), groundY
+func (g *Game) drawStations(dst *ebiten.Image) {
+	for i := range g.era.Stations {
+		def := &g.era.Stations[i]
+		x := slotX(i) - g.scrollX
+		if x < -400 || x > ScreenW+400 {
+			continue
+		}
+		st := g.sim.Station(def.ID)
+		switch {
+		case i == 0:
+			g.drawBush(dst, x)
+		case st.Built:
+			g.drawWorkshop(dst, x, st.Speed)
+		default:
+			g.drawEmptySlot(dst, x)
+		}
+		g.kit.Text(dst, g.text(def.NameKey), x, groundY+24, 26, rgb(0xff, 0xf4, 0xdc), ui.Center, true)
+		if st.Built {
+			g.kit.Text(dst, fmt.Sprintf("%s %d", g.tr("ui.level"), st.Level), x, groundY+56, 22, rgb(0xff, 0xf4, 0xdc), ui.Center, false)
+		}
+	}
+}
+
+// drawBush is the first station: the bush the player taps at the very start.
+func (g *Game) drawBush(dst *ebiten.Image, x float64) {
+	y := groundY
+	sway := 4 * math.Sin(g.t*1.3)
+	g.ellipse(dst, x, y+6, 130, 16, rgba(0x30, 0x24, 0x10, 0x55))
+	g.ellipse(dst, x-60+sway, y-70, 80, 70, rgb(0x5f, 0x7f, 0x4a))
+	g.ellipse(dst, x+60+sway, y-65, 85, 65, rgb(0x54, 0x72, 0x42))
+	g.ellipse(dst, x+sway*1.5, y-120, 95, 80, rgb(0x6c, 0x8c, 0x55))
+	for i, p := range [][2]float64{{-70, -90}, {-20, -140}, {40, -110}, {80, -60}, {-40, -50}, {10, -70}} {
+		g.ellipse(dst, x+p[0]+sway*1.5, y+p[1]+2*math.Sin(g.t*2+float64(i)), 11, 11, rgb(0xb0, 0x3a, 0x48))
+	}
+}
+
+func (g *Game) drawEmptySlot(dst *ebiten.Image, x float64) {
+	y := groundY
+	g.quad(dst, x-150, y, x+150, y, x+130, y-24, x-130, y-24, rgba(0x8d, 0x84, 0x77, 0x80))
+	g.thickLine(dst, x-120, y-24, x-120, y-90, 8, rgba(0x5c, 0x40, 0x28, 0x90))
+	g.thickLine(dst, x+120, y-24, x+120, y-90, 8, rgba(0x5c, 0x40, 0x28, 0x90))
+}
+
+// drawWorkshop draws a flat-shaded placeholder made of separate layers: base,
+// chimney, a rotating wheel and an oscillating hammer arm, both slowed down
+// when a bottleneck holds the station back.
+func (g *Game) drawWorkshop(dst *ebiten.Image, x, speed float64) {
+	y := groundY
 
 	// Ground shadow (drawn in code, never baked into assets).
 	g.ellipse(dst, x, y+6, 230, 22, rgba(0x30, 0x24, 0x10, 0x55))
@@ -208,10 +328,10 @@ func (g *Game) drawStation(dst *ebiten.Image) {
 	g.quad(dst, x+95, y-230, x+145, y-230, x+140, y-330, x+100, y-330, rgb(0x6e, 0x66, 0x5d))
 
 	// Wheel: rotating part with its own pivot.
-	g.wheel(dst, x-245, y-120, 85, g.t*1.2)
+	g.wheel(dst, x-245, y-120, 85, g.t*1.2*speed)
 
 	// Hammer arm: oscillates around its pivot.
-	a := -0.6 + 0.5*math.Sin(g.t*4)
+	a := -0.6 + 0.5*math.Sin(g.t*4*speed)
 	px, py := x+215, y-150
 	ex, ey := px+130*math.Cos(a), py+130*math.Sin(a)
 	g.thickLine(dst, px, py, ex, ey, 14, rgb(0x5c, 0x40, 0x28))
@@ -235,8 +355,6 @@ func (g *Game) wheel(dst *ebiten.Image, cx, cy, r, angle float64) {
 	g.ellipse(dst, cx, cy, 14, 14, rgb(0x3b, 0x2a, 0x1a))
 }
 
-// --- particles & panel --------------------------------------------------
-
 func (g *Game) drawParticles(dst *ebiten.Image) {
 	size := float64(g.puff.Bounds().Dx())
 	g.particles.Each(func(p *fx.Particle) {
@@ -250,21 +368,6 @@ func (g *Game) drawParticles(dst *ebiten.Image) {
 		op.ColorScale.Scale(0.93*a, 0.92*a, 0.9*a, a)
 		dst.DrawImage(g.puff, op)
 	})
-}
-
-// drawPanel sketches where the management panel will live (bottom 45%).
-func (g *Game) drawPanel(dst *ebiten.Image) {
-	top := float64(ScreenH) * 0.55
-	g.quad(dst, 0, top+60, ScreenW, top+60, ScreenW, ScreenH, 0, ScreenH, rgba(0x2b, 0x22, 0x18, 0xee))
-	tabs := 5
-	w := float64(ScreenW) / float64(tabs)
-	for i := 0; i < tabs; i++ {
-		c := rgba(0x4a, 0x3b, 0x2a, 0xff)
-		if i == 0 {
-			c = rgba(0xd9, 0x7a, 0x2b, 0xff)
-		}
-		g.quad(dst, float64(i)*w+6, ScreenH-110, float64(i+1)*w-6, ScreenH-110, float64(i+1)*w-6, ScreenH-20, float64(i)*w+6, ScreenH-20, c)
-	}
 }
 
 // --- drawing helpers (flat-shaded triangles) -----------------------------

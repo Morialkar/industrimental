@@ -12,7 +12,7 @@ func sample(n float64) *GameState {
 		CurrentEra: "e01",
 		Eras: map[string]*EraState{"e01": {
 			Resources: map[string]float64{"baies": n},
-			Stations:  map[string]string{"cueillette": "juteuses"},
+			Stations:  map[string]*StationState{"cueillette": {Variant: "juteuses", Level: 1}},
 		}},
 		LastTick: time.Date(2026, 11, 6, 12, 0, 0, 0, time.UTC),
 	}
@@ -67,7 +67,7 @@ func TestStoreRotatesAndSkipsCorruptSlots(t *testing.T) {
 	// Corrupt the newest slot: Load must fall back to the previous save.
 	for i := 0; i < Slots; i++ {
 		if _, at, ok := st.read(i); ok && at.Equal(clock) {
-			if err := os.WriteFile(st.slotPath(i), []byte("garbage"), 0o644); err != nil {
+			if err := os.WriteFile(st.SlotPath(i), []byte("garbage"), 0o644); err != nil {
 				t.Fatal(err)
 			}
 		}

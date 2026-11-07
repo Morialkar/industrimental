@@ -34,6 +34,7 @@ var ErrNoSave = errors.New("save: no valid save found")
 // GameState is everything persisted between sessions.
 type GameState struct {
 	CurrentEra string               `json:"currentEra"`
+	Locale     string               `json:"locale,omitempty"`
 	Eras       map[string]*EraState `json:"eras"`
 	// LastTick is the wall-clock time of the last simulation step, used to
 	// compute offline gains.
@@ -42,10 +43,45 @@ type GameState struct {
 
 // EraState is the persisted progress of one era.
 type EraState struct {
-	Resources map[string]float64 `json:"resources"`
-	Stations  map[string]string  `json:"stations"` // station ID -> chosen variant ID
-	Nodes     []string           `json:"nodes"`    // bought tree nodes
-	Quests    []string           `json:"quests"`   // completed quests
+	Resources map[string]float64       `json:"resources"`
+	Stations  map[string]*StationState `json:"stations"`
+	Nodes     []string                 `json:"nodes"`  // bought tree nodes
+	Quests    []string                 `json:"quests"` // completed quests
+
+	Clock       float64 `json:"clock"`       // seconds lived, offline included
+	MarketClock float64 `json:"marketClock"` // seconds of open market: frozen offline
+
+	Produced  map[string]float64 `json:"produced,omitempty"`  // total produced, per resource
+	Sold      map[string]float64 `json:"sold,omitempty"`      // S of the market formula
+	TotalSold map[string]float64 `json:"totalSold,omitempty"` // total ever sold
+	Earned    float64            `json:"earned,omitempty"`    // currency earned on the market
+	Affinity  map[string]float64 `json:"affinity,omitempty"`  // NPC -> affinity
+
+	QuestSteps     map[string]int     `json:"questSteps,omitempty"`     // current step
+	QuestDeadlines map[string]float64 `json:"questDeadlines,omitempty"` // contract quests
+	QuestRetry     map[string]float64 `json:"questRetry,omitempty"`     // failed contracts come back
+
+	Contracts      []ContractState `json:"contracts,omitempty"`
+	NextContractAt float64         `json:"nextContractAt,omitempty"`
+	ContractSeq    uint64          `json:"contractSeq,omitempty"`
+	Seed           uint64          `json:"seed,omitempty"`
+
+	Ending string `json:"ending,omitempty"` // axis of the ending taken
+}
+
+// StationState is the persisted state of one built station.
+type StationState struct {
+	Variant     string  `json:"variant"`
+	Level       int     `json:"level"`
+	RetoolUntil float64 `json:"retoolUntil,omitempty"` // Clock at which retooling ends
+}
+
+// ContractState is one open delivery order of the market.
+type ContractState struct {
+	Template string  `json:"template"`
+	Amount   float64 `json:"amount"`
+	Reward   float64 `json:"reward"`
+	Deadline float64 `json:"deadline"`
 }
 
 type envelope struct {
@@ -167,7 +203,8 @@ func (st *Store) now() time.Time {
 	return time.Now()
 }
 
-func (st *Store) slotPath(i int) string {
+// SlotPath is the file of a save slot.
+func (st *Store) SlotPath(i int) string {
 	return filepath.Join(st.Dir, fmt.Sprintf("save-%d.dat", i))
 }
 
@@ -180,7 +217,7 @@ func (st *Store) Save(s *GameState) error {
 	if err := os.MkdirAll(st.Dir, 0o755); err != nil {
 		return err
 	}
-	target := st.slotPath(st.oldestSlot())
+	target := st.SlotPath(st.oldestSlot())
 	tmp := target + ".tmp"
 	if err := os.WriteFile(tmp, data, 0o644); err != nil {
 		return err
@@ -205,7 +242,7 @@ func (st *Store) Load() (*GameState, error) {
 }
 
 func (st *Store) read(i int) (*GameState, time.Time, bool) {
-	data, err := os.ReadFile(st.slotPath(i))
+	data, err := os.ReadFile(st.SlotPath(i))
 	if err != nil {
 		return nil, time.Time{}, false
 	}
