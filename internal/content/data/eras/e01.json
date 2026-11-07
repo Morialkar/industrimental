@@ -45,6 +45,13 @@
       "elasticity": 0.7
     },
     {
+      "id": "argile",
+      "nameKey": "res.argile",
+      "kind": "base",
+      "basePrice": 1.5,
+      "elasticity": 0.6
+    },
+    {
       "id": "outils-silex",
       "nameKey": "res.outils-silex",
       "kind": "critical",
