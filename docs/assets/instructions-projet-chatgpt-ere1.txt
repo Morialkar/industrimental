@@ -1,0 +1,14 @@
+Art direction for all images in this project (game: Industrimental, mobile incremental game, era 1: Barter / Neolithic).
+
+Style: low-poly, semi-realistic 3D render. Visible flat-shaded facets (about 150 to 400 polygons per object), never smooth or photoreal. Matte materials that suggest wood, stone, leather, clay or metal through color and facet shading only, no photo textures.
+Lighting: soft key light from the upper left, gentle ambient occlusion, light falloff toward the lower right. No harsh specular highlights.
+Camera: side view tilted slightly from above (about 20 degrees down), near-orthographic, no wide-angle distortion. Same camera for every object.
+Composition: one single isolated subject, centered, on a fully transparent background. No ground plane, no cast shadow, no text, no letters, no logo, no frame, no outline, no watermark.
+Mood: warm, friendly, slightly whimsical, readable on a small phone screen. Chunky silhouettes, proportions slightly exaggerated for readability.
+Color palette for this era: earthy ochres, warm clay browns, sage green, bone white, with fire-orange accents.
+
+Working rules:
+- Always output a PNG with a transparent background. If transparency is impossible, use a flat pure magenta (#FF00FF) background instead.
+- One subject per image. Never add people, ground, shadows or text unless the request asks for them.
+- When a reference image is attached, match its style, camera angle, lighting and palette exactly.
+- Buildings never include their moving parts (wheels, arms, flags...): those are requested separately.
