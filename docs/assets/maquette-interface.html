@@ -1,0 +1,728 @@
+<title>Maquette Industrimental</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: page = a dark workbench; left a phone frame running the playable mock, right the design notes. One deliberate dark world (the game's), so a single theme. */
+:root {
+  color-scheme: dark;
+  --desk: #17140f;          /* page background, like a dark workshop bench */
+  --desk-2: #221d16;
+  --desk-ink: #efe6d6;
+  --desk-muted: #b3a58d;
+  --desk-line: #3a3127;
+  --good: #8fd16a;          /* resource gains */
+  --gold: #f2c14e;          /* Historic Turning Point, rewards */
+  --danger: #e2735a;
+  --font-display: "Alegreya SC", "Palatino Linotype", Georgia, serif;
+  --font-body: "Alegreya Sans", "Trebuchet MS", system-ui, sans-serif;
+
+  /* Material tokens, era 1 = wood (overridden per material below) */
+  --mat-bg: repeating-linear-gradient(92deg, rgba(0,0,0,.07) 0 2px, transparent 2px 11px), linear-gradient(180deg, #91603a, #6c4427);
+  --mat-edge: #3b2414;
+  --mat-hi: rgba(255,220,170,.28);
+  --mat-ink: #fbefdc;
+  --mat-ink-2: #e7cfa9;
+  --mat-sunk: rgba(30,16,6,.45);
+  --mat-accent: #f08a2c;
+  --mat-socket: radial-gradient(circle at 35% 30%, #7b5233, #4a2d18 70%);
+  --mat-rivet: transparent;
+}
+.phone[data-material="stone"] {
+  --mat-bg: radial-gradient(circle at 20% 30%, rgba(255,255,255,.08) 0 2px, transparent 3px) 0 0/23px 19px, radial-gradient(circle at 70% 60%, rgba(0,0,0,.12) 0 2px, transparent 3px) 0 0/17px 21px, linear-gradient(180deg, #8f8b83, #6c6962);
+  --mat-edge: #3d3b37; --mat-hi: rgba(255,255,255,.22); --mat-ink: #fbf8f1; --mat-ink-2: #e2ddd2;
+  --mat-sunk: rgba(25,24,22,.45); --mat-accent: #4a90c8; --mat-socket: radial-gradient(circle at 35% 30%, #8a867e, #4d4a45 70%);
+}
+.phone[data-material="iron"] {
+  --mat-bg: repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 1px, transparent 1px 4px), linear-gradient(180deg, #55585c, #36383b);
+  --mat-edge: #17181a; --mat-hi: rgba(255,255,255,.16); --mat-ink: #f0f1f2; --mat-ink-2: #c7cacd;
+  --mat-sunk: rgba(0,0,0,.42); --mat-accent: #e8a33d; --mat-socket: radial-gradient(circle at 35% 30%, #6a6d71, #2b2c2e 70%);
+  --mat-rivet: radial-gradient(circle, #9a9ea3 0 2px, #2a2b2d 2.5px 3px, transparent 3.5px);
+}
+.phone[data-material="steel"] {
+  --mat-bg: repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 3px), linear-gradient(135deg, #dde1e5, #aab1b9 45%, #eef0f2 55%, #9ca3ab);
+  --mat-edge: #5b636c; --mat-hi: rgba(255,255,255,.6); --mat-ink: #1b2026; --mat-ink-2: #3c444d;
+  --mat-sunk: rgba(255,255,255,.35); --mat-accent: #2f6fd6; --mat-socket: radial-gradient(circle at 35% 30%, #f3f5f7, #9aa2ab 75%);
+  --mat-rivet: radial-gradient(circle, #f6f7f8 0 2px, #6b737c 2.5px 3px, transparent 3.5px);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--desk); }
+body {
+  color: var(--desk-ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 48px;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.page { max-width: 1120px; margin: 0 auto; display: grid; gap: 24px; }
+.page-head { display: grid; gap: 10px; }
+.page-head h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 5vw, 40px); margin: 0; line-height: 1.1; letter-spacing: .01em; }
+.page-head p { margin: 0; color: var(--desk-muted); max-width: 70ch; }
+.mat-switch { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.mat-switch span { color: var(--desk-muted); font-size: 14px; margin-right: 4px; }
+.mat-switch button { border: 1px solid var(--desk-line); background: var(--desk-2); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 700; }
+.mat-switch button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (min-width: 900px) { .layout { grid-template-columns: 400px minmax(0, 1fr); } }
+
+/* ---------- phone ---------- */
+.phone-wrap { display: flex; justify-content: center; }
+.phone {
+  position: relative; width: min(390px, 100%); aspect-ratio: 9 / 19.5; max-height: 860px;
+  border-radius: 34px; overflow: hidden; border: 6px solid #0b0a08; box-shadow: 0 20px 60px rgba(0,0,0,.55);
+  background: #7fb3c9; font-size: 13px; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+}
+.panel {
+  background: var(--mat-bg); color: var(--mat-ink); border: 2px solid var(--mat-edge);
+  box-shadow: inset 0 1px 0 var(--mat-hi), inset 0 -2px 0 rgba(0,0,0,.25), 0 3px 8px rgba(0,0,0,.35);
+  position: relative;
+}
+.panel.riveted::before, .panel.riveted::after { content: ""; position: absolute; top: 4px; width: 8px; height: 8px; background: var(--mat-rivet); }
+.panel.riveted::before { left: 4px; } .panel.riveted::after { right: 4px; }
+
+/* world */
+.world { position: absolute; inset: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.world::-webkit-scrollbar { display: none; }
+.world-track { position: relative; width: 1500px; height: 100%; }
+.world-sky { position: absolute; inset: 0; background: linear-gradient(180deg, #7fb3c9 0%, #b9cdbf 42%, #f0d9a6 62%); }
+.world svg.hills { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 68%; }
+.station { position: absolute; bottom: 21%; width: 132px; display: grid; justify-items: center; gap: 2px; background: none; border: 0; padding: 0; }
+.station svg { width: 120px; height: 104px; overflow: visible; filter: drop-shadow(0 4px 0 rgba(40,25,10,.25)); }
+.station .plate { font-family: var(--font-display); font-weight: 700; font-size: 11px; padding: 1px 8px; border-radius: 4px; white-space: nowrap; }
+.station .lvl { font-size: 10px; font-weight: 800; color: var(--gold); text-shadow: 0 1px 0 #000; }
+.station.locked svg { filter: grayscale(1) brightness(.75); opacity: .6; }
+.harvest-hint { position: absolute; font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px #000; pointer-events: none; animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-4px); } }
+
+.float { position: absolute; pointer-events: none; font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 1px 2px #000, 0 0 6px rgba(0,0,0,.5); animation: rise 1s ease-out forwards; z-index: 30; }
+.float.small { font-size: 11px; color: #f7f0c7; }
+@keyframes rise { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -46px); opacity: 0; } }
+.spark { position: absolute; width: 6px; height: 6px; background: var(--gold); pointer-events: none; z-index: 29; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); animation: spark .6s ease-out forwards; }
+@keyframes spark { to { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .float, .spark, .harvest-hint { animation-duration: .01s; } }
+
+/* HUD */
+.hud { position: absolute; top: 0; left: 0; right: 0; z-index: 20; padding: 34px 8px 6px; display: grid; gap: 6px; pointer-events: none; }
+.hud > * { pointer-events: auto; }
+.res-bar { border-radius: 10px; padding: 5px 6px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.res-bar::-webkit-scrollbar { display: none; }
+.res { flex: none; display: grid; grid-template-columns: 18px auto; column-gap: 5px; align-items: center; padding: 2px 7px 2px 4px; border-radius: 7px; background: var(--mat-sunk); min-width: 64px; }
+.res .ico { grid-row: span 2; width: 18px; height: 18px; clip-path: polygon(50% 0, 100% 35%, 85% 100%, 15% 100%, 0 35%); }
+.res b { font-size: 13px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.res small { font-size: 10px; color: var(--good); font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.res.currency { background: rgba(242,193,78,.18); }
+.res.bump b { animation: bump .35s; }
+@keyframes bump { 40% { transform: scale(1.18); color: var(--gold); } }
+
+.quest-pin { justify-self: start; max-width: 74%; border-radius: 10px; padding: 7px 10px 8px; display: grid; gap: 4px; text-align: left; }
+.quest-pin .k { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--mat-ink-2); }
+.quest-pin .t { font-weight: 700; font-size: 13px; line-height: 1.2; }
+.bar { height: 7px; border-radius: 4px; background: var(--mat-sunk); overflow: hidden; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--mat-accent), var(--gold)); width: 0; transition: width .3s; }
+.quest-pin .meta { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--mat-ink-2); font-variant-numeric: tabular-nums; }
+
+/* harvest button */
+.harvest { position: absolute; right: 12px; bottom: 92px; z-index: 22; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; text-align: center; line-height: 1.05; padding: 6px; }
+.harvest b { font-family: var(--font-display); font-size: 13px; }
+.harvest small { display: block; font-size: 10.5px; color: var(--gold); font-weight: 800; white-space: nowrap; }
+.harvest:active { transform: scale(.94); }
+
+/* action bar */
+.actionbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 6px 6px 16px; border-radius: 0; border-left: 0; border-right: 0; border-bottom: 0; }
+.act { position: relative; display: grid; justify-items: center; gap: 1px; padding: 6px 2px; border-radius: 8px; background: var(--mat-sunk); border: 0; }
+.act svg { width: 26px; height: 26px; }
+.act span { font-family: var(--font-display); font-size: 11px; font-weight: 700; }
+.act .badge { position: absolute; top: 2px; right: 10%; min-width: 17px; height: 17px; border-radius: 9px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 800; display: grid; place-items: center; padding: 0 4px; border: 1px solid #000; }
+
+/* sheets & overlays */
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.45); z-index: 40; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; border-radius: 18px 18px 0 0; max-height: 78%; display: grid; grid-template-rows: auto 1fr; border-bottom: 0; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px 8px; }
+.sheet-head h2 { font-family: var(--font-display); font-size: 19px; margin: 0; line-height: 1.1; }
+.sheet-head .sub { font-size: 12px; color: var(--mat-ink-2); }
+.close { border: 0; background: var(--mat-sunk); border-radius: 8px; width: 32px; height: 32px; font-size: 18px; line-height: 1; flex: none; }
+.sheet-body { overflow-y: auto; padding: 0 14px 18px; display: grid; gap: 10px; align-content: start; }
+.btn { border: 2px solid var(--mat-edge); background: var(--mat-accent); color: #fff; font-weight: 800; border-radius: 9px; padding: 9px 12px; text-shadow: 0 1px 0 rgba(0,0,0,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.btn:disabled { filter: grayscale(.8); opacity: .55; cursor: not-allowed; }
+.btn.gold { background: var(--gold); color: #2a1b05; text-shadow: none; }
+.quip { font-style: italic; color: var(--mat-ink-2); font-size: 12.5px; border-left: 3px solid var(--mat-accent); padding-left: 8px; }
+.specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.spec { border: 2px solid transparent; background: var(--mat-sunk); border-radius: 9px; padding: 7px 5px; font-size: 11.5px; font-weight: 700; text-align: center; line-height: 1.2; }
+.spec[aria-pressed="true"] { border-color: var(--gold); }
+.spec small { display: block; font-weight: 500; color: var(--mat-ink-2); font-size: 10.5px; }
+.statrow { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.statrow b { font-variant-numeric: tabular-nums; }
+
+.qgroup { display: grid; gap: 8px; }
+.qgroup h3 { margin: 4px 0 0; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--mat-ink-2); }
+.qcard { background: var(--mat-sunk); border-radius: 10px; padding: 9px 10px; display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+.qcard .t { font-weight: 700; font-size: 13.5px; line-height: 1.2; }
+.qcard .who { font-size: 11px; color: var(--mat-ink-2); }
+.qcard .bar { grid-column: 1 / -1; }
+.qcard .meta { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 11px; color: var(--mat-ink-2); font-variant-numeric: tabular-nums; }
+.qcard.done { outline: 2px solid var(--gold); }
+.timer { color: var(--danger); font-weight: 700; }
+
+/* ---------- skill tree (Diablo 2 style board in a carousel) ---------- */
+.tree { position: absolute; inset: 0; z-index: 45; display: grid; grid-template-rows: auto auto 1fr auto; border-radius: 0; border: 0; padding-top: 30px; }
+.tree-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px 4px; }
+.tree-head h2 { margin: 0; font-family: var(--font-display); font-size: 19px; line-height: 1.1; }
+.tree-head .sub { font-size: 11.5px; color: var(--mat-ink-2); }
+.tabs { display: flex; gap: 4px; padding: 4px 10px 8px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; border: 2px solid transparent; background: var(--mat-sunk); border-radius: 999px; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; font-size: 12px; }
+.tab[aria-selected="true"] { border-color: var(--gold); color: var(--gold); }
+.carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; min-height: 0; }
+.carousel::-webkit-scrollbar { display: none; }
+.board-slide { flex: 0 0 100%; scroll-snap-align: center; padding: 0 10px; display: grid; min-height: 0; }
+.board { position: relative; border-radius: 14px; padding: 10px 8px; background: var(--mat-sunk); display: grid; grid-template-rows: auto 1fr; gap: 6px; min-height: 0; }
+.board-title { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; padding: 0 4px; }
+.board-title b { font-family: var(--font-display); font-size: 15px; }
+.board-title span { font-size: 11px; color: var(--mat-ink-2); }
+.grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; min-height: 0; }
+.grid svg.links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.cell { display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 0; }
+.node-name { font-size: 9.5px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mat-ink-2); }
+.node-name.key { color: var(--gold); }
+.node { position: relative; width: 48px; height: 48px; border-radius: 10px; border: 2px solid var(--mat-edge); background: var(--mat-socket); display: grid; place-items: center; padding: 0; box-shadow: inset 0 2px 0 var(--mat-hi), 0 2px 0 rgba(0,0,0,.4); }
+.node svg { width: 30px; height: 30px; }
+.node .rank { position: absolute; right: -6px; bottom: -6px; min-width: 26px; padding: 0 3px; height: 16px; border-radius: 4px; background: #15120d; color: #f6efe2; font-size: 10px; font-weight: 800; display: grid; place-items: center; border: 1px solid var(--mat-edge); font-variant-numeric: tabular-nums; }
+.node.maxed .rank { color: var(--gold); }
+.node.can::after { content: ""; position: absolute; inset: -5px; border-radius: 13px; border: 2px solid var(--good); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.node.off { filter: grayscale(1) brightness(.6); }
+.node.key { width: 56px; height: 56px; border-color: var(--gold); box-shadow: 0 0 0 2px #2a1b05, 0 0 14px rgba(242,193,78,.55); }
+.node.hybrid { border-style: dashed; border-color: #b78cf0; }
+.node.selected { outline: 3px solid var(--gold); outline-offset: 3px; }
+.hy-tag { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #b78cf0; color: #1d1030; font-size: 9px; font-weight: 800; padding: 0 5px; border-radius: 4px; white-space: nowrap; }
+.lock-band { position: absolute; left: -2px; right: -2px; border-radius: 8px; background: repeating-linear-gradient(135deg, rgba(0,0,0,.35) 0 8px, rgba(0,0,0,.2) 8px 16px); display: grid; place-items: center; z-index: 2; border: 1px dashed rgba(255,255,255,.25); }
+.lock-band span { font-size: 11px; font-weight: 800; background: rgba(0,0,0,.65); color: #f3e9d6; padding: 3px 8px; border-radius: 6px; }
+.dots { display: flex; justify-content: center; gap: 6px; padding: 6px 0 2px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--mat-sunk); border: 1px solid var(--mat-edge); }
+.dots i.on { background: var(--gold); }
+.node-info { margin: 0 10px 14px; border-radius: 12px; background: var(--mat-sunk); padding: 10px 12px; display: grid; gap: 6px; min-height: 132px; }
+.node-info h3 { margin: 0; font-family: var(--font-display); font-size: 16px; line-height: 1.15; }
+.node-info .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.node-info p { margin: 0; font-size: 12.5px; }
+.syn { font-size: 12px; color: #c9a8f5; }
+.syn b { color: #e3d0ff; }
+.cost { font-size: 12px; font-variant-numeric: tabular-nums; }
+.cost.no { color: var(--danger); }
+.hy-toggle { display: flex; align-items: center; gap: 6px; font-size: 11.5px; padding: 0 12px 4px; color: var(--mat-ink-2); }
+.hy-toggle input { accent-color: #b78cf0; width: 16px; height: 16px; }
+
+/* ---------- notes ---------- */
+.notes { display: grid; gap: 14px; min-width: 0; }
+.note { background: var(--desk-2); border: 1px solid var(--desk-line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; }
+.note h2 { margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 1.2; }
+.note p, .note ul { margin: 0; color: var(--desk-muted); }
+.note ul { padding-left: 18px; display: grid; gap: 4px; }
+.note b { color: var(--desk-ink); }
+.note .q { color: var(--gold); font-weight: 700; }
+.hint { font-size: 13px; color: var(--desk-muted); }
+</style>
+
+<div class="page">
+  <header class="page-head">
+    <h1>Maquette d'interface</h1>
+    <p>Prototype jouable de la nouvelle interface : un monde plein écran avec une barre d'actions, une récolte au toucher, des quêtes lisibles et un arbre façon Diablo 2 qu'on fait glisser branche par branche. Les chiffres et les noms des nœuds sont provisoires.</p>
+    <div class="mat-switch" role="group" aria-label="Matière de l'interface">
+      <span>Matière par ère :</span>
+      <button type="button" data-mat="wood" aria-pressed="true">Bois · ère 1</button>
+      <button type="button" data-mat="stone" aria-pressed="false">Pierre · ère 2</button>
+      <button type="button" data-mat="iron" aria-pressed="false">Métal brut · ères 3 à 5</button>
+      <button type="button" data-mat="steel" aria-pressed="false">Métal poli · ères 6+</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="phone-wrap">
+      <div class="phone" id="phone" data-material="wood">
+        <div class="world" id="world">
+          <div class="world-track" id="track">
+            <div class="world-sky"></div>
+            <svg class="hills" viewBox="0 0 1500 600" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 260 L120 180 L260 230 L420 150 L560 220 L720 160 L880 240 L1040 170 L1200 230 L1360 160 L1500 210 L1500 600 L0 600Z" fill="#8ea88f"/>
+              <path d="M0 260 L120 180 L190 205 L120 600 L0 600Z" fill="#9db69d"/>
+              <path d="M420 150 L490 185 L420 600Z" fill="#9db69d"/>
+              <path d="M720 160 L800 200 L720 600Z" fill="#9db69d"/>
+              <path d="M1040 170 L1120 200 L1040 600Z" fill="#9db69d"/>
+              <path d="M0 330 L180 290 L360 320 L560 280 L760 330 L960 290 L1160 330 L1360 290 L1500 320 L1500 600 L0 600Z" fill="#a8925c"/>
+              <path d="M0 410 L1500 400 L1500 600 L0 600Z" fill="#7b6a3e"/>
+              <path d="M0 410 L1500 400 L1500 430 L0 445Z" fill="#8a7746"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="hud">
+          <div class="res-bar panel riveted" id="resbar" aria-label="Ressources"></div>
+          <button type="button" class="quest-pin panel" id="questPin" aria-label="Ouvrir les quêtes">
+            <span class="k">Quête principale</span>
+            <span class="t" id="qpTitle"></span>
+            <span class="bar"><i id="qpBar"></i></span>
+            <span class="meta"><span id="qpCount"></span><span id="qpReward"></span></span>
+          </button>
+        </div>
+
+        <button type="button" class="harvest panel" id="harvestBtn" aria-label="Récolter">
+          <span><b>Récolter</b><small id="harvestVal">+1</small></span>
+        </button>
+
+        <nav class="actionbar panel riveted" aria-label="Actions">
+          <button type="button" class="act" data-open="tree"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L22 11 L19 11 L24 18 L20 18 L25 25 L7 25 L12 18 L8 18 L13 11 L10 11Z" fill="currentColor"/><rect x="14" y="25" width="4" height="5" fill="currentColor"/></svg><span>Arbre</span><i class="badge" id="badgeTree" hidden>!</i></button>
+          <button type="button" class="act" data-open="market"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4v24M6 9h20M6 9l-4 9h8zM26 9l-4 9h8z" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linejoin="round"/><path d="M10 28h12" stroke="currentColor" stroke-width="3"/></svg><span>Marché</span></button>
+          <button type="button" class="act" data-open="quests"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4h14l4 4v20H8z" fill="currentColor" opacity=".9"/><path d="M12 12h10M12 17h10M12 22h6" stroke="#000" stroke-opacity=".45" stroke-width="2"/></svg><span>Quêtes</span><i class="badge" id="badgeQuests" hidden>1</i></button>
+          <button type="button" class="act" data-open="timeline"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16h26" stroke="currentColor" stroke-width="2.4"/><circle cx="8" cy="16" r="3.5" fill="currentColor"/><circle cx="16" cy="16" r="3.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="16" r="3.5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg><span>Frise</span></button>
+          <button type="button" class="act" data-open="clan"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="11" r="5" fill="currentColor"/><path d="M6 28c0-6 4.5-10 10-10s10 4 10 10z" fill="currentColor"/></svg><span>Clan</span></button>
+        </nav>
+
+        <div class="scrim" id="scrim" hidden></div>
+        <section class="sheet panel" id="sheet" hidden aria-live="polite"></section>
+        <section class="tree panel" id="tree" hidden aria-label="Arbre de l'ère"></section>
+      </div>
+    </div>
+
+    <aside class="notes">
+      <div class="note">
+        <h2>Essaie-la</h2>
+        <ul>
+          <li>Touche <b>Récolter</b> ou le Coin de cueillette : la valeur d'un toucher grandit avec ta production.</li>
+          <li>Glisse le monde à gauche et à droite ; touche une station pour sa fiche.</li>
+          <li>Ouvre l'<b>Arbre</b>, glisse d'une branche à l'autre, touche un nœud puis <b>Investir</b>.</li>
+          <li>Change de matière en haut pour voir l'interface de chaque grande époque.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h2>Ce qui change par rapport au GDD</h2>
+        <ul>
+          <li><b>Le monde occupe tout l'écran.</b> Plus de panneau permanent : une barre de 5 actions en bas, et des fiches qui montent par-dessus le monde.</li>
+          <li><b>Les ressources se voient monter</b> : bandeau en haut avec le stock et le gain par seconde, et des bulles « +1 » au-dessus des stations.</li>
+          <li><b>La récolte au toucher reste toujours disponible</b>, et sa valeur suit la production (ici 5 % du gain total par seconde, au moins 1).</li>
+          <li><b>Une seule quête épinglée</b> en haut à gauche, la plus proche d'être finie ; le journal classe les quêtes par type et par avancement.</li>
+          <li><b>L'arbre façon Diablo 2</b> : chaque branche est une planche de 3 colonnes sur 6 rangées, avec flèches de prérequis, rangs (0/5) et synergies. On glisse d'une planche à l'autre avec des points d'arrêt, et le tronc commun a sa propre planche « Fondations ».</li>
+          <li><b>Rangées verrouillées par la progression de l'ère</b> : ici, une rangée de plus tous les 2 bâtiments construits.</li>
+          <li><b>Fins hybrides (ère 3+)</b> : coche « Voir les ponts hybrides » dans l'arbre ; un nœud pont affiche la branche voisine, et un toucher sur l'étiquette y fait glisser.</li>
+          <li><b>Micro-skeuomorphisme par ère</b> : bois, pierre, métal brut, métal poli ; seule la matière change, la disposition reste identique.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h2>À trancher ensemble</h2>
+        <ul>
+          <li><span class="q">Tronc commun</span> : planche « Fondations » séparée (comme ici) ou rangées du haut répétées sur chaque branche ?</li>
+          <li><span class="q">Coût des rangs</span> : toujours en ressources de l'ère (comme ici), ou des « points » gagnés par paliers façon Diablo 2 ?</li>
+          <li><span class="q">Valeur du toucher</span> : 5 % de la production par seconde te semble-t-il juste, ou faut-il que le toucher reste plus rentable ?</li>
+          <li><span class="q">Barre d'actions</span> : Arbre, Marché, Quêtes, Frise, Clan. Manque-t-il quelque chose, ou un bouton est-il de trop ?</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------------- data (era 1, validated names; tree node names are placeholders) ----------------
+  const RES = [
+    { id: "coquillages", name: "Coquillages", color: "#f2c14e", currency: true },
+    { id: "baies", name: "Baies", color: "#b5476b" },
+    { id: "bois", name: "Bois", color: "#8b5a2b" },
+    { id: "silex", name: "Silex", color: "#6f7480" },
+    { id: "peaux", name: "Peaux tannées", color: "#c78b55" },
+    { id: "outils", name: "Outils en silex", color: "#9aa3ad" },
+    { id: "parures", name: "Parures", color: "#e7d7b5" },
+    { id: "ocre", name: "Ocre", color: "#c4552d" },
+  ];
+  const state = {
+    res: { coquillages: 42, baies: 18, bois: 25, silex: 30, peaux: 6, outils: 12, parures: 4, ocre: 3 },
+    built: 6,
+    harvested: 64,
+  };
+  const STATIONS = [
+    { id: "cueillette", name: "Coin de cueillette", x: 70, out: { baies: 1.2, bois: 0.4 }, lvl: 7, specs: [["Baies sauvages", "nourriture"], ["Herbes du clan", "moral"], ["Herbes à tresser", "fibres"]], spec: 0, quip: "Les baies sont à tout le monde. C'est curieux comme tout le monde arrive après la cueillette.", harvest: true, shape: "bush" },
+    { id: "carriere", name: "Carrière de silex", x: 250, out: { silex: 0.8 }, lvl: 5, specs: [["Silex de taille", "outils"], ["Pierres à moudre", "grain"], ["Galets de parure", "parures"]], spec: 0, quip: "Le client voulait une pierre plus solide. On lui a conseillé de la frapper moins fort.", shape: "rock" },
+    { id: "atelier", name: "Atelier de taille", x: 430, out: { outils: 0.3 }, lvl: 4, specs: [["Pointes de chasse", ""], ["Outils agricoles", ""], ["Parures d'échange", ""]], spec: 1, quip: "On a inventé un outil pour tailler les outils. Il est cassé. Pour le réparer, il faut maintenant inventer un nouvel outil.", shape: "hut" },
+    { id: "foyer", name: "Foyer du clan", x: 610, out: { ocre: 0.15 }, lvl: 3, specs: [["Fumoir", ""], ["Foyer à ocre", ""], ["Assemblée du soir", ""]], spec: 1, quip: "On devait simplement cuire la viande. Trois heures plus tard, le clan débat encore de qui tient le bâton.", shape: "fire" },
+    { id: "peaux", name: "Atelier des peaux", x: 790, out: { peaux: 0.2 }, lvl: 3, specs: [["Cuir épais", ""], ["Fourrures de prestige", ""], ["Outres", ""]], spec: 0, quip: "Les peaux sentent mauvais. Le marchand assure que c'est l'odeur de la richesse.", shape: "frame" },
+    { id: "troc", name: "Place du troc", x: 970, out: { coquillages: 0.5, parures: 0.05 }, lvl: 2, specs: [["Pierre du troc", ""], ["Foire saisonnière", ""], ["Conseil des anciens", ""]], spec: 0, quip: "Les négociations ont duré trois jours. Rien n'a été échangé, mais le chef parle d'un grand succès.", shape: "circle" },
+    { id: "champs", name: "Premiers champs", x: 1150, locked: true, cost: { coquillages: 120, outils: 15 }, specs: [], quip: "On a inventé l'agriculture pour moins courir après le repas. Maintenant, on court après la pluie.", shape: "field" },
+    { id: "terres", name: "Terres salées", x: 1330, locked: true, cost: { coquillages: 200 }, specs: [], quip: "Le sel conserve la viande. Le chef conserve le sel. La viande conserve son goût. C'est déjà ça.", shape: "salt" },
+  ];
+  const QUESTS = [
+    { type: "Principales", title: "Bob compte jusqu'à 100", who: "Bob, chef comptable", goal: () => [Math.min(100, state.harvested), 100], reward: "+30 coquillages" },
+    { type: "Principales", title: "Ouvrir les Premiers champs", who: "Tournant de l'ère", goal: () => [state.built >= 7 ? 1 : 0, 1], reward: "Rangée 4 de l'arbre" },
+    { type: "Contrats", title: "Le clan d'à côté veut 20 peaux tannées", who: "Avant la nuit", goal: () => [Math.min(20, Math.floor(state.res.peaux)), 20], reward: "+60 coquillages", timer: true },
+    { type: "PNJ", title: "Trouver une utilité à la roue d'Amna", who: "Amna, inventrice", goal: () => [1, 3], reward: "Spécialisation bonus" },
+  ];
+
+  // Tree: boards of a 3 x 6 grid. req = prerequisites (ids). syn = synergies. Ranks paid in era resources.
+  const N = (id, name, row, col, max, res, base, effect, req = [], syn = [], extra = {}) => ({ id, name, row, col, max, rank: 0, res, base, effect, req, syn, ...extra });
+  const BOARDS = [
+    { id: "fond", name: "Fondations", sub: "tronc commun", nodes: [
+      N("main", "Main habile", 1, 2, 5, "baies", 6, "+10 % de récolte au toucher par rang", [], [], { rank: 5 }),
+      N("feu", "Le feu apprivoisé", 2, 2, 5, "bois", 10, "+5 % de production du Foyer du clan par rang", ["main"], [], { rank: 3 }),
+      N("paniers", "Premiers paniers", 2, 1, 3, "baies", 14, "+15 % de stockage par rang", ["main"], [], { rank: 1 }),
+      N("langage", "Langage du troc", 3, 2, 5, "coquillages", 12, "+4 % sur les prix de vente par rang", ["feu"], [], { rank: 2 }),
+      N("sedent", "Sédentarisation", 4, 2, 3, "outils", 6, "+1 emplacement de station par rang", ["langage"]),
+      N("cercle", "Le Cercle", 5, 2, 1, "coquillages", 80, "Ouvre les quatre branches", ["sedent"]),
+    ]},
+    { id: "negoce", name: "Négoce", sub: "Le Pacte des Marchands", nodes: [
+      N("porteurs", "Porteurs", 1, 1, 5, "peaux", 3, "+1 contrat proposé tous les 2 rangs", [], [], { rank: 2 }),
+      N("etals", "Étals", 1, 3, 5, "parures", 2, "+5 % sur la vente de parures par rang"),
+      N("monnaie", "Monnaie de coquillages", 2, 2, 5, "coquillages", 15, "+6 % de coquillages gagnés par rang", ["porteurs"], [["etals", "+2 % par rang d'Étals"]]),
+      N("sentiers", "Sentiers battus", 3, 1, 5, "peaux", 6, "Contrats 10 % plus longs par rang", ["porteurs"]),
+      N("crieurs", "Crieurs", 3, 3, 5, "parures", 5, "Les tendances du marché durent plus longtemps", ["etals"]),
+      N("relais", "Relais de porteurs", 4, 1, 3, "outils", 10, "Livraison automatique d'un contrat", ["sentiers"]),
+      N("foire", "Grande foire", 4, 3, 3, "parures", 12, "Événement de foire plus fréquent", ["crieurs"], [["monnaie", "+3 % par rang de Monnaie"]]),
+      N("reput", "Réputation du clan", 5, 2, 5, "coquillages", 60, "+5 % d'affinité avec les marchands par rang", ["monnaie"], [["relais", "+1 % par rang de Relais"], ["foire", "+1 % par rang de Grande foire"]]),
+      N("pacte", "Le Pacte des Marchands", 6, 2, 1, "parures", 100, "Tournant historique : termine la branche Négoce et donne l'Héritage Le Bruit court", ["relais", "foire", "reput"], [], { key: true, any: true }),
+    ]},
+    { id: "cadence", name: "Cadence", sub: "La Révolution des Champs", nodes: [
+      N("semailles", "Semailles", 1, 1, 5, "baies", 10, "+8 % de grain par rang"),
+      N("etabli", "Établi", 1, 3, 5, "silex", 8, "+6 % d'outils par rang", [], [], { rank: 1 }),
+      N("rotation", "Rotation des cultures", 2, 2, 5, "outils", 6, "+5 % de production de base par rang", ["semailles"], [["etabli", "+2 % par rang d'Établi"]]),
+      N("irrig", "Irrigation", 3, 1, 5, "bois", 18, "Les champs produisent même par temps sec", ["semailles"]),
+      N("doublons", "Doublons", 3, 3, 3, "outils", 12, "Permet de construire une station en double", ["etabli"]),
+      N("greniers", "Greniers", 4, 1, 3, "bois", 30, "+2 h de gains hors-ligne par rang", ["irrig"]),
+      N("cadtaille", "Cadence de taille", 4, 3, 5, "silex", 20, "+10 % de vitesse de l'Atelier de taille par rang", ["doublons"]),
+      N("rendement", "Rendement", 5, 2, 5, "coquillages", 70, "+4 % de toute la production par rang", ["rotation"], [["greniers", "+1 % par rang"], ["cadtaille", "+1 % par rang"]]),
+      N("revol", "La Révolution des Champs", 6, 2, 1, "outils", 100, "Tournant historique : termine la branche Cadence et donne l'Héritage Le Sens des réserves", ["greniers", "cadtaille", "rendement"], [], { key: true, any: true }),
+    ]},
+    { id: "ingen", name: "Ingéniosité", sub: "Maîtrise du feu", nodes: [
+      N("argile", "Argile cuite", 1, 1, 5, "bois", 12, "Débloque la cuisson des poteries"),
+      N("broyage", "Broyage", 1, 3, 5, "silex", 10, "+8 % d'ocre par rang"),
+      N("deuxmains", "Recettes à deux mains", 2, 2, 3, "outils", 10, "Débloque les recettes à 2 intrants", ["argile"], [["broyage", "+1 recette par rang de Broyage"]]),
+      N("four", "Four couvert", 3, 1, 5, "bois", 22, "-6 % de bois consommé par rang", ["argile"]),
+      N("liants", "Liants", 3, 3, 5, "ocre", 6, "+5 % de valeur des parures par rang", ["broyage"]),
+      N("lente", "Cuisson lente", 4, 1, 3, "ocre", 12, "Les poteries crues se vendent 2 fois plus cher", ["four"]),
+      N("palette", "Palette", 4, 3, 3, "ocre", 14, "Débloque les peintures rupestres", ["liants"]),
+      N("proto", "Prototype", 5, 2, 5, "outils", 40, "+5 % d'efficacité des recettes par rang", ["deuxmains"], [["lente", "+1 % par rang"], ["palette", "+1 % par rang"]]),
+      N("maitrise", "Maîtrise du feu", 6, 2, 1, "ocre", 80, "Tournant historique : termine la branche Ingéniosité et donne l'Héritage L'Étincelle de génie", ["lente", "palette", "proto"], [], { key: true, any: true }),
+    ]},
+    { id: "societe", name: "Société", sub: "Le Cercle des conteurs", nodes: [
+      N("contes", "Contes", 1, 1, 5, "baies", 12, "+5 % de moral par rang"),
+      N("conseil", "Conseil", 1, 3, 5, "coquillages", 10, "Les quêtes de PNJ rapportent 10 % de plus par rang"),
+      N("moral", "Moral", 2, 2, 5, "baies", 20, "+3 % de production par rang", ["contes"], [["conseil", "+1 % par rang de Conseil"]]),
+      N("chants", "Chants", 3, 1, 5, "baies", 28, "Les événements durent 10 % de plus par rang", ["contes"]),
+      N("sagesse", "Sagesse", 3, 3, 5, "coquillages", 25, "Révèle une récompense cachée par rang", ["conseil"]),
+      N("peint", "Peintures", 4, 1, 3, "ocre", 10, "+10 % de peintures rupestres par rang", ["chants"]),
+      N("oral", "Héritage oral", 4, 3, 3, "parures", 10, "Une quête principale de plus devient optionnelle", ["sagesse"]),
+      N("entraide", "Entraide", 5, 2, 5, "coquillages", 60, "Les stations se reconvertissent 10 % plus vite par rang", ["moral"], [["peint", "+2 % par rang"], ["oral", "+2 % par rang"]]),
+      N("conteurs", "Le Cercle des conteurs", 6, 2, 1, "baies", 150, "Tournant historique : termine la branche Société et donne l'Héritage La Troisième Voie", ["peint", "oral", "entraide"], [], { key: true, any: true }),
+    ]},
+  ];
+  // Hybrid bridges (era 3+ preview): nodes that sit on the edge between two neighbouring boards.
+  const HYBRIDS = [
+    { board: "negoce", node: N("hy-nc", "Marchés d'artisans", 5, 3, 3, "outils", 30, "Pont hybride : compte pour Négoce et Cadence", ["foire"], [], { hybrid: "cadence" }) },
+    { board: "cadence", node: N("hy-cn", "Marchés d'artisans", 5, 1, 3, "outils", 30, "Pont hybride : compte pour Cadence et Négoce", ["greniers"], [], { hybrid: "negoce" }) },
+  ];
+
+  const ROW_REQ = [0, 0, 2, 4, 6, 8, 10]; // buildings needed per row (index = row)
+  let showHybrid = false;
+  let selected = null;
+  let currentBoard = 1;
+
+  // ---------------- helpers ----------------
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + " k" : n >= 100 ? Math.floor(n).toString() : n >= 10 ? n.toFixed(1) : n.toFixed(1);
+  const rate = () => {
+    const r = {};
+    for (const s of STATIONS) if (!s.locked) for (const [k, v] of Object.entries(s.out)) r[k] = (r[k] || 0) + v * (1 + s.lvl * 0.15);
+    return r;
+  };
+  const harvestValue = () => {
+    const total = Object.values(rate()).reduce((a, b) => a + b, 0);
+    return Math.max(1, Math.round(total * 0.05 * 10 * (1 + 0.1 * BOARDS[0].nodes[0].rank)) / 10);
+  };
+  const resName = (id) => RES.find((r) => r.id === id)?.name || id;
+
+  // ---------------- resources HUD ----------------
+  function renderRes() {
+    const bar = $("resbar"); bar.replaceChildren();
+    for (const r of RES) {
+      const d = document.createElement("div"); d.className = "res" + (r.currency ? " currency" : ""); d.id = "res-" + r.id;
+      d.innerHTML = `<i class="ico" style="background:${r.color}"></i><b></b><small></small>`;
+      d.title = r.name; bar.append(d);
+    }
+    updateRes();
+  }
+  function updateRes() {
+    const rt = rate();
+    for (const r of RES) {
+      const el = $("res-" + r.id); if (!el) continue;
+      el.querySelector("b").textContent = fmt(state.res[r.id] || 0);
+      el.querySelector("small").textContent = rt[r.id] ? `+${rt[r.id].toFixed(1)}/s` : r.name;
+      el.querySelector("small").style.color = rt[r.id] ? "" : "var(--mat-ink-2)";
+    }
+    $("harvestVal").textContent = "+" + harvestValue() + " baies";
+  }
+  function bump(id) { const el = $("res-" + id); if (!el) return; el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+
+  // ---------------- world ----------------
+  const SHAPES = {
+    bush: `<path d="M20 90 L30 55 L50 40 L70 48 L92 38 L105 60 L100 90Z" fill="#5f7d4a"/><path d="M30 55 L50 40 L60 70Z" fill="#7a9a5e"/><path d="M70 48 L92 38 L85 70Z" fill="#7a9a5e"/><circle cx="44" cy="62" r="5" fill="#b5476b"/><circle cx="74" cy="58" r="5" fill="#b5476b"/><circle cx="62" cy="76" r="5" fill="#b5476b"/><circle cx="88" cy="74" r="4" fill="#b5476b"/>`,
+    rock: `<path d="M10 92 L28 50 L60 34 L92 50 L110 92Z" fill="#7d808a"/><path d="M28 50 L60 34 L56 70Z" fill="#a3a7b1"/><path d="M60 34 L92 50 L56 70Z" fill="#6a6d76"/><path d="M40 92 L52 72 L68 74 L80 92Z" fill="#4a4a52"/>`,
+    hut: `<path d="M14 62 L60 18 L106 62Z" fill="#b9844a"/><path d="M60 18 L106 62 L60 62Z" fill="#9a5b3a"/><rect x="24" y="62" width="6" height="30" fill="#6e4b2e"/><rect x="90" y="62" width="6" height="30" fill="#5a3b22"/><path d="M36 80 L84 78 L86 92 L34 92Z" fill="#a7a39a"/>`,
+    fire: `<path d="M24 92 L40 74 L80 74 L96 92Z" fill="#8a8a86"/><path d="M44 78 L60 40 L76 78Z" fill="#e0702a"/><path d="M52 78 L60 56 L68 78Z" fill="#f2c14e"/>`,
+    frame: `<rect x="22" y="30" width="6" height="62" fill="#6e4b2e"/><rect x="92" y="30" width="6" height="62" fill="#5a3b22"/><rect x="20" y="30" width="80" height="6" fill="#6e4b2e"/><path d="M34 40 L86 40 L80 84 L40 84Z" fill="#c78b55"/><path d="M60 40 L86 40 L80 84 L60 84Z" fill="#a8703f"/>`,
+    circle: `<ellipse cx="60" cy="84" rx="50" ry="10" fill="#9d8a58"/><path d="M20 84 L24 56 L32 84Z" fill="#8a8a86"/><path d="M50 84 L56 50 L64 84Z" fill="#a3a7b1"/><path d="M88 84 L94 58 L100 84Z" fill="#8a8a86"/><circle cx="60" cy="40" r="7" fill="#f2c14e"/>`,
+    field: `<path d="M8 92 L20 60 L100 60 L112 92Z" fill="#a8925c"/><path d="M24 66h72M20 74h80M16 82h88" stroke="#d6b866" stroke-width="3"/>`,
+    salt: `<path d="M10 92 L30 64 L90 64 L110 92Z" fill="#cdd6db"/><path d="M30 64 L60 44 L90 64Z" fill="#eef2f4"/>`,
+  };
+  function renderWorld() {
+    const track = $("track");
+    track.querySelectorAll(".station, .harvest-hint").forEach((n) => n.remove());
+    for (const s of STATIONS) {
+      const b = document.createElement("button"); b.type = "button";
+      b.className = "station" + (s.locked ? " locked" : ""); b.style.left = s.x + "px"; b.id = "st-" + s.id;
+      b.setAttribute("aria-label", s.name);
+      b.innerHTML = `<svg viewBox="0 0 120 100" aria-hidden="true">${SHAPES[s.shape]}</svg><span class="plate panel">${s.name}</span><span class="lvl">${s.locked ? "À construire" : "Niv. " + s.lvl}</span>`;
+      b.addEventListener("click", (e) => { if (s.harvest) { harvest(e); } openStation(s); });
+      track.append(b);
+      if (s.harvest) { const h = document.createElement("div"); h.className = "harvest-hint"; h.textContent = "Touche pour récolter"; h.style.left = (s.x + 14) + "px"; h.style.bottom = "calc(21% + 140px)"; track.append(h); }
+    }
+  }
+  function floatText(parent, x, y, text, small) {
+    const f = document.createElement("div"); f.className = "float" + (small ? " small" : ""); f.textContent = text;
+    f.style.left = x + "px"; f.style.top = y + "px"; parent.append(f); setTimeout(() => f.remove(), 1000);
+  }
+  function sparks(parent, x, y) {
+    for (let i = 0; i < 7; i++) {
+      const s = document.createElement("div"); s.className = "spark"; s.style.left = x + "px"; s.style.top = y + "px";
+      const a = Math.random() * Math.PI * 2, d = 20 + Math.random() * 26;
+      s.style.setProperty("--dx", Math.cos(a) * d + "px"); s.style.setProperty("--dy", Math.sin(a) * d - 10 + "px");
+      parent.append(s); setTimeout(() => s.remove(), 600);
+    }
+  }
+  function harvest(e) {
+    const v = harvestValue(); state.res.baies += v; state.harvested += v; bump("baies"); updateRes(); updateQuestPin();
+    const phone = $("phone"), r = phone.getBoundingClientRect();
+    const x = (e?.clientX ?? r.right - 50) - r.left, y = (e?.clientY ?? r.bottom - 130) - r.top;
+    floatText(phone, x, y - 10, "+" + v + " baies"); sparks(phone, x, y);
+  }
+  $("harvestBtn").addEventListener("click", harvest);
+
+  // production bubbles above stations
+  let bubbleTick = 0;
+  function bubbles() {
+    bubbleTick++;
+    const live = STATIONS.filter((s) => !s.locked);
+    const s = live[bubbleTick % live.length], [res, v] = Object.entries(s.out)[0];
+    const el = $("st-" + s.id); if (!el) return;
+    floatText($("track"), s.x + 66, el.offsetTop - 6, "+" + (v * (1 + s.lvl * 0.15) * 2).toFixed(1) + " " + resName(res).toLowerCase(), true);
+  }
+
+  // ---------------- quests ----------------
+  function bestMain() {
+    return QUESTS.filter((q) => q.type === "Principales").map((q) => ({ q, p: q.goal() })).sort((a, b) => b.p[0] / b.p[1] - a.p[0] / a.p[1])[0];
+  }
+  function updateQuestPin() {
+    const { q, p } = bestMain();
+    $("qpTitle").textContent = q.title; $("qpBar").style.width = (100 * p[0] / p[1]) + "%";
+    $("qpCount").textContent = `${Math.floor(p[0])} / ${p[1]}`; $("qpReward").textContent = q.reward;
+    const done = QUESTS.filter((x) => { const g = x.goal(); return g[0] >= g[1]; }).length;
+    $("badgeQuests").hidden = done === 0; $("badgeQuests").textContent = done;
+    const can = BOARDS.some((b) => b.nodes.some((n) => canInvest(n)));
+    $("badgeTree").hidden = !can;
+  }
+  $("questPin").addEventListener("click", () => openQuests());
+
+  // ---------------- sheets ----------------
+  function openSheet(html, onMount) {
+    $("scrim").hidden = false; const s = $("sheet"); s.innerHTML = html; s.hidden = false;
+    s.querySelector(".close")?.addEventListener("click", closeAll);
+    onMount?.(s);
+  }
+  function closeAll() { $("scrim").hidden = true; $("sheet").hidden = true; $("tree").hidden = true; selected = null; }
+  $("scrim").addEventListener("click", closeAll);
+
+  function openStation(s) {
+    if (s.locked) {
+      const cost = Object.entries(s.cost).map(([k, v]) => `${v} ${resName(k).toLowerCase()}`).join(" · ");
+      openSheet(`<div class="sheet-head"><div><h2>${s.name}</h2><div class="sub">Pas encore construite</div></div><button type="button" class="close" aria-label="Fermer">×</button></div>
+        <div class="sheet-body"><p class="quip">« ${s.quip} »</p><div class="statrow"><span>Coût</span><b>${cost}</b></div>
+        <button type="button" class="btn" disabled>Construire (ressources insuffisantes)</button></div>`);
+      return;
+    }
+    const outs = Object.entries(s.out).map(([k, v]) => `${(v * (1 + s.lvl * 0.15)).toFixed(1)} ${resName(k).toLowerCase()}/s`).join(" · ");
+    const upCost = Math.round(10 * Math.pow(1.15, s.lvl));
+    openSheet(`<div class="sheet-head"><div><h2>${s.name}</h2><div class="sub">Niveau ${s.lvl} · ${outs}</div></div><button type="button" class="close" aria-label="Fermer">×</button></div>
+      <div class="sheet-body">
+        <p class="quip">« ${s.quip} »</p>
+        <div class="statrow"><span>Spécialisation</span><b>${s.specs[s.spec][0]}</b></div>
+        <div class="specs">${s.specs.map((sp, i) => `<button type="button" class="spec" data-i="${i}" aria-pressed="${i === s.spec}">${sp[0]}${sp[1] ? `<small>${sp[1]}</small>` : ""}</button>`).join("")}</div>
+        <p class="hint" style="margin:0;font-size:11.5px;color:var(--mat-ink-2)">Changer de spécialisation déclenche une Reconversion (coût et chantier).</p>
+        <button type="button" class="btn" id="upBtn">Améliorer au niveau ${s.lvl + 1} · ${upCost} coquillages</button>
+      </div>`, (sh) => {
+      sh.querySelectorAll(".spec").forEach((b) => b.addEventListener("click", () => { s.spec = +b.dataset.i; openStation(s); }));
+      const up = sh.querySelector("#upBtn"); up.disabled = state.res.coquillages < upCost;
+      up.addEventListener("click", () => { if (state.res.coquillages < upCost) return; state.res.coquillages -= upCost; s.lvl++; bump("coquillages"); renderWorld(); updateRes(); openStation(s); });
+    });
+  }
+
+  function openQuests() {
+    const groups = ["Principales", "Contrats", "PNJ"];
+    const html = groups.map((g) => {
+      const items = QUESTS.filter((q) => q.type === g).map((q) => ({ q, p: q.goal() })).sort((a, b) => b.p[0] / b.p[1] - a.p[0] / a.p[1]);
+      return `<div class="qgroup"><h3>${g}</h3>${items.map(({ q, p }) => {
+        const done = p[0] >= p[1];
+        return `<div class="qcard${done ? " done" : ""}"><div><div class="t">${q.title}</div><div class="who">${q.timer ? `<span class="timer">Reste 2 h 14</span> · ` : ""}${q.who}</div></div>${done ? `<button type="button" class="btn gold">Réclamer</button>` : ""}
+          <div class="bar"><i style="width:${Math.min(100, 100 * p[0] / p[1])}%"></i></div><div class="meta"><span>${Math.floor(p[0])} / ${p[1]}</span><span>${q.reward}</span></div></div>`;
+      }).join("")}</div>`;
+    }).join("");
+    openSheet(`<div class="sheet-head"><div><h2>Quêtes</h2><div class="sub">Ère 1 · 2 / 25 quêtes principales faites</div></div><button type="button" class="close" aria-label="Fermer">×</button></div><div class="sheet-body">${html}</div>`);
+  }
+  function openSimple(title, text) {
+    openSheet(`<div class="sheet-head"><div><h2>${title}</h2></div><button type="button" class="close" aria-label="Fermer">×</button></div><div class="sheet-body"><p style="margin:0">${text}</p></div>`);
+  }
+
+  // ---------------- tree ----------------
+  function allNodes() {
+    return BOARDS.flatMap((b) => b.nodes.concat(showHybrid ? HYBRIDS.filter((h) => h.board === b.id).map((h) => h.node) : []));
+  }
+  function nodeById(id) { return allNodes().find((n) => n.id === id); }
+  function rowOpen(row) { return state.built >= ROW_REQ[row]; }
+  function reqMet(n) {
+    if (!n.req.length) return true;
+    const ok = (id) => (nodeById(id)?.rank || 0) > 0;
+    return n.any ? n.req.some(ok) : n.req.every(ok);
+  }
+  function cost(n) { return Math.round(n.base * (n.rank + 1)); }
+  function canInvest(n) { return n.rank < n.max && rowOpen(n.row) && reqMet(n) && (state.res[n.res] || 0) >= cost(n); }
+  function boardNodes(b) { return b.nodes.concat(showHybrid ? HYBRIDS.filter((h) => h.board === b.id).map((h) => h.node) : []); }
+
+  const GLYPHS = [
+    `<path d="M16 4 L28 16 L16 28 L4 16Z" fill="currentColor"/>`,
+    `<circle cx="16" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="currentColor"/>`,
+    `<path d="M6 26 L16 5 L26 26Z" fill="currentColor"/>`,
+    `<path d="M5 9h22v5H5zM8 16h16v11H8z" fill="currentColor"/>`,
+    `<path d="M16 3l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="currentColor"/>`,
+  ];
+  function openTree() {
+    $("scrim").hidden = true; $("sheet").hidden = true;
+    const t = $("tree"); t.hidden = false;
+    t.innerHTML = `
+      <div class="tree-head"><div><h2>Arbre du Troc</h2><div class="sub">${state.built} bâtiments construits · rangées ouvertes : ${ROW_REQ.filter((r, i) => i && rowOpen(i)).length} / 6</div></div><button type="button" class="close" aria-label="Fermer l'arbre">×</button></div>
+      <div class="tabs" role="tablist">${BOARDS.map((b, i) => `<button type="button" class="tab" role="tab" data-i="${i}">${b.name}</button>`).join("")}</div>
+      <div class="carousel" id="carousel">${BOARDS.map((b) => `<div class="board-slide"><div class="board"><div class="board-title"><b>${b.name}</b><span>${b.sub}</span></div><div class="grid" id="grid-${b.id}"></div></div></div>`).join("")}</div>
+      <div><label class="hy-toggle"><input type="checkbox" id="hyToggle" ${showHybrid ? "checked" : ""}> Voir les ponts hybrides (aperçu des ères 3+)</label><div class="dots" id="dots">${BOARDS.map(() => "<i></i>").join("")}</div><div class="node-info" id="nodeInfo"></div></div>`;
+    t.querySelector(".close").addEventListener("click", closeAll);
+    t.querySelector("#hyToggle").addEventListener("change", (e) => { showHybrid = e.target.checked; renderBoards(); });
+    t.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => goBoard(+b.dataset.i)));
+    const car = $("carousel");
+    car.addEventListener("scroll", () => { const i = Math.round(car.scrollLeft / car.clientWidth); if (i !== currentBoard) { currentBoard = i; syncTabs(); } }, { passive: true });
+    renderBoards();
+    requestAnimationFrame(() => { car.scrollLeft = currentBoard * car.clientWidth; syncTabs(); drawAllLinks(); });
+  }
+  function goBoard(i) { const car = $("carousel"); car.scrollTo({ left: i * car.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); currentBoard = i; syncTabs(); }
+  function syncTabs() {
+    document.querySelectorAll(".tab").forEach((b, i) => b.setAttribute("aria-selected", i === currentBoard));
+    document.querySelectorAll("#dots i").forEach((d, i) => d.classList.toggle("on", i === currentBoard));
+    document.querySelector(`.tab[data-i="${currentBoard}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+  function renderBoards() {
+    for (const b of BOARDS) {
+      const g = $("grid-" + b.id); if (!g) continue; g.replaceChildren();
+      const nodes = boardNodes(b);
+      for (let row = 1; row <= 6; row++) for (let col = 1; col <= 3; col++) {
+        const cell = document.createElement("div"); cell.className = "cell"; cell.style.gridRow = row; cell.style.gridColumn = col;
+        const n = nodes.find((x) => x.row === row && x.col === col);
+        if (n) {
+          const btn = document.createElement("button"); btn.type = "button"; btn.id = "node-" + n.id;
+          const off = !rowOpen(n.row) || (!reqMet(n) && n.rank === 0);
+          btn.className = "node" + (n.key ? " key" : "") + (n.hybrid ? " hybrid" : "") + (off ? " off" : "") + (canInvest(n) ? " can" : "") + (n.rank >= n.max ? " maxed" : "") + (selected === n.id ? " selected" : "");
+          btn.style.color = n.key ? "var(--gold)" : "var(--mat-ink)";
+          btn.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true">${n.key ? GLYPHS[4] : GLYPHS[(n.row + n.col) % 4]}</svg><span class="rank">${n.rank}/${n.max}</span>${n.hybrid ? `<span class="hy-tag">↔ ${BOARDS.find((x) => x.id === n.hybrid).name}</span>` : ""}`;
+          btn.setAttribute("aria-label", `${n.name}, rang ${n.rank} sur ${n.max}`);
+          btn.addEventListener("click", () => { selected = n.id; renderBoards(); showNode(n); });
+          btn.querySelector(".hy-tag")?.addEventListener("click", (e) => { e.stopPropagation(); goBoard(BOARDS.findIndex((x) => x.id === n.hybrid)); });
+          cell.append(btn);
+          const nm = document.createElement("span"); nm.className = "node-name" + (n.key ? " key" : ""); nm.textContent = n.name; cell.append(nm);
+        }
+        g.append(cell);
+      }
+      // lock band over the first locked row and below
+      const firstLocked = [1, 2, 3, 4, 5, 6].find((r) => !rowOpen(r));
+      if (firstLocked) {
+        const band = document.createElement("div"); band.className = "lock-band";
+        band.style.top = `calc(${(firstLocked - 1) / 6 * 100}% - 2px)`; band.style.bottom = "-2px";
+        band.innerHTML = `<span>Rangée ${firstLocked} : ${ROW_REQ[firstLocked]} bâtiments construits (${state.built}/${ROW_REQ[firstLocked]})</span>`;
+        g.append(band);
+      }
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.classList.add("links"); g.prepend(svg);
+    }
+    requestAnimationFrame(drawAllLinks);
+    const sel = selected && nodeById(selected); showNode(sel || null);
+    updateQuestPin();
+  }
+  function drawAllLinks() {
+    for (const b of BOARDS) {
+      const g = $("grid-" + b.id); if (!g) continue; const svg = g.querySelector("svg.links"); if (!svg) continue;
+      const gr = g.getBoundingClientRect(); svg.setAttribute("viewBox", `0 0 ${gr.width} ${gr.height}`); svg.innerHTML = `<defs><marker id="ah-${b.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e8d9b8"/></marker></defs>`;
+      for (const n of boardNodes(b)) for (const r of n.req) {
+        const a = $("node-" + r), c = $("node-" + n.id); if (!a || !c || !g.contains(a)) continue;
+        const ra = a.getBoundingClientRect(), rc = c.getBoundingClientRect();
+        const x1 = ra.left + ra.width / 2 - gr.left, y1 = ra.bottom - gr.top, x2 = rc.left + rc.width / 2 - gr.left, y2 = rc.top - gr.top - 3;
+        const active = (nodeById(r)?.rank || 0) > 0;
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        p.setAttribute("d", `M${x1} ${y1} C${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2}`);
+        p.setAttribute("fill", "none"); p.setAttribute("stroke", active ? "#f2d79a" : "rgba(232,217,184,.35)"); p.setAttribute("stroke-width", active ? "2.5" : "2");
+        if (n.any) p.setAttribute("stroke-dasharray", "5 4");
+        p.setAttribute("marker-end", `url(#ah-${b.id})`); svg.append(p);
+      }
+    }
+  }
+  window.addEventListener("resize", () => { if (!$("tree").hidden) { const car = $("carousel"); car.scrollLeft = currentBoard * car.clientWidth; drawAllLinks(); } });
+
+  function showNode(n) {
+    const box = $("nodeInfo"); if (!box) return;
+    if (!n) { box.innerHTML = `<h3>Touche un nœud</h3><p>Les nœuds brillent en vert quand tu peux investir. Les flèches pleines sont des prérequis remplis ; en pointillés, un seul des chemins suffit pour le Tournant historique.</p>`; return; }
+    const c = cost(n), have = state.res[n.res] || 0;
+    let why = "";
+    if (n.rank >= n.max) why = "Rang maximum atteint.";
+    else if (!rowOpen(n.row)) why = `Rangée verrouillée : ${ROW_REQ[n.row]} bâtiments construits.`;
+    else if (!reqMet(n)) why = `Prérequis : ${n.req.map((r) => nodeById(r)?.name).join(n.any ? " ou " : " et ")}.`;
+    const syn = n.syn.length ? `<div class="syn">Synergies : ${n.syn.map(([id, t]) => `<b>${nodeById(id)?.name || id}</b> (${t})`).join(" · ")}</div>` : "";
+    box.innerHTML = `<div class="row"><h3>${n.name}</h3><b style="font-variant-numeric:tabular-nums">${n.rank} / ${n.max}</b></div>
+      <p>${n.effect}</p>${syn}
+      <div class="row"><span class="cost ${have < c ? "no" : ""}">${n.rank >= n.max ? "" : `Prochain rang : ${c} ${resName(n.res).toLowerCase()} (tu as ${Math.floor(have)})`}</span>
+      <button type="button" class="btn" id="investBtn" ${canInvest(n) ? "" : "disabled"}>${n.key ? "Accomplir" : "Investir"}</button></div>
+      ${why ? `<p style="font-size:11.5px;color:var(--mat-ink-2)">${why}</p>` : ""}`;
+    box.querySelector("#investBtn").addEventListener("click", () => {
+      if (!canInvest(n)) return; state.res[n.res] -= c; n.rank++; bump(n.res); updateRes();
+      const el = $("node-" + n.id), r = $("phone").getBoundingClientRect(), e = el.getBoundingClientRect();
+      sparks($("phone"), e.left + e.width / 2 - r.left, e.top + e.height / 2 - r.top);
+      renderBoards();
+    });
+  }
+
+  // ---------------- action bar ----------------
+  document.querySelectorAll(".act").forEach((b) => b.addEventListener("click", () => {
+    const k = b.dataset.open;
+    if (k === "tree") openTree();
+    else if (k === "quests") openQuests();
+    else if (k === "market") openSimple("Marché", "Prix du jour, tendances et contrats des marchands. Même principe de fiche que les stations : une ressource par ligne, vendre ou acheter au curseur.");
+    else if (k === "timeline") openSimple("Frise", "La frise des 10 ères, de gauche à droite, avec les Héritages gagnés. Touche une ère passée pour ouvrir ses Archives.");
+    else openSimple("Clan", "Les PNJ de l'ère (Bob, Amna, Nick, l'Ancienne), leur affinité, et les réglages du jeu.");
+  }));
+
+  // ---------------- material switch ----------------
+  document.querySelectorAll("[data-mat]").forEach((b) => b.addEventListener("click", () => {
+    $("phone").dataset.material = b.dataset.mat;
+    document.querySelectorAll("[data-mat]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+  }));
+
+  // ---------------- loop ----------------
+  renderRes(); renderWorld(); updateQuestPin();
+  let last = performance.now();
+  setInterval(() => {
+    const now = performance.now(), dt = (now - last) / 1000; last = now;
+    const rt = rate(); for (const [k, v] of Object.entries(rt)) state.res[k] = (state.res[k] || 0) + v * dt;
+    updateRes(); updateQuestPin();
+  }, 250);
+  setInterval(bubbles, 900);
+})();
+</script>
