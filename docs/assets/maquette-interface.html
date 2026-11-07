@@ -107,8 +107,12 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .float, .spark, .harvest-hint { animation-duration: .01s; } }
 
 /* HUD */
-.hud { position: absolute; top: 0; left: 0; right: 0; z-index: 20; padding: 34px 8px 6px; display: grid; gap: 6px; pointer-events: none; }
+.hud { position: absolute; top: 0; left: 0; right: 0; z-index: 20; padding: 30px 8px 6px; display: grid; gap: 6px; pointer-events: none; }
 .hud > * { pointer-events: auto; }
+.topline { display: flex; justify-content: center; }
+.era-btn { border-radius: 0 0 10px 10px; padding: 3px 12px 4px; display: flex; gap: 8px; align-items: baseline; margin-top: -8px; border-top: 0; }
+.era-btn b { font-family: var(--font-display); font-size: 13px; }
+.era-btn span { font-size: 11px; color: var(--mat-ink-2); font-weight: 700; }
 .res-bar { border-radius: 10px; padding: 5px 6px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
 .res-bar::-webkit-scrollbar { display: none; }
 .res { flex: none; display: grid; grid-template-columns: 18px auto; column-gap: 5px; align-items: center; padding: 2px 7px 2px 4px; border-radius: 7px; background: var(--mat-sunk); min-width: 64px; }
@@ -169,18 +173,26 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .timer { color: var(--danger); font-weight: 700; }
 
 /* ---------- skill tree (Diablo 2 style board in a carousel) ---------- */
-.tree { position: absolute; inset: 0; z-index: 45; display: grid; grid-template-rows: auto auto 1fr auto; border-radius: 0; border: 0; padding-top: 30px; }
-.tree-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px 4px; }
+.tree { position: absolute; inset: 0; z-index: 45; display: grid; grid-template-rows: auto auto 30px auto 1fr auto; border-radius: 0; border: 0; padding-top: 30px; }
+.tree-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 12px 6px; }
 .tree-head h2 { margin: 0; font-family: var(--font-display); font-size: 19px; line-height: 1.1; }
 .tree-head .sub { font-size: 11.5px; color: var(--mat-ink-2); }
-.tabs { display: flex; gap: 4px; padding: 4px 10px 8px; overflow-x: auto; scrollbar-width: none; }
+.tabs { display: flex; gap: 4px; padding: 0 10px 6px; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { flex: none; border: 2px solid transparent; background: var(--mat-sunk); border-radius: 999px; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; font-size: 12px; }
 .tab[aria-selected="true"] { border-color: var(--gold); color: var(--gold); }
+.trunk { margin: 0 10px; border-radius: 12px; background: var(--mat-sunk); padding: 6px 8px 4px; display: grid; gap: 2px; }
+.trunk-label { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--mat-ink-2); }
+.grid.trunk-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, auto); gap: 2px 4px; }
+.trunk-grid .node { width: 34px; height: 34px; border-radius: 8px; }
+.trunk-grid .node svg { width: 20px; height: 20px; }
+.trunk-grid .node .rank { min-width: 22px; height: 13px; font-size: 9px; right: -7px; bottom: -5px; }
+.trunk-grid .node-name { font-size: 8.5px; }
+svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
 .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; min-height: 0; }
 .carousel::-webkit-scrollbar { display: none; }
 .board-slide { flex: 0 0 100%; scroll-snap-align: center; padding: 0 10px; display: grid; min-height: 0; }
-.board { position: relative; border-radius: 14px; padding: 10px 8px; background: var(--mat-sunk); display: grid; grid-template-rows: auto 1fr; gap: 6px; min-height: 0; }
+.board { position: relative; border-radius: 14px; padding: 6px 8px 8px; background: var(--mat-sunk); display: grid; grid-template-rows: auto 1fr; gap: 6px; min-height: 0; }
 .board-title { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; padding: 0 4px; }
 .board-title b { font-family: var(--font-display); font-size: 15px; }
 .board-title span { font-size: 11px; color: var(--mat-ink-2); }
@@ -189,14 +201,14 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .cell { display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 0; }
 .node-name { font-size: 9.5px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mat-ink-2); }
 .node-name.key { color: var(--gold); }
-.node { position: relative; width: 48px; height: 48px; border-radius: 10px; border: 2px solid var(--mat-edge); background: var(--mat-socket); display: grid; place-items: center; padding: 0; box-shadow: inset 0 2px 0 var(--mat-hi), 0 2px 0 rgba(0,0,0,.4); }
-.node svg { width: 30px; height: 30px; }
+.node { position: relative; width: 42px; height: 42px; border-radius: 10px; border: 2px solid var(--mat-edge); background: var(--mat-socket); display: grid; place-items: center; padding: 0; box-shadow: inset 0 2px 0 var(--mat-hi), 0 2px 0 rgba(0,0,0,.4); }
+.node svg { width: 24px; height: 24px; }
 .node .rank { position: absolute; right: -6px; bottom: -6px; min-width: 26px; padding: 0 3px; height: 16px; border-radius: 4px; background: #15120d; color: #f6efe2; font-size: 10px; font-weight: 800; display: grid; place-items: center; border: 1px solid var(--mat-edge); font-variant-numeric: tabular-nums; }
 .node.maxed .rank { color: var(--gold); }
 .node.can::after { content: ""; position: absolute; inset: -5px; border-radius: 13px; border: 2px solid var(--good); animation: pulse 1.4s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .25; } }
 .node.off { filter: grayscale(1) brightness(.6); }
-.node.key { width: 56px; height: 56px; border-color: var(--gold); box-shadow: 0 0 0 2px #2a1b05, 0 0 14px rgba(242,193,78,.55); }
+.node.key { width: 50px; height: 50px; border-color: var(--gold); box-shadow: 0 0 0 2px #2a1b05, 0 0 14px rgba(242,193,78,.55); }
 .node.hybrid { border-style: dashed; border-color: #b78cf0; }
 .node.selected { outline: 3px solid var(--gold); outline-offset: 3px; }
 .hy-tag { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #b78cf0; color: #1d1030; font-size: 9px; font-weight: 800; padding: 0 5px; border-radius: 4px; white-space: nowrap; }
@@ -205,7 +217,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .dots { display: flex; justify-content: center; gap: 6px; padding: 6px 0 2px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--mat-sunk); border: 1px solid var(--mat-edge); }
 .dots i.on { background: var(--gold); }
-.node-info { margin: 0 10px 14px; border-radius: 12px; background: var(--mat-sunk); padding: 10px 12px; display: grid; gap: 6px; min-height: 132px; }
+.node-info { margin: 0 10px 14px; border-radius: 12px; background: var(--mat-sunk); padding: 8px 12px; display: grid; gap: 4px; min-height: 104px; }
 .node-info h3 { margin: 0; font-family: var(--font-display); font-size: 16px; line-height: 1.15; }
 .node-info .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .node-info p { margin: 0; font-size: 12.5px; }
@@ -260,6 +272,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
         </div>
 
         <div class="hud">
+          <div class="topline"><button type="button" class="era-btn panel" id="eraBtn" aria-label="Ouvrir la frise des ères"><b>Ère 1 · Troc</b><span>Frise ›</span></button></div>
           <div class="res-bar panel riveted" id="resbar" aria-label="Ressources"></div>
           <button type="button" class="quest-pin panel" id="questPin" aria-label="Ouvrir les quêtes">
             <span class="k">Quête principale</span>
@@ -274,10 +287,10 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
         </button>
 
         <nav class="actionbar panel riveted" aria-label="Actions">
-          <button type="button" class="act" data-open="tree"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L22 11 L19 11 L24 18 L20 18 L25 25 L7 25 L12 18 L8 18 L13 11 L10 11Z" fill="currentColor"/><rect x="14" y="25" width="4" height="5" fill="currentColor"/></svg><span>Arbre</span><i class="badge" id="badgeTree" hidden>!</i></button>
+          <button type="button" class="act" data-open="tree"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L22 11 L19 11 L24 18 L20 18 L25 25 L7 25 L12 18 L8 18 L13 11 L10 11Z" fill="currentColor"/><rect x="14" y="25" width="4" height="5" fill="currentColor"/></svg><span>Capacités</span><i class="badge" id="badgeTree" hidden>!</i></button>
           <button type="button" class="act" data-open="market"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4v24M6 9h20M6 9l-4 9h8zM26 9l-4 9h8z" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linejoin="round"/><path d="M10 28h12" stroke="currentColor" stroke-width="3"/></svg><span>Marché</span></button>
           <button type="button" class="act" data-open="quests"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4h14l4 4v20H8z" fill="currentColor" opacity=".9"/><path d="M12 12h10M12 17h10M12 22h6" stroke="#000" stroke-opacity=".45" stroke-width="2"/></svg><span>Quêtes</span><i class="badge" id="badgeQuests" hidden>1</i></button>
-          <button type="button" class="act" data-open="timeline"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16h26" stroke="currentColor" stroke-width="2.4"/><circle cx="8" cy="16" r="3.5" fill="currentColor"/><circle cx="16" cy="16" r="3.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="16" r="3.5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg><span>Frise</span></button>
+          <button type="button" class="act" data-open="shop"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12h22l-2 15H7z" fill="currentColor"/><path d="M11 12a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 16l1.6 3.4 3.6.4-2.7 2.4.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.7-2.4 3.6-.4z" fill="#000" fill-opacity=".45"/></svg><span>Boutique</span></button>
           <button type="button" class="act" data-open="clan"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="11" r="5" fill="currentColor"/><path d="M6 28c0-6 4.5-10 10-10s10 4 10 10z" fill="currentColor"/></svg><span>Clan</span></button>
         </nav>
 
@@ -293,30 +306,31 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
         <ul>
           <li>Touche <b>Récolter</b> ou le Coin de cueillette : la valeur d'un toucher grandit avec ta production.</li>
           <li>Glisse le monde à gauche et à droite ; touche une station pour sa fiche.</li>
-          <li>Ouvre l'<b>Arbre</b>, glisse d'une branche à l'autre, touche un nœud puis <b>Investir</b>.</li>
+          <li>Ouvre les <b>Capacités</b>, glisse sous le tronc pour changer de branche, touche un nœud puis <b>Investir</b>. Monte « Main habile » pour voir la récolte grandir.</li>
+          <li>Touche <b>Ère 1 · Troc</b> en haut pour ouvrir la frise.</li>
           <li>Change de matière en haut pour voir l'interface de chaque grande époque.</li>
         </ul>
       </div>
       <div class="note">
         <h2>Ce qui change par rapport au GDD</h2>
         <ul>
-          <li><b>Le monde occupe tout l'écran.</b> Plus de panneau permanent : une barre de 5 actions en bas, et des fiches qui montent par-dessus le monde.</li>
+          <li><b>Le monde occupe tout l'écran.</b> Plus de panneau permanent : une barre de 5 actions (Capacités, Marché, Quêtes, Boutique, Clan) et des fiches qui montent par-dessus le monde. La frise s'ouvre depuis le nom de l'ère.</li>
           <li><b>Les ressources se voient monter</b> : bandeau en haut avec le stock et le gain par seconde, et des bulles « +1 » au-dessus des stations.</li>
-          <li><b>La récolte au toucher reste toujours disponible</b>, et sa valeur suit la production (ici 5 % du gain total par seconde, au moins 1).</li>
+          <li><b>La récolte au toucher reste toujours disponible</b> : 5 % de la production par seconde au départ (au moins 1), +5 points par rang de « Main habile » dans le tronc.</li>
           <li><b>Une seule quête épinglée</b> en haut à gauche, la plus proche d'être finie ; le journal classe les quêtes par type et par avancement.</li>
-          <li><b>L'arbre façon Diablo 2</b> : chaque branche est une planche de 3 colonnes sur 6 rangées, avec flèches de prérequis, rangs (0/5) et synergies. On glisse d'une planche à l'autre avec des points d'arrêt, et le tronc commun a sa propre planche « Fondations ».</li>
+          <li><b>Capacités façon Diablo 2</b> : le tronc commun reste fixe en haut ; de « Le Cercle » partent 4 lignes qui suivent les branches quand on glisse. Chaque branche est une planche de 3 colonnes sur 6 rangées, avec flèches de prérequis, rangs (0/5) payés en ressources, et synergies.</li>
           <li><b>Rangées verrouillées par la progression de l'ère</b> : ici, une rangée de plus tous les 2 bâtiments construits.</li>
           <li><b>Fins hybrides (ère 3+)</b> : coche « Voir les ponts hybrides » dans l'arbre ; un nœud pont affiche la branche voisine, et un toucher sur l'étiquette y fait glisser.</li>
           <li><b>Micro-skeuomorphisme par ère</b> : bois, pierre, métal brut, métal poli ; seule la matière change, la disposition reste identique.</li>
         </ul>
       </div>
       <div class="note">
-        <h2>À trancher ensemble</h2>
+        <h2>Décisions du 7 novembre</h2>
         <ul>
-          <li><span class="q">Tronc commun</span> : planche « Fondations » séparée (comme ici) ou rangées du haut répétées sur chaque branche ?</li>
-          <li><span class="q">Coût des rangs</span> : toujours en ressources de l'ère (comme ici), ou des « points » gagnés par paliers façon Diablo 2 ?</li>
-          <li><span class="q">Valeur du toucher</span> : 5 % de la production par seconde te semble-t-il juste, ou faut-il que le toucher reste plus rentable ?</li>
-          <li><span class="q">Barre d'actions</span> : Arbre, Marché, Quêtes, Frise, Clan. Manque-t-il quelque chose, ou un bouton est-il de trop ?</li>
+          <li>Tronc commun fixe en haut de chaque branche, branches qui glissent dessous.</li>
+          <li>Rangs payés en ressources de l'ère.</li>
+          <li>Toucher à 5 % de base, amélioré par « Main habile ».</li>
+          <li>Barre : Capacités, Marché, Quêtes, Boutique, Clan ; frise via le nom de l'ère.</li>
         </ul>
       </div>
     </aside>
@@ -360,15 +374,16 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
   // Tree: boards of a 3 x 6 grid. req = prerequisites (ids). syn = synergies. Ranks paid in era resources.
   const N = (id, name, row, col, max, res, base, effect, req = [], syn = [], extra = {}) => ({ id, name, row, col, max, rank: 0, res, base, effect, req, syn, ...extra });
+  // Common trunk: fixed above the carousel, shared by every branch.
+  const TRUNK = [
+    N("main", "Main habile", 1, 1, 5, "baies", 6, "+5 points de pourcentage sur la récolte au toucher par rang (5 % de base)", [], [], { rank: 1 }),
+    N("feu", "Le feu apprivoisé", 1, 2, 5, "bois", 10, "+5 % de production du Foyer du clan par rang", ["main"], [], { rank: 3 }),
+    N("langage", "Langage du troc", 1, 3, 5, "coquillages", 12, "+4 % sur les prix de vente par rang", ["feu"], [], { rank: 2 }),
+    N("sedent", "Sédentarisation", 1, 4, 3, "outils", 6, "+1 emplacement de station par rang", ["langage"], [], { rank: 1 }),
+    N("paniers", "Premiers paniers", 2, 1, 3, "baies", 14, "+15 % de stockage par rang", ["main"], [], { rank: 1 }),
+    N("cercle", "Le Cercle", 2, 2, 1, "coquillages", 80, "Ouvre les quatre branches", ["sedent"], [], { rank: 1, span: 2 }),
+  ];
   const BOARDS = [
-    { id: "fond", name: "Fondations", sub: "tronc commun", nodes: [
-      N("main", "Main habile", 1, 2, 5, "baies", 6, "+10 % de récolte au toucher par rang", [], [], { rank: 5 }),
-      N("feu", "Le feu apprivoisé", 2, 2, 5, "bois", 10, "+5 % de production du Foyer du clan par rang", ["main"], [], { rank: 3 }),
-      N("paniers", "Premiers paniers", 2, 1, 3, "baies", 14, "+15 % de stockage par rang", ["main"], [], { rank: 1 }),
-      N("langage", "Langage du troc", 3, 2, 5, "coquillages", 12, "+4 % sur les prix de vente par rang", ["feu"], [], { rank: 2 }),
-      N("sedent", "Sédentarisation", 4, 2, 3, "outils", 6, "+1 emplacement de station par rang", ["langage"]),
-      N("cercle", "Le Cercle", 5, 2, 1, "coquillages", 80, "Ouvre les quatre branches", ["sedent"]),
-    ]},
     { id: "negoce", name: "Négoce", sub: "Le Pacte des Marchands", nodes: [
       N("porteurs", "Porteurs", 1, 1, 5, "peaux", 3, "+1 contrat proposé tous les 2 rangs", [], [], { rank: 2 }),
       N("etals", "Étals", 1, 3, 5, "parures", 2, "+5 % sur la vente de parures par rang"),
@@ -423,7 +438,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   const ROW_REQ = [0, 0, 2, 4, 6, 8, 10]; // buildings needed per row (index = row)
   let showHybrid = false;
   let selected = null;
-  let currentBoard = 1;
+  let currentBoard = 0;
 
   // ---------------- helpers ----------------
   const $ = (id) => document.getElementById(id);
@@ -435,7 +450,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   };
   const harvestValue = () => {
     const total = Object.values(rate()).reduce((a, b) => a + b, 0);
-    return Math.max(1, Math.round(total * 0.05 * 10 * (1 + 0.1 * BOARDS[0].nodes[0].rank)) / 10);
+    const pct = 0.05 + 0.05 * TRUNK[0].rank; return Math.max(1, Math.round(total * pct * 10) / 10);
   };
   const resName = (id) => RES.find((r) => r.id === id)?.name || id;
 
@@ -580,19 +595,18 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   }
 
   // ---------------- tree ----------------
-  function allNodes() {
-    return BOARDS.flatMap((b) => b.nodes.concat(showHybrid ? HYBRIDS.filter((h) => h.board === b.id).map((h) => h.node) : []));
-  }
+  function boardNodes(b) { return b.nodes.concat(showHybrid ? HYBRIDS.filter((h) => h.board === b.id).map((h) => h.node) : []); }
+  function allNodes() { return TRUNK.concat(BOARDS.flatMap(boardNodes)); }
   function nodeById(id) { return allNodes().find((n) => n.id === id); }
-  function rowOpen(row) { return state.built >= ROW_REQ[row]; }
+  function isTrunk(n) { return TRUNK.includes(n); }
+  function rowOpen(n) { return isTrunk(n) || state.built >= ROW_REQ[n.row]; }
   function reqMet(n) {
-    if (!n.req.length) return true;
     const ok = (id) => (nodeById(id)?.rank || 0) > 0;
+    if (!n.req.length) return isTrunk(n) || ok("cercle");
     return n.any ? n.req.some(ok) : n.req.every(ok);
   }
   function cost(n) { return Math.round(n.base * (n.rank + 1)); }
-  function canInvest(n) { return n.rank < n.max && rowOpen(n.row) && reqMet(n) && (state.res[n.res] || 0) >= cost(n); }
-  function boardNodes(b) { return b.nodes.concat(showHybrid ? HYBRIDS.filter((h) => h.board === b.id).map((h) => h.node) : []); }
+  function canInvest(n) { return n.rank < n.max && rowOpen(n) && reqMet(n) && (state.res[n.res] || 0) >= cost(n); }
 
   const GLYPHS = [
     `<path d="M16 4 L28 16 L16 28 L4 16Z" fill="currentColor"/>`,
@@ -601,51 +615,80 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
     `<path d="M5 9h22v5H5zM8 16h16v11H8z" fill="currentColor"/>`,
     `<path d="M16 3l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="currentColor"/>`,
   ];
+  function nodeButton(n) {
+    const btn = document.createElement("button"); btn.type = "button"; btn.id = "node-" + n.id;
+    const off = !rowOpen(n) || (!reqMet(n) && n.rank === 0);
+    btn.className = "node" + (n.key ? " key" : "") + (n.hybrid ? " hybrid" : "") + (off ? " off" : "") + (canInvest(n) ? " can" : "") + (n.rank >= n.max ? " maxed" : "") + (selected === n.id ? " selected" : "");
+    btn.style.color = n.key ? "var(--gold)" : "var(--mat-ink)";
+    btn.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true">${n.key ? GLYPHS[4] : GLYPHS[(n.row + n.col) % 4]}</svg><span class="rank">${n.rank}/${n.max}</span>${n.hybrid ? `<span class="hy-tag">↔ ${BOARDS.find((x) => x.id === n.hybrid).name}</span>` : ""}`;
+    btn.setAttribute("aria-label", `${n.name}, rang ${n.rank} sur ${n.max}`);
+    btn.addEventListener("click", () => { selected = n.id; renderBoards(); showNode(n); });
+    btn.querySelector(".hy-tag")?.addEventListener("click", (e) => { e.stopPropagation(); goBoard(BOARDS.findIndex((x) => x.id === n.hybrid)); });
+    return btn;
+  }
+  function nodeCell(n, row, col) {
+    const cell = document.createElement("div"); cell.className = "cell"; cell.style.gridRow = row; cell.style.gridColumn = n?.span ? `${col} / span ${n.span}` : col;
+    if (n) {
+      cell.append(nodeButton(n));
+      const nm = document.createElement("span"); nm.className = "node-name" + (n.key ? " key" : ""); nm.textContent = n.name; cell.append(nm);
+    }
+    return cell;
+  }
+
   function openTree() {
     $("scrim").hidden = true; $("sheet").hidden = true;
     const t = $("tree"); t.hidden = false;
     t.innerHTML = `
-      <div class="tree-head"><div><h2>Arbre du Troc</h2><div class="sub">${state.built} bâtiments construits · rangées ouvertes : ${ROW_REQ.filter((r, i) => i && rowOpen(i)).length} / 6</div></div><button type="button" class="close" aria-label="Fermer l'arbre">×</button></div>
+      <div class="tree-head"><div><h2>Capacités du Troc</h2><div class="sub">${state.built} bâtiments construits · rangées ouvertes : ${ROW_REQ.filter((r, i) => i && state.built >= r).length} / 6</div></div><button type="button" class="close" aria-label="Fermer les capacités">×</button></div>
+      <div class="trunk"><div class="trunk-label">Tronc commun</div><div class="grid trunk-grid" id="grid-trunk"></div></div>
+      <svg class="fan" id="fan" aria-hidden="true"></svg>
       <div class="tabs" role="tablist">${BOARDS.map((b, i) => `<button type="button" class="tab" role="tab" data-i="${i}">${b.name}</button>`).join("")}</div>
       <div class="carousel" id="carousel">${BOARDS.map((b) => `<div class="board-slide"><div class="board"><div class="board-title"><b>${b.name}</b><span>${b.sub}</span></div><div class="grid" id="grid-${b.id}"></div></div></div>`).join("")}</div>
-      <div><label class="hy-toggle"><input type="checkbox" id="hyToggle" ${showHybrid ? "checked" : ""}> Voir les ponts hybrides (aperçu des ères 3+)</label><div class="dots" id="dots">${BOARDS.map(() => "<i></i>").join("")}</div><div class="node-info" id="nodeInfo"></div></div>`;
+      <div><label class="hy-toggle"><input type="checkbox" id="hyToggle" ${showHybrid ? "checked" : ""}> Voir les ponts hybrides (aperçu des ères 3+)</label><div class="node-info" id="nodeInfo"></div></div>`;
     t.querySelector(".close").addEventListener("click", closeAll);
     t.querySelector("#hyToggle").addEventListener("change", (e) => { showHybrid = e.target.checked; renderBoards(); });
     t.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => goBoard(+b.dataset.i)));
     const car = $("carousel");
-    car.addEventListener("scroll", () => { const i = Math.round(car.scrollLeft / car.clientWidth); if (i !== currentBoard) { currentBoard = i; syncTabs(); } }, { passive: true });
+    car.addEventListener("scroll", () => {
+      drawFan();
+      const i = Math.round(car.scrollLeft / car.clientWidth); if (i !== currentBoard) { currentBoard = i; syncTabs(); }
+    }, { passive: true });
     renderBoards();
-    requestAnimationFrame(() => { car.scrollLeft = currentBoard * car.clientWidth; syncTabs(); drawAllLinks(); });
+    requestAnimationFrame(() => { car.scrollLeft = currentBoard * car.clientWidth; syncTabs(); drawAllLinks(); drawFan(); });
   }
   function goBoard(i) { const car = $("carousel"); car.scrollTo({ left: i * car.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); currentBoard = i; syncTabs(); }
   function syncTabs() {
     document.querySelectorAll(".tab").forEach((b, i) => b.setAttribute("aria-selected", i === currentBoard));
-    document.querySelectorAll("#dots i").forEach((d, i) => d.classList.toggle("on", i === currentBoard));
     document.querySelector(`.tab[data-i="${currentBoard}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }
+
+  // The four lines leaving "Le Cercle": each points at its branch board; they slide as the carousel moves.
+  function drawFan() {
+    const fan = $("fan"), car = $("carousel"), cercle = $("node-cercle"); if (!fan || !car || !cercle) return;
+    const fr = fan.getBoundingClientRect(), cr = cercle.getBoundingClientRect();
+    const W = fr.width, H = fr.height, x0 = cr.left + cr.width / 2 - fr.left, pos = car.scrollLeft / car.clientWidth;
+    fan.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    let out = "";
+    BOARDS.forEach((b, i) => {
+      const x1 = W / 2 + (i - pos) * W * 0.62, near = Math.abs(i - pos) < 0.5;
+      out += `<path d="M${x0} 0 C${x0} ${H * 0.55} ${x1} ${H * 0.45} ${x1} ${H}" fill="none" stroke="${near ? "#f2c14e" : "rgba(232,217,184,.45)"}" stroke-width="${near ? 3 : 2}"/>`;
+      if (x1 > 10 && x1 < W - 10) out += `<text x="${x1}" y="${H - 3}" text-anchor="middle" font-size="9" font-weight="800" fill="${near ? "#f2c14e" : "rgba(232,217,184,.7)"}">${b.name}</text>`;
+    });
+    fan.innerHTML = out;
+  }
+
   function renderBoards() {
+    const tg = $("grid-trunk");
+    if (tg) {
+      tg.replaceChildren();
+      for (const n of TRUNK) tg.append(nodeCell(n, n.row, n.col));
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.classList.add("links"); tg.prepend(svg);
+    }
     for (const b of BOARDS) {
       const g = $("grid-" + b.id); if (!g) continue; g.replaceChildren();
       const nodes = boardNodes(b);
-      for (let row = 1; row <= 6; row++) for (let col = 1; col <= 3; col++) {
-        const cell = document.createElement("div"); cell.className = "cell"; cell.style.gridRow = row; cell.style.gridColumn = col;
-        const n = nodes.find((x) => x.row === row && x.col === col);
-        if (n) {
-          const btn = document.createElement("button"); btn.type = "button"; btn.id = "node-" + n.id;
-          const off = !rowOpen(n.row) || (!reqMet(n) && n.rank === 0);
-          btn.className = "node" + (n.key ? " key" : "") + (n.hybrid ? " hybrid" : "") + (off ? " off" : "") + (canInvest(n) ? " can" : "") + (n.rank >= n.max ? " maxed" : "") + (selected === n.id ? " selected" : "");
-          btn.style.color = n.key ? "var(--gold)" : "var(--mat-ink)";
-          btn.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true">${n.key ? GLYPHS[4] : GLYPHS[(n.row + n.col) % 4]}</svg><span class="rank">${n.rank}/${n.max}</span>${n.hybrid ? `<span class="hy-tag">↔ ${BOARDS.find((x) => x.id === n.hybrid).name}</span>` : ""}`;
-          btn.setAttribute("aria-label", `${n.name}, rang ${n.rank} sur ${n.max}`);
-          btn.addEventListener("click", () => { selected = n.id; renderBoards(); showNode(n); });
-          btn.querySelector(".hy-tag")?.addEventListener("click", (e) => { e.stopPropagation(); goBoard(BOARDS.findIndex((x) => x.id === n.hybrid)); });
-          cell.append(btn);
-          const nm = document.createElement("span"); nm.className = "node-name" + (n.key ? " key" : ""); nm.textContent = n.name; cell.append(nm);
-        }
-        g.append(cell);
-      }
-      // lock band over the first locked row and below
-      const firstLocked = [1, 2, 3, 4, 5, 6].find((r) => !rowOpen(r));
+      for (let row = 1; row <= 6; row++) for (let col = 1; col <= 3; col++) g.append(nodeCell(nodes.find((x) => x.row === row && x.col === col), row, col));
+      const firstLocked = [1, 2, 3, 4, 5, 6].find((r) => state.built < ROW_REQ[r]);
       if (firstLocked) {
         const band = document.createElement("div"); band.className = "lock-band";
         band.style.top = `calc(${(firstLocked - 1) / 6 * 100}% - 2px)`; band.style.bottom = "-2px";
@@ -654,45 +697,51 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
       }
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.classList.add("links"); g.prepend(svg);
     }
-    requestAnimationFrame(drawAllLinks);
+    requestAnimationFrame(() => { drawAllLinks(); drawFan(); });
     const sel = selected && nodeById(selected); showNode(sel || null);
-    updateQuestPin();
+    updateQuestPin(); updateRes();
   }
-  function drawAllLinks() {
-    for (const b of BOARDS) {
-      const g = $("grid-" + b.id); if (!g) continue; const svg = g.querySelector("svg.links"); if (!svg) continue;
-      const gr = g.getBoundingClientRect(); svg.setAttribute("viewBox", `0 0 ${gr.width} ${gr.height}`); svg.innerHTML = `<defs><marker id="ah-${b.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e8d9b8"/></marker></defs>`;
-      for (const n of boardNodes(b)) for (const r of n.req) {
-        const a = $("node-" + r), c = $("node-" + n.id); if (!a || !c || !g.contains(a)) continue;
-        const ra = a.getBoundingClientRect(), rc = c.getBoundingClientRect();
-        const x1 = ra.left + ra.width / 2 - gr.left, y1 = ra.bottom - gr.top, x2 = rc.left + rc.width / 2 - gr.left, y2 = rc.top - gr.top - 3;
-        const active = (nodeById(r)?.rank || 0) > 0;
-        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        p.setAttribute("d", `M${x1} ${y1} C${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2}`);
-        p.setAttribute("fill", "none"); p.setAttribute("stroke", active ? "#f2d79a" : "rgba(232,217,184,.35)"); p.setAttribute("stroke-width", active ? "2.5" : "2");
-        if (n.any) p.setAttribute("stroke-dasharray", "5 4");
-        p.setAttribute("marker-end", `url(#ah-${b.id})`); svg.append(p);
-      }
+  function drawLinks(g, nodes, key) {
+    const svg = g.querySelector("svg.links"); if (!svg) return;
+    const gr = g.getBoundingClientRect(); svg.setAttribute("viewBox", `0 0 ${gr.width} ${gr.height}`);
+    svg.innerHTML = `<defs><marker id="ah-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e8d9b8"/></marker></defs>`;
+    for (const n of nodes) for (const r of n.req) {
+      const a = $("node-" + r), c = $("node-" + n.id); if (!a || !c || !g.contains(a)) continue;
+      const ra = a.getBoundingClientRect(), rc = c.getBoundingClientRect();
+      const sameRow = Math.abs(ra.top - rc.top) < 4;
+      const x1 = sameRow ? ra.right - gr.left : ra.left + ra.width / 2 - gr.left, y1 = sameRow ? ra.top + ra.height / 2 - gr.top : ra.bottom - gr.top;
+      const x2 = sameRow ? rc.left - gr.left - 3 : rc.left + rc.width / 2 - gr.left, y2 = sameRow ? rc.top + rc.height / 2 - gr.top : rc.top - gr.top - 3;
+      const active = (nodeById(r)?.rank || 0) > 0;
+      const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      p.setAttribute("d", sameRow ? `M${x1} ${y1} L${x2} ${y2}` : `M${x1} ${y1} C${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2}`);
+      p.setAttribute("fill", "none"); p.setAttribute("stroke", active ? "#f2d79a" : "rgba(232,217,184,.35)"); p.setAttribute("stroke-width", active ? "2.5" : "2");
+      if (n.any) p.setAttribute("stroke-dasharray", "5 4");
+      p.setAttribute("marker-end", `url(#ah-${key})`); svg.append(p);
     }
   }
-  window.addEventListener("resize", () => { if (!$("tree").hidden) { const car = $("carousel"); car.scrollLeft = currentBoard * car.clientWidth; drawAllLinks(); } });
+  function drawAllLinks() {
+    const tg = $("grid-trunk"); if (tg) drawLinks(tg, TRUNK, "trunk");
+    for (const b of BOARDS) { const g = $("grid-" + b.id); if (g) drawLinks(g, boardNodes(b), b.id); }
+  }
+  window.addEventListener("resize", () => { if (!$("tree").hidden) { const car = $("carousel"); car.scrollLeft = currentBoard * car.clientWidth; drawAllLinks(); drawFan(); } });
 
   function showNode(n) {
     const box = $("nodeInfo"); if (!box) return;
-    if (!n) { box.innerHTML = `<h3>Touche un nœud</h3><p>Les nœuds brillent en vert quand tu peux investir. Les flèches pleines sont des prérequis remplis ; en pointillés, un seul des chemins suffit pour le Tournant historique.</p>`; return; }
+    if (!n) { box.innerHTML = `<h3>Touche une capacité</h3><p>Le tronc reste fixe en haut ; glisse dessous pour changer de branche. Les nœuds brillent en vert quand tu peux investir.</p>`; return; }
     const c = cost(n), have = state.res[n.res] || 0;
     let why = "";
     if (n.rank >= n.max) why = "Rang maximum atteint.";
-    else if (!rowOpen(n.row)) why = `Rangée verrouillée : ${ROW_REQ[n.row]} bâtiments construits.`;
-    else if (!reqMet(n)) why = `Prérequis : ${n.req.map((r) => nodeById(r)?.name).join(n.any ? " ou " : " et ")}.`;
+    else if (!rowOpen(n)) why = `Rangée verrouillée : ${ROW_REQ[n.row]} bâtiments construits.`;
+    else if (!reqMet(n)) why = n.req.length ? `Prérequis : ${n.req.map((r) => nodeById(r)?.name).join(n.any ? " ou " : " et ")}.` : "Prérequis : Le Cercle.";
     const syn = n.syn.length ? `<div class="syn">Synergies : ${n.syn.map(([id, t]) => `<b>${nodeById(id)?.name || id}</b> (${t})`).join(" · ")}</div>` : "";
+    const extra = n.id === "main" ? ` Récolte actuelle : ${Math.round((0.05 + 0.05 * n.rank) * 100)} % de ta production par seconde.` : "";
     box.innerHTML = `<div class="row"><h3>${n.name}</h3><b style="font-variant-numeric:tabular-nums">${n.rank} / ${n.max}</b></div>
-      <p>${n.effect}</p>${syn}
+      <p>${n.effect.replace(/\.$/, "")}.${extra}</p>${syn}
       <div class="row"><span class="cost ${have < c ? "no" : ""}">${n.rank >= n.max ? "" : `Prochain rang : ${c} ${resName(n.res).toLowerCase()} (tu as ${Math.floor(have)})`}</span>
       <button type="button" class="btn" id="investBtn" ${canInvest(n) ? "" : "disabled"}>${n.key ? "Accomplir" : "Investir"}</button></div>
       ${why ? `<p style="font-size:11.5px;color:var(--mat-ink-2)">${why}</p>` : ""}`;
     box.querySelector("#investBtn").addEventListener("click", () => {
-      if (!canInvest(n)) return; state.res[n.res] -= c; n.rank++; bump(n.res); updateRes();
+      if (!canInvest(n)) return; state.res[n.res] -= c; n.rank++; bump(n.res);
       const el = $("node-" + n.id), r = $("phone").getBoundingClientRect(), e = el.getBoundingClientRect();
       sparks($("phone"), e.left + e.width / 2 - r.left, e.top + e.height / 2 - r.top);
       renderBoards();
@@ -705,9 +754,11 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
     if (k === "tree") openTree();
     else if (k === "quests") openQuests();
     else if (k === "market") openSimple("Marché", "Prix du jour, tendances et contrats des marchands. Même principe de fiche que les stations : une ressource par ligne, vendre ou acheter au curseur.");
-    else if (k === "timeline") openSimple("Frise", "La frise des 10 ères, de gauche à droite, avec les Héritages gagnés. Touche une ère passée pour ouvrir ses Archives.");
+    else if (k === "shop") openSimple("Boutique", "Cosmétiques (skins de stations, thèmes de particules, tenues de PNJ) payés en Étincelles, gagnées en jouant ou achetées, et le pack « Sans pub ». Rien qui accélère la progression.");
     else openSimple("Clan", "Les PNJ de l'ère (Bob, Amna, Nick, l'Ancienne), leur affinité, et les réglages du jeu.");
   }));
+
+  $("eraBtn").addEventListener("click", () => openSimple("Frise des ères", "Les 10 ères de gauche à droite, avec les Héritages gagnés. Touche une ère passée pour ouvrir ses Archives. On y accède en touchant le nom de l'ère en haut de l'écran."));
 
   // ---------------- material switch ----------------
   document.querySelectorAll("[data-mat]").forEach((b) => b.addEventListener("click", () => {
