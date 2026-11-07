@@ -181,6 +181,10 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { flex: none; border: 2px solid transparent; background: var(--mat-sunk); border-radius: 999px; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; font-size: 12px; }
 .tab[aria-selected="true"] { border-color: var(--gold); color: var(--gold); }
+.tree-mid { position: relative; min-height: 0; display: grid; }
+.jump { position: absolute; right: 14px; z-index: 8; display: flex; flex-direction: column; gap: 6px; }
+.jump button { display: flex; align-items: center; gap: 4px; border-radius: 999px; padding: 6px 10px 6px 8px; font-size: 11.5px; font-weight: 800; font-family: var(--font-display); }
+.jump svg { width: 14px; height: 14px; }
 .tree-scroll { overflow-y: auto; min-height: 0; overscroll-behavior: contain; scrollbar-width: thin; padding-bottom: 8px; }
 .tree-scroll .tabs { position: sticky; top: 0; z-index: 6; padding-top: 6px; background: linear-gradient(var(--mat-edge), var(--mat-edge)) bottom/100% 0 no-repeat; }
 .tree-scroll .tabs::before { content: ""; position: absolute; inset: 0; background: var(--mat-bg); z-index: -1; box-shadow: 0 4px 8px rgba(0,0,0,.3); }
@@ -310,7 +314,7 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
         <ul>
           <li>Touche <b>Récolter</b> ou le Coin de cueillette : la valeur d'un toucher grandit avec ta production.</li>
           <li>Glisse le monde à gauche et à droite ; touche une station pour sa fiche.</li>
-          <li>Ouvre les <b>Capacités</b>, glisse à gauche ou à droite pour changer de branche, de haut en bas pour parcourir la branche, touche un nœud puis <b>Investir</b>. Monte « Main habile » pour voir la récolte grandir.</li>
+          <li>Ouvre les <b>Capacités</b>, glisse à gauche ou à droite pour changer de branche, de haut en bas pour parcourir la branche (boutons <b>Haut</b> et <b>Tournant</b> pour sauter aux extrémités), touche un nœud puis <b>Investir</b>. Monte « Main habile » pour voir la récolte grandir.</li>
           <li>Touche <b>Ère 1 · Troc</b> en haut pour ouvrir la frise.</li>
           <li>Change de matière en haut pour voir l'interface de chaque grande époque.</li>
         </ul>
@@ -644,10 +648,10 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
     const t = $("tree"); t.hidden = false;
     t.innerHTML = `
       <div class="tree-head"><div><h2>Capacités du Troc</h2><div class="sub">${state.built} bâtiments construits · rangées ouvertes : ${ROW_REQ.filter((r, i) => i && state.built >= r).length} / 6</div></div><button type="button" class="close" aria-label="Fermer les capacités">×</button></div>
-      <div class="tree-scroll" id="treeScroll"><div class="trunk"><div class="trunk-label">Tronc commun</div><div class="grid trunk-grid" id="grid-trunk"></div></div>
+      <div class="tree-mid"><div class="jump" style="bottom:10px"><button type="button" class="panel" id="jumpTop" aria-label="Remonter au tronc commun"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3 L14 11 H2Z" fill="currentColor"/></svg>Haut</button><button type="button" class="panel" id="jumpBottom" aria-label="Descendre au Tournant historique"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13 L14 5 H2Z" fill="currentColor"/></svg>Tournant</button></div><div class="tree-scroll" id="treeScroll"><div class="trunk"><div class="trunk-label">Tronc commun</div><div class="grid trunk-grid" id="grid-trunk"></div></div>
       <svg class="fan" id="fan" aria-hidden="true"></svg>
       <div class="tabs" role="tablist">${BOARDS.map((b, i) => `<button type="button" class="tab" role="tab" data-i="${i}">${b.name}</button>`).join("")}</div>
-      <div class="carousel" id="carousel">${BOARDS.map((b) => `<div class="board-slide"><div class="board"><div class="board-title"><b>${b.name}</b><span>${b.sub}</span></div><div class="grid branch" id="grid-${b.id}"></div></div></div>`).join("")}</div></div>
+      <div class="carousel" id="carousel">${BOARDS.map((b) => `<div class="board-slide"><div class="board"><div class="board-title"><b>${b.name}</b><span>${b.sub}</span></div><div class="grid branch" id="grid-${b.id}"></div></div></div>`).join("")}</div></div></div>
       <div><label class="hy-toggle"><input type="checkbox" id="hyToggle" ${showHybrid ? "checked" : ""}> Voir les ponts hybrides (aperçu des ères 3+)</label><div class="node-info" id="nodeInfo"></div></div>`;
     t.querySelector(".close").addEventListener("click", closeAll);
     t.querySelector("#hyToggle").addEventListener("change", (e) => { showHybrid = e.target.checked; renderBoards(); });
@@ -657,8 +661,16 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
       drawFan();
       const i = Math.round(car.scrollLeft / car.clientWidth); if (i !== currentBoard) { currentBoard = i; syncTabs(); }
     }, { passive: true });
+    const ts = $("treeScroll"), smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    const syncJump = () => {
+      $("jumpTop").hidden = ts.scrollTop < 24;
+      $("jumpBottom").hidden = ts.scrollTop + ts.clientHeight >= ts.scrollHeight - 24;
+    };
+    ts.addEventListener("scroll", syncJump, { passive: true });
+    $("jumpTop").addEventListener("click", () => ts.scrollTo({ top: 0, behavior: smooth() }));
+    $("jumpBottom").addEventListener("click", () => ts.scrollTo({ top: ts.scrollHeight, behavior: smooth() }));
     renderBoards();
-    requestAnimationFrame(() => { car.scrollLeft = currentBoard * car.clientWidth; syncTabs(); drawAllLinks(); drawFan(); });
+    requestAnimationFrame(() => { car.scrollLeft = currentBoard * car.clientWidth; syncTabs(); drawAllLinks(); drawFan(); syncJump(); });
   }
   function goBoard(i) { const car = $("carousel"); car.scrollTo({ left: i * car.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); currentBoard = i; syncTabs(); }
   function syncTabs() {
