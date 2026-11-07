@@ -1,0 +1,780 @@
+<title>Bible d'art Industrimental</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (max 980px) of stacked sections; visual sheets (palettes, gabarits) laid out as wrapping grids. */
+:root {
+  --bg: #f6f2ea;
+  --surface: #fffdf8;
+  --sunk: #ece5d8;
+  --ink: #2a221a;
+  --muted: #6d6152;
+  --line: #d9cfbe;
+  --accent: #c8611f;      /* orange de feu, l'accent de l'ère 1 */
+  --accent-ink: #ffffff;
+  --ok: #3f7d4e;
+  --checker-a: #e7e1d6;
+  --checker-b: #f8f5ef;
+  --font-display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1713; --surface: #24201b; --sunk: #2e2822; --ink: #f1e9dc; --muted: #b3a690;
+    --line: #3d352c; --accent: #f08a45; --accent-ink: #1b1713; --ok: #7cc28d;
+    --checker-a: #2f2a24; --checker-b: #3a332c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1713; --surface: #24201b; --sunk: #2e2822; --ink: #f1e9dc; --muted: #b3a690;
+  --line: #3d352c; --accent: #f08a45; --accent-ink: #1b1713; --ok: #7cc28d;
+  --checker-a: #2f2a24; --checker-b: #3a332c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(30px, 6vw, 48px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(20px, 3.4vw, 26px); font-weight: 700; }
+h3 { font-size: 15px; font-weight: 500; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 18px; color: var(--muted); }
+section { display: grid; gap: 20px; scroll-margin-top: 16px; }
+.section-head { display: grid; gap: 8px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+a { color: var(--accent); text-underline-offset: 2px; }
+.note { color: var(--muted); font-size: 14px; }
+
+header.hero { display: grid; gap: 16px; padding-bottom: 8px; }
+.facets { height: 10px; border-radius: 2px; background:
+  linear-gradient(135deg, #c8913a 0 16%, #9a5b3a 16% 32%, #6e4b2e 32% 48%, #8ea88f 48% 64%, #ede3cf 64% 80%, #e0702a 80%); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+nav.toc a { color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+nav.toc a:hover, nav.toc a:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+
+ol.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; counter-reset: s; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; }
+ol.steps li::before { content: counter(s); font-family: var(--font-display); font-weight: 700; font-size: 14px; width: 36px; height: 36px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); clip-path: polygon(50% 0, 100% 30%, 90% 100%, 10% 100%, 0 30%); }
+ol.steps li > div { min-width: 0; padding-top: 6px; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+.imgbox { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--line);
+  background-color: var(--checker-b);
+  background-image: linear-gradient(45deg, var(--checker-a) 25%, transparent 25%, transparent 75%, var(--checker-a) 75%),
+                    linear-gradient(45deg, var(--checker-a) 25%, transparent 25%, transparent 75%, var(--checker-a) 75%);
+  background-size: 20px 20px; background-position: 0 0, 10px 10px; }
+.imgbox img { display: block; width: 100%; height: auto; }
+.imgbox.plain { background: var(--sunk); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.spread { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+
+button, select, .file-btn { font: inherit; font-size: 14px; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+button { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
+button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+button:hover { filter: brightness(1.05); }
+button.ghost:hover { border-color: var(--accent); color: var(--accent); filter: none; }
+button:focus-visible, select:focus-visible, .file-btn:focus-within, input:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+select { border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+
+pre.prompt { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: 13px; line-height: 1.6;
+  background: var(--sunk); border-radius: 8px; padding: 14px 16px; max-height: 340px; overflow: auto; }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.swatch { display: grid; gap: 4px; font-size: 12px; }
+.swatch span.chip { height: 44px; border-radius: 6px; border: 1px solid var(--line); clip-path: polygon(0 0, 100% 0, 100% 78%, 82% 100%, 0 100%); }
+.swatch .hex { font-family: var(--font-mono); color: var(--muted); }
+
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 620px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.format-card { display: grid; gap: 10px; min-width: 0; }
+.format-card .meta { display: grid; gap: 2px; font-size: 14px; }
+.format-card .meta strong { font-size: 15px; }
+.format-card .imgbox { max-width: 100%; }
+
+.check-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.check-list label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.check-list input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex: none; }
+
+details.prompt-item { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+details.prompt-item[open] { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+details.prompt-item summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+details.prompt-item summary::-webkit-details-marker { display: none; }
+details.prompt-item summary .idx { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--accent); width: 26px; flex: none; }
+details.prompt-item summary .what { display: grid; min-width: 0; }
+details.prompt-item summary .what b { font-weight: 600; }
+details.prompt-item summary .what code { color: var(--muted); overflow-wrap: anywhere; }
+details.prompt-item summary input { width: 18px; height: 18px; accent-color: var(--ok); margin-left: auto; flex: none; }
+details.prompt-item .body { padding: 0 16px 16px; display: grid; gap: 10px; }
+.badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); }
+
+.checker-tool { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 760px) { .checker-tool { grid-template-columns: 280px minmax(0, 1fr); } }
+.stage { position: relative; }
+.stage canvas { display: block; width: 100%; height: auto; }
+.file-btn { display: inline-flex; border: 1px dashed var(--accent); color: var(--accent); background: transparent; }
+.file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.range { display: grid; gap: 4px; font-size: 14px; }
+.range input { width: 100%; accent-color: var(--accent); }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; max-width: calc(100% - 32px); box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+@media (prefers-reduced-motion: no-preference) { .toast { transition: opacity .2s; } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">Industrimental · direction artistique</span>
+  <h1>Bible d'art</h1>
+  <p class="lead">Tout ce qu'il faut pour générer les images du jeu avec ChatGPT dans un style cohérent : images de référence, palettes, formats et prompts prêts à copier.</p>
+  <div class="facets" aria-hidden="true"></div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#methode">Méthode</a>
+    <a href="#references">Images de référence</a>
+    <a href="#palettes">Palettes</a>
+    <a href="#formats">Formats</a>
+    <a href="#bible">Bible de style</a>
+    <a href="#gabarits">Gabarits de prompt</a>
+    <a href="#lot-test">Lot de test</a>
+    <a href="#verifier">Vérifier une image</a>
+    <a href="#ere1">Liste ère 1</a>
+    <a href="#qualite">Contrôle qualité</a>
+  </nav>
+</header>
+
+<section id="methode">
+  <div class="section-head">
+    <span class="eyebrow">Méthode</span>
+    <h2>Six étapes, toujours dans cet ordre</h2>
+  </div>
+  <ol class="steps">
+    <li><div><b>Crée un projet ChatGPT par ère</b> (ex. « Industrimental · Ère 1 ») et colle la <a href="#bible">bible de style</a> dans ses instructions, avec la palette de l'ère choisie.</div></li>
+    <li><div><b>Joins les images de référence</b> au projet : le croquis de style et la planche de palette de l'ère, ci-dessous. Copie-les avec le bouton, puis colle-les dans ChatGPT.</div></li>
+    <li><div><b>Génère l'image 1 du lot de test</b> : elle devient la vraie référence de l'ère. Joins-la ensuite à chaque demande.</div></li>
+    <li><div><b>Un élément par image</b>, avec le gabarit de son type. Les prompts sont en anglais : les modèles d'image le suivent plus fidèlement.</div></li>
+    <li><div><b>Régénère plutôt que de corriger.</b> Si l'angle, la lumière ou les couleurs dérivent, relance avec la référence au lieu d'enchaîner les retouches.</div></li>
+    <li><div><b>Vérifie, nomme, livre.</b> Passe l'image dans l'<a href="#verifier">outil de vérification</a>, nomme-la selon la convention et dépose-la dans <code>assets/src/e01/</code> du dépôt.</div></li>
+  </ol>
+</section>
+
+<section id="references">
+  <div class="section-head">
+    <span class="eyebrow">Images de référence</span>
+    <h2>À joindre dans ChatGPT</h2>
+    <p class="note">Ces images sont dessinées par la page, en PNG à fond transparent. Copie-les avec le bouton, ou fais un appui long (clic droit sur ordinateur) puis « Enregistrer l'image ». Le croquis de style est provisoire : dès que l'image 1 du lot de test est validée, c'est elle la référence.</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <div class="spread"><h3>Croquis de style low-poly</h3><span class="note mono">1024 × 1024</span></div>
+      <div class="imgbox"><img id="ref-style" alt="Rocher et abri préhistorique en low-poly, facettes éclairées depuis le haut à gauche, fond transparent"></div>
+      <p class="note">Facettes plates et visibles, lumière en haut à gauche, aucune ombre au sol, fond transparent.</p>
+      <div class="row"><button type="button" data-copy-img="ref-style">Copier l'image</button></div>
+    </div>
+    <div class="panel">
+      <div class="spread"><h3>Caméra et lumière</h3><span class="note mono">1024 × 1024</span></div>
+      <div class="imgbox plain"><img id="ref-camera" alt="Schéma : caméra de côté inclinée de 20 degrés vers le bas, lumière venant du haut à gauche"></div>
+      <p class="note">Vue de côté légèrement plongeante (environ 20°), quasi orthographique ; soleil en haut à gauche, ombre propre vers le bas à droite.</p>
+      <div class="row"><button type="button" data-copy-img="ref-camera">Copier l'image</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="palettes">
+  <div class="section-head">
+    <span class="eyebrow">Palettes</span>
+    <h2>Une planche de couleurs par ère</h2>
+    <p class="note">Joins la planche de l'ère en cours au projet ChatGPT : elle complète la ligne de palette de la bible de style.</p>
+  </div>
+  <div class="panel">
+    <div class="row">
+      <label for="era-select" class="note">Ère</label>
+      <select id="era-select"></select>
+      <button type="button" data-copy-img="ref-palette">Copier la planche</button>
+    </div>
+    <div class="swatches" id="swatches"></div>
+    <div class="imgbox plain"><img id="ref-palette" alt="Planche de palette de l'ère sélectionnée"></div>
+    <p class="note">Ligne de palette : <code id="palette-line"></code></p>
+  </div>
+</section>
+
+<section id="formats">
+  <div class="section-head">
+    <span class="eyebrow">Formats</span>
+    <h2>Cadrage de chaque type d'image</h2>
+    <p class="note">Les gabarits montrent où placer le sujet. Ils servent à vérifier, pas à générer : ne les joins pas à ChatGPT, il recopierait les traits. Tout se génère en PNG transparent, sauf le ciel.</p>
+  </div>
+  <div class="grid-3" id="format-cards"></div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Type</th><th>Format ChatGPT</th><th>Cadrage</th><th>Taille à l'écran</th><th>Nom de fichier</th></tr></thead>
+      <tbody id="format-table"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="bible">
+  <div class="section-head">
+    <span class="eyebrow">Bible de style</span>
+    <h2>Le texte des instructions du projet</h2>
+    <p class="note">La ligne de palette suit l'ère choisie dans la section Palettes.</p>
+  </div>
+  <div class="panel">
+    <pre class="prompt" id="bible-text"></pre>
+    <div class="row"><button type="button" data-copy-text="bible-text">Copier la bible de style</button></div>
+  </div>
+</section>
+
+<section id="gabarits">
+  <div class="section-head">
+    <span class="eyebrow">Gabarits de prompt</span>
+    <h2>Un modèle par type d'image</h2>
+    <p class="note">Remplace les champs entre accolades. La bible de style est déjà dans le projet : ces gabarits ne décrivent que le sujet.</p>
+  </div>
+  <div class="grid-2" id="templates"></div>
+</section>
+
+<section id="lot-test">
+  <div class="section-head">
+    <span class="eyebrow">Lot de test · ère 1</span>
+    <h2>Les 10 premières images</h2>
+    <p class="note">Génère-les dans l'ordre et coche-les au fur et à mesure (les cases sont mémorisées sur cet appareil seulement). L'image 1 devient la référence jointe à toutes les autres.</p>
+  </div>
+  <div style="display:grid;gap:10px" id="test-batch"></div>
+</section>
+
+<section id="verifier">
+  <div class="section-head">
+    <span class="eyebrow">Vérifier une image</span>
+    <h2>Superpose le gabarit à ton image</h2>
+    <p class="note">Charge une image générée : la page pose le gabarit du format par-dessus pour vérifier le cadrage, le centrage et le pivot. L'image reste sur ton appareil.</p>
+  </div>
+  <div class="checker-tool">
+    <div class="panel">
+      <label class="note" for="check-format">Type d'image</label>
+      <select id="check-format"></select>
+      <label class="file-btn">Choisir une image<input type="file" id="check-file" accept="image/png,image/jpeg,image/webp"></label>
+      <div class="range"><label for="check-opacity">Opacité du gabarit</label><input type="range" id="check-opacity" min="0" max="100" value="70"></div>
+      <p class="note" id="check-info">Exemple affiché : le croquis de style dans le gabarit « Base de station ».</p>
+    </div>
+    <div class="imgbox stage"><canvas id="check-canvas" width="1024" height="1024" aria-label="Aperçu de l'image avec le gabarit superposé"></canvas></div>
+  </div>
+</section>
+
+<section id="ere1">
+  <div class="section-head">
+    <span class="eyebrow">Production · ère 1</span>
+    <h2>Environ 125 images à produire</h2>
+    <p class="note">Après validation du lot de test. Chaque station a 3 bases (<code>n1</code>, <code>n25</code>, <code>n100</code>), ses parties mobiles et un accessoire par variante.</p>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Station</th><th>Slug</th><th>Parties mobiles (pivot)</th><th>Accessoires de variante</th></tr></thead>
+      <tbody id="stations-table"></tbody>
+    </table>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Groupe</th><th>Contenu</th><th>Images</th></tr></thead>
+      <tbody id="groups-table"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="qualite">
+  <div class="section-head">
+    <span class="eyebrow">Contrôle qualité</span>
+    <h2>Neuf questions avant de garder une image</h2>
+    <p class="note">Une seule réponse « non » : on la régénère.</p>
+  </div>
+  <div class="panel">
+    <ul class="check-list" id="qa-list"></ul>
+  </div>
+</section>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+  // ---------- data ----------
+  const ERAS = [
+    { n: 1, name: "Troc", line: "earthy ochres, warm clay browns, sage green, bone white, with fire-orange accents",
+      colors: [["Ocre", "#C8913A"], ["Argile", "#9A5B3A"], ["Terre", "#6E4B2E"], ["Sauge", "#8EA88F"], ["Os", "#EDE3CF"], ["Feu (accent)", "#E0702A"]] },
+    { n: 2, name: "Marchés antiques", line: "terracotta, white marble, olive green, with Aegean blue accents",
+      colors: [["Terre cuite", "#C0643F"], ["Marbre", "#F1EEE6"], ["Olive", "#7D8450"], ["Sable", "#D8C39A"], ["Bleu égéen (accent)", "#2F6FA3"]] },
+    { n: 3, name: "Guildes", line: "dark oak wood, grey stone, undyed wool beige, with banner red accents",
+      colors: [["Chêne", "#5A4130"], ["Pierre", "#8A8A86"], ["Laine", "#DCCFB4"], ["Mousse", "#6C7350"], ["Bannière (accent)", "#A8322D"]] },
+    { n: 4, name: "Comptoirs maritimes", line: "navy blue, honey wood, canvas white, with gold accents",
+      colors: [["Marine", "#22355B"], ["Bois miel", "#B9844A"], ["Toile", "#EEE6D3"], ["Mer", "#3E7C8C"], ["Or (accent)", "#D4A83A"]] },
+    { n: 5, name: "Manufactures", line: "soft pastels, cream, pearl grey, with Prussian blue accents",
+      colors: [["Crème", "#F3E9D6"], ["Rose poudré", "#E3B9B2"], ["Menthe", "#BFD8C7"], ["Perle", "#C9CBCF"], ["Bleu de Prusse (accent)", "#1F4E79"]] },
+    { n: 6, name: "Vapeur", line: "soot black, brick red, copper, with ember yellow accents",
+      colors: [["Suie", "#2B2826"], ["Brique", "#9C4A36"], ["Cuivre", "#B8733F"], ["Fonte", "#5E6266"], ["Braise (accent)", "#F2B33D"]] },
+    { n: 7, name: "Électricité", line: "steel grey, brass, bottle green, with electric white accents",
+      colors: [["Acier", "#7C858C"], ["Laiton", "#B89A4E"], ["Vert bouteille", "#2F5D4A"], ["Ivoire", "#E9E4D6"], ["Arc électrique (accent)", "#9FD6FF"]] },
+    { n: 8, name: "Plastique & atome", line: "saturated pastels, chrome, with turquoise accents",
+      colors: [["Jaune pastel", "#F4D35E"], ["Rose bonbon", "#F2A7B5"], ["Menthe", "#9ED8C5"], ["Chrome", "#C9D1D6"], ["Turquoise (accent)", "#1FB5AC"]] },
+    { n: 9, name: "Numérique", line: "anthracite grey, clean white, with cyan and magenta accents",
+      colors: [["Anthracite", "#2E3238"], ["Blanc", "#F4F5F7"], ["Gris", "#8C939B"], ["Cyan (accent)", "#1EC8E6"], ["Magenta (accent)", "#E0358C"]] },
+    { n: 10, name: "Spatiale & robotique", line: "white, deep space black, lunar grey, with thruster orange accents",
+      colors: [["Blanc", "#F2F3F5"], ["Noir spatial", "#0E1116"], ["Gris lunaire", "#9AA0A6"], ["Panneau solaire", "#2B4C7E"], ["Propulseur (accent)", "#F07A2A"]] },
+  ];
+
+  const FORMATS = [
+    { id: "station", label: "Base de station", w: 1024, h: 1024, frame: "Bâtiment entier, centré, environ 80 % de la largeur, base sur la ligne", screen: "≈ 300 px de large", file: "e01_station_atelier-taille_n1.png" },
+    { id: "part", label: "Partie mobile", w: 1024, h: 1024, frame: "Pièce seule, point de pivot au centre exact", screen: "Selon la station", file: "e01_part_atelier-taille_bras.png" },
+    { id: "prop", label: "Accessoire de variante", w: 1024, h: 1024, frame: "Objet seul, centré, environ 70 % de l'image", screen: "≈ 100 px", file: "e01_prop_atelier-taille_parures.png" },
+    { id: "char", label: "Personnage de scène", w: 1024, h: 1536, frame: "Corps entier, de profil, pieds sur la ligne", screen: "≈ 60 px de haut", file: "e01_char_tailleur.png" },
+    { id: "npc", label: "Portrait de PNJ", w: 1024, h: 1024, frame: "Tête et épaules, trois-quarts vers la droite, yeux sur la ligne", screen: "≈ 200 px", file: "e01_npc_bob_neutre.png" },
+    { id: "icon", label: "Icône de ressource", w: 1024, h: 1024, frame: "Objet seul, environ 80 % de l'image", screen: "48 à 128 px", file: "e01_icon_parures.png" },
+    { id: "bg", label: "Plan de décor", w: 1536, h: 1024, frame: "Bande horizontale ; bords gauche et droit raccordables", screen: "Panorama répété", file: "e01_bg_plan2.png" },
+    { id: "fx", label: "Texture de particule", w: 1024, h: 1024, frame: "Forme blanche et grise seule, centrée", screen: "8 à 64 px", file: "fx_fumee.png" },
+  ];
+
+  const BIBLE = (line) => `Art direction for all images in this project (game: Industrimental, mobile incremental game).
+Style: low-poly, semi-realistic 3D render. Visible flat-shaded facets (about 150 to 400 polygons per object), never smooth or photoreal. Matte materials that suggest wood, stone, leather, clay or metal through color and facet shading only, no photo textures.
+Lighting: soft key light from the upper left, gentle ambient occlusion, light falloff toward the lower right. No harsh specular highlights.
+Camera: side view tilted slightly from above (about 20 degrees down), near-orthographic, no wide-angle distortion. Same camera for every object.
+Composition: one single isolated subject, centered, on a fully transparent background. No ground plane, no cast shadow, no text, no letters, no logo, no frame, no outline, no watermark.
+Mood: warm, friendly, slightly whimsical, readable on a small phone screen. Chunky silhouettes, proportions slightly exaggerated for readability.
+Color palette for this era: ${line}.
+
+Working rules:
+- Always output a PNG with a transparent background. If transparency is impossible, use a flat pure magenta (#FF00FF) background instead.
+- One subject per image. Never add people, ground, shadows or text unless the request asks for them.
+- When a reference image is attached, match its style, camera angle, lighting and palette exactly.
+- Buildings never include their moving parts (wheels, arms, flags...): those are requested separately.`;
+
+  const TEMPLATES = [
+    { t: "Base de station", note: "Paliers : n1 = rudimentaire, construit à la main ; n25 = agrandi, mieux organisé ; n100 = florissant, décoré, fier.",
+      p: `Match the style of the attached reference image exactly.
+Subject: {STATION}, a building from the {ERA} era, at stage {STAGE}: {STAGE_DESCRIPTION}.
+Show the whole structure, centered, about 80% of the canvas width, its base near the bottom of the image.
+Do NOT include these parts, they will be added separately: {MOVING_PARTS}.
+No people. Transparent background, PNG, square 1024x1024.` },
+    { t: "Partie mobile", note: "Le pivot (axe, coude, pied du mât…) doit tomber au centre exact.",
+      p: `Match the style of the attached reference image exactly.
+Subject: only the {PART} of the {STATION}, isolated, in a neutral resting pose.
+Its pivot point ({PIVOT}) must sit at the exact center of the image.
+Transparent background, PNG, square 1024x1024.` },
+    { t: "Accessoire de variante", note: "Un accessoire par variante de station.",
+      p: `Match the style of the attached reference image exactly.
+Subject: {PROP}, a small add-on placed next to the {STATION} to show its specialization.
+Centered, transparent background, PNG, square 1024x1024.` },
+    { t: "Personnage de scène", note: "Silhouette simple, pose neutre : l'animation se fait en code.",
+      p: `Match the style of the attached reference image exactly.
+Subject: a {ROLE} from the {ERA} era, full body, seen from the side, neutral standing pose, arms slightly away from the body.
+Simple low-poly figure with a friendly look. Transparent background, PNG, portrait 1024x1536.` },
+    { t: "Portrait de PNJ", note: "Pour les deux autres expressions, dans la même conversation : « Same character, same framing, same lighting. Change only the expression to {joyful | panicked}. »",
+      p: `Match the style of the attached reference image exactly.
+Subject: head-and-shoulders portrait of {NPC_NAME}, {NPC_DESCRIPTION}. Three-quarter view, facing right, friendly caricature, expressive face.
+Expression: neutral. Transparent background, PNG, square 1024x1024.` },
+    { t: "Icône de ressource", note: "Silhouette lisible même à 48 px.",
+      p: `Match the style of the attached reference image exactly.
+Subject: {RESOURCE} as a game resource icon. One chunky, instantly readable object, slightly exaggerated proportions, filling about 80% of the canvas.
+Transparent background, PNG, square 1024x1024.` },
+    { t: "Plan de décor", note: "plan1 = ciel opaque ; plan2 = lointain ; plan3 = sol des stations ; plan4 = premier plan. Transparent au-dessus du relief, sauf le ciel.",
+      p: `Match the style of the attached reference image exactly.
+Subject: layer {N} of a side-scrolling parallax background for the {ERA} era: {LAYER_DESCRIPTION}.
+Wide horizontal strip; the left and right edges must match so the image can repeat seamlessly.
+{TRANSPARENCY}. PNG, landscape 1536x1024.` },
+    { t: "Texture de particule", note: "Une seule fois pour tout le jeu : fumée, étincelle, feuille, poussière, bulle, éclat, goutte, flamme.",
+      p: `Subject: a single {SHAPE} particle sprite for a game effect, white and light grey only, soft low-poly facets, centered.
+Transparent background, PNG, square 1024x1024.` },
+  ];
+
+  const TEST = [
+    { f: "e01_station_atelier-taille_n25.png", t: "Atelier de taille, palier 25", fmt: "station", ref: true,
+      p: `Subject: a Neolithic flint-knapping workshop at a developed stage: a sturdy open-sided shelter of wooden poles and a hide roof, a large flat stone workbench, neat piles of flint nodules, finished flint blades laid out on a leather mat, a rack of spear points, a woven basket of flint flakes.
+Show the whole structure, centered, about 80% of the canvas width, its base near the bottom of the image.
+Do NOT include any people or tools in motion.
+Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_station_atelier-taille_n1.png", t: "Atelier de taille, palier 1", fmt: "station",
+      p: `Match the style of the attached reference image exactly.
+Subject: the same Neolithic flint-knapping workshop at its very first stage: just a flat stone workbench under a single leaning branch shelter, a small pile of flint nodules, two rough blades on the stone.
+Show the whole structure, centered, about 80% of the canvas width, its base near the bottom of the image.
+No people. Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_part_atelier-taille_bras.png", t: "Bras du tailleur (partie mobile)", fmt: "part",
+      p: `Match the style of the attached reference image exactly.
+Subject: only a muscular forearm and hand holding a round hammerstone, as used to knap flint, isolated, in a neutral resting pose, held horizontally.
+Its pivot point (the elbow end of the forearm) must sit at the exact center of the image, with the arm extending to the right.
+Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_station_feu-camp_n1.png", t: "Feu de camp, palier 1", fmt: "station",
+      p: `Match the style of the attached reference image exactly.
+Subject: a Neolithic campfire at its first stage: a ring of rounded stones around a stack of split logs, two flat stones used as seats, a small pile of firewood beside it.
+Do NOT include flames, smoke or a cooking spit: they will be added separately.
+Centered, about 70% of the canvas width. No people. Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_prop_atelier-taille_parures.png", t: "Présentoir de parures (accessoire)", fmt: "prop",
+      p: `Match the style of the attached reference image exactly.
+Subject: a small wooden display stand with necklaces of shells, polished pebbles and carved bone beads hanging from it, a small add-on placed next to the flint workshop to show it now specializes in trinkets.
+Centered, transparent background, PNG, square 1024x1024.` },
+    { f: "e01_icon_parures.png", t: "Icône : parures", fmt: "icon",
+      p: `Match the style of the attached reference image exactly.
+Subject: a Neolithic necklace of white shells, red ochre-painted beads and one polished green stone pendant, as a game resource icon. One chunky, instantly readable object, slightly exaggerated proportions, filling about 80% of the canvas.
+Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_icon_silex.png", t: "Icône : silex", fmt: "icon",
+      p: `Match the style of the attached reference image exactly.
+Subject: a single flint nodule, partly knapped to show its glossy dark grey interior and chalky white crust, as a game resource icon. Chunky, instantly readable, filling about 80% of the canvas.
+Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_npc_bob_neutre.png", t: "Portrait : Bob, neutre", fmt: "npc",
+      p: `Match the style of the attached reference image exactly.
+Subject: head-and-shoulders portrait of Bob, the clan's anxious chief accountant in the Neolithic era: round friendly face, bushy eyebrows, short beard, hide tunic, a necklace of counting pebbles, a notched tally stick tucked behind his ear. Three-quarter view, facing right, friendly caricature, expressive face.
+Expression: neutral, slightly worried. Transparent background, PNG, square 1024x1024.` },
+    { f: "e01_bg_plan2.png", t: "Décor : plan 2 (lointain)", fmt: "bg",
+      p: `Match the style of the attached reference image exactly.
+Subject: layer 2 of a side-scrolling parallax background for the Neolithic era: distant rolling hills in muted sage green and ochre, a faraway forest line, one gentle mountain silhouette, slightly desaturated by distance.
+Wide horizontal strip occupying the lower half; the left and right edges must match so the image can repeat seamlessly.
+Transparent sky above the hills. PNG, landscape 1536x1024.` },
+    { f: "fx_fumee.png", t: "Particule : bouffée de fumée", fmt: "fx",
+      p: `Subject: a single puff of smoke particle sprite for a game effect, white and light grey only, soft low-poly facets, roughly round, centered.
+Transparent background, PNG, square 1024x1024.` },
+  ];
+
+  const STATIONS = [
+    ["Buisson de cueillette", "cueillette", "Branche qui se balance (base de la branche)", "Panier de baies · Botte d'herbes · Rouleau de fibres"],
+    ["Carrière de silex", "carriere-silex", "Pic en bois de cerf (manche)", "Tas de silex fin · Pierres de meule · Galets polis"],
+    ["Camp de chasse", "camp-chasse", "Peau qui sèche au vent (haut du cadre)", "Trophée de gros gibier · Filet et poissons · Collets"],
+    ["Atelier de taille", "atelier-taille", "Bras du tailleur (coude)", "Pointes de chasse · Outils agricoles · Parures"],
+    ["Feu de camp", "feu-camp", "Broche tournante (axe)", "Fumoir · Four à ocre · Cercle de veillée"],
+    ["Tannerie", "tannerie", "Peau tendue qui oscille (haut du cadre)", "Cuir épais · Fourrures · Outres"],
+    ["Champ primitif", "champ", "Bande d'épis qui ondule (pied des tiges)", "Blé sauvage · Lentilles · Lin"],
+    ["Source salée", "source-salee", "Seau et corde (point d'attache)", "Bassins d'évaporation · Entrée de mine · Coquillages"],
+    ["Fosse à argile", "fosse-argile", "Mains qui pétrissent (poignets)", "Jarres · Figurines · Tuiles"],
+    ["Cercle de troc", "cercle-troc", "Totem à rubans (pied du mât)", "Pierre aux échanges · Étals de foire · Sièges des anciens"],
+  ];
+  const GROUPS = [
+    ["Stations", "10 stations × (3 bases + parties mobiles + 3 accessoires)", "≈ 75"],
+    ["Personnages de scène", "Cueilleuse, tailleur, chasseur, tanneuse, potier, porteur, enfant, ancien, marchand, berger", "10"],
+    ["Portraits de PNJ", "Bob, Amna, Nick, L'Ancienne × neutre / joyeux / paniqué", "12"],
+    ["Icônes de ressources", "Coquillages, baies, silex, bois, viande, peaux brutes, argile, outils de silex, peaux tannées, grain, sel, parures, ocre, poteries crues, fresques", "15"],
+    ["Décor", "Plans 1 à 4 + une tuile de sol", "5"],
+    ["Interface", "Bannière d'ère, cadre de fiche, icône de Brevet, icône de Savoir-faire, portail, Comptoir temporel", "6"],
+    ["Particules (communes)", "Fumée, étincelle, feuille, poussière, bulle, éclat, goutte, flamme", "8"],
+  ];
+  const QA = [
+    "Fond transparent (ou magenta uni), aucun sol ni ombre portée.",
+    "Même angle de caméra que la référence (légèrement en plongée, vue de côté).",
+    "Lumière venant d'en haut à gauche.",
+    "Facettes visibles, pas de rendu lisse ni photoréaliste.",
+    "Couleurs dans la palette de l'ère.",
+    "Aucun texte, logo, cadre ou contour noir.",
+    "Base de station : aucune pièce mobile ni personnage.",
+    "Partie mobile : le point de pivot est bien au centre.",
+    "Lisible en petit : réduite à environ 10 %, la silhouette se reconnaît encore.",
+  ];
+
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else n.setAttribute(k, v);
+    }
+    for (const k of kids) if (k != null) n.append(k);
+    return n;
+  };
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  let toastTimer;
+  const toast = (msg) => {
+    const t = $("toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+  };
+  const canvases = {}; // img id -> canvas used to copy
+
+  function showCanvas(imgId, canvas) {
+    canvases[imgId] = canvas;
+    $(imgId).src = canvas.toDataURL("image/png");
+  }
+
+  async function copyImage(imgId) {
+    const c = canvases[imgId];
+    try {
+      if (!c || !window.ClipboardItem || !navigator.clipboard?.write) throw new Error("unsupported");
+      const blob = new Promise((res) => c.toBlob(res, "image/png"));
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      toast("Image copiée : colle-la dans ChatGPT.");
+    } catch {
+      toast("Copie refusée ici : appui long ou clic droit sur l'image, puis « Enregistrer l'image ».");
+    }
+  }
+  async function copyText(text, what) {
+    try { await navigator.clipboard.writeText(text); toast(`${what} copié.`); }
+    catch { toast("Copie refusée ici : sélectionne le texte et copie-le à la main."); }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-copy-img],[data-copy-text],[data-copy-prompt]");
+    if (!b) return;
+    if (b.dataset.copyImg) copyImage(b.dataset.copyImg);
+    else if (b.dataset.copyText) copyText($(b.dataset.copyText).textContent, b.dataset.label || "Texte");
+    else if (b.dataset.copyPrompt) copyText(b.closest(".panel, .body").querySelector("pre").textContent, "Prompt");
+  });
+
+  const hexToRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const shade = (hex, k) => { const [r, g, b] = hexToRgb(hex); const f = (v) => Math.max(0, Math.min(255, Math.round(v * k))); return `rgb(${f(r)},${f(g)},${f(b)})`; };
+  const LIGHT = (() => { const l = Math.hypot(-0.65, -0.75); return [-0.65 / l, -0.75 / l]; })();
+
+  // Draw a convex-ish blob as a fan of facets, each lit by its outward direction.
+  function facetedBlob(ctx, cx, cy, rx, ry, n, color, seed) {
+    let s = seed; const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + rnd() * 0.25;
+      const k = 0.82 + rnd() * 0.22;
+      pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
+    }
+    const inner = pts.map(([x, y]) => [cx + (x - cx) * 0.45 + (rnd() - 0.5) * rx * 0.12, cy + (y - cy) * 0.45 + (rnd() - 0.5) * ry * 0.12]);
+    const tri = (a, b, c) => {
+      const mx = (a[0] + b[0] + c[0]) / 3 - cx, my = (a[1] + b[1] + c[1]) / 3 - cy, l = Math.hypot(mx, my) || 1;
+      const d = (mx / l) * LIGHT[0] + (my / l) * LIGHT[1];
+      ctx.fillStyle = shade(color, 0.78 + 0.32 * d + rnd() * 0.05);
+      ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.lineTo(...c); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1; ctx.stroke();
+    };
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      tri(pts[i], pts[j], inner[j]); tri(pts[i], inner[j], inner[i]);
+    }
+    const c = [cx - rx * 0.05, cy - ry * 0.05];
+    for (let i = 0; i < n; i++) tri(inner[i], inner[(i + 1) % n], c);
+  }
+  function facet(ctx, pts, color, k) {
+    ctx.fillStyle = shade(color, k); ctx.beginPath(); ctx.moveTo(...pts[0]);
+    for (const p of pts.slice(1)) ctx.lineTo(...p);
+    ctx.closePath(); ctx.fill(); ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1; ctx.stroke();
+  }
+
+  // ---------- reference: low-poly style sketch ----------
+  function drawStyleRef() {
+    const c = document.createElement("canvas"); c.width = c.height = 1024; const x = c.getContext("2d");
+    // Shelter: poles + hide roof (two facets, lit side on the left).
+    const roofL = [[250, 600], [470, 330], [470, 640]], roofR = [[470, 330], [700, 610], [470, 640]];
+    facet(x, [[300, 600], [318, 600], [318, 800], [300, 800]], "#6E4B2E", 1.0);
+    facet(x, [[640, 600], [660, 600], [660, 800], [640, 800]], "#6E4B2E", 0.8);
+    facet(x, roofL, "#B9844A", 1.12); facet(x, roofR, "#9A5B3A", 0.86);
+    facet(x, [[250, 600], [470, 640], [470, 660], [262, 618]], "#6E4B2E", 0.9);
+    facet(x, [[470, 640], [700, 610], [690, 628], [470, 660]], "#6E4B2E", 0.72);
+    // Stone workbench.
+    facet(x, [[360, 720], [600, 715], [612, 745], [350, 752]], "#A7A39A", 1.1);
+    facet(x, [[350, 752], [612, 745], [600, 800], [362, 805]], "#8A8A86", 0.85);
+    // Flint nodules and a boulder.
+    facetedBlob(x, 230, 770, 95, 70, 9, "#8A8A86", 7);
+    facetedBlob(x, 770, 760, 120, 85, 10, "#C8913A", 11);
+    facetedBlob(x, 470, 700, 26, 18, 6, "#4A4A52", 3);
+    facetedBlob(x, 520, 702, 22, 16, 6, "#4A4A52", 5);
+    // Accent: a small ember stone.
+    facetedBlob(x, 860, 650, 34, 28, 6, "#E0702A", 13);
+    return c;
+  }
+
+  // ---------- reference: camera & light diagram ----------
+  function drawCameraRef() {
+    const c = document.createElement("canvas"); c.width = c.height = 1024; const x = c.getContext("2d");
+    x.fillStyle = "#F4EFE6"; x.fillRect(0, 0, 1024, 1024);
+    x.fillStyle = "#2A221A"; x.font = "600 44px Figtree, system-ui, sans-serif";
+    x.fillText("Camera and light", 64, 100);
+    x.font = "28px Figtree, system-ui, sans-serif"; x.fillStyle = "#6D6152";
+    x.fillText("Side view, about 20° from above. Sun from the upper left.", 64, 148);
+    // ground line
+    x.strokeStyle = "#B9A98F"; x.lineWidth = 3; x.setLineDash([12, 10]); x.beginPath(); x.moveTo(80, 800); x.lineTo(944, 800); x.stroke(); x.setLineDash([]);
+    // subject: a lit cube in low-poly
+    facet(x, [[420, 560], [620, 560], [620, 780], [420, 780]], "#C8913A", 1.08);
+    facet(x, [[620, 560], [700, 520], [700, 740], [620, 780]], "#9A5B3A", 0.8);
+    facet(x, [[420, 560], [500, 520], [700, 520], [620, 560]], "#EDE3CF", 1.0);
+    // sun
+    x.fillStyle = "#E0702A"; x.beginPath(); x.arc(180, 300, 46, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = "#E0702A"; x.lineWidth = 6;
+    for (let i = 0; i < 3; i++) { x.beginPath(); x.moveTo(240 + i * 30, 330 + i * 40); x.lineTo(390 + i * 30, 470 + i * 40); x.stroke(); }
+    x.fillStyle = "#2A221A"; x.font = "600 30px Figtree, system-ui, sans-serif"; x.fillText("Light: upper left", 96, 400);
+    // camera
+    x.save(); x.translate(860, 360); x.rotate(Math.PI * (20 / 180));
+    x.fillStyle = "#2A221A"; x.fillRect(-70, -40, 110, 80); x.beginPath(); x.moveTo(-70, -26); x.lineTo(-120, -50); x.lineTo(-120, 50); x.lineTo(-70, 26); x.closePath(); x.fill();
+    x.restore();
+    x.strokeStyle = "#2A221A"; x.lineWidth = 3; x.setLineDash([10, 8]); x.beginPath(); x.moveTo(770, 330); x.lineTo(560, 255 + 0); x.stroke();
+    x.beginPath(); x.moveTo(770, 330); x.lineTo(640, 600); x.stroke(); x.setLineDash([]);
+    x.fillStyle = "#2A221A"; x.font = "600 30px Figtree, system-ui, sans-serif"; x.fillText("Camera: 20° down", 700, 470);
+    x.fillStyle = "#6D6152"; x.font = "26px Figtree, system-ui, sans-serif";
+    x.fillText("Shadow side: lower right · no cast shadow on the ground", 64, 900);
+    return c;
+  }
+
+  // ---------- palettes ----------
+  function drawPalette(era) {
+    const c = document.createElement("canvas"); c.width = 1536; c.height = 640; const x = c.getContext("2d");
+    x.fillStyle = "#FFFFFF"; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = "#2A221A"; x.font = "600 46px Figtree, system-ui, sans-serif";
+    x.fillText(`Era ${era.n} palette`, 64, 96);
+    const n = era.colors.length, gap = 24, w = (c.width - 128 - gap * (n - 1)) / n;
+    era.colors.forEach(([name, hex], i) => {
+      const x0 = 64 + i * (w + gap), y0 = 150, h = 330;
+      // Each chip as three facets (lit, mid, shade) to suggest the low-poly read of the color.
+      facet(x, [[x0, y0], [x0 + w, y0], [x0 + w * 0.55, y0 + h * 0.45]], hex, 1.12);
+      facet(x, [[x0, y0], [x0 + w * 0.55, y0 + h * 0.45], [x0, y0 + h]], hex, 1.0);
+      facet(x, [[x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h], [x0 + w * 0.55, y0 + h * 0.45]], hex, 0.82);
+      x.fillStyle = "#2A221A"; x.font = "600 26px Figtree, system-ui, sans-serif";
+      x.fillText(hex, x0, y0 + h + 48);
+    });
+    x.fillStyle = "#6D6152"; x.font = "24px Figtree, system-ui, sans-serif";
+    x.fillText("Lit / mid / shadow facets of each color", 64, 600);
+    return c;
+  }
+  function renderPalette() {
+    const era = ERAS[+$("era-select").value];
+    const sw = $("swatches"); sw.replaceChildren();
+    for (const [name, hex] of era.colors) {
+      const chip = el("span", { class: "chip" }); chip.style.background = hex;
+      sw.append(el("div", { class: "swatch" }, chip, el("span", { text: name }), el("span", { class: "hex", text: hex })));
+    }
+    showCanvas("ref-palette", drawPalette(era));
+    $("palette-line").textContent = era.line;
+    $("bible-text").textContent = BIBLE(era.line);
+    store.set("bible-era", +$("era-select").value);
+  }
+
+  // ---------- format guides ----------
+  function drawGuide(fmt, opts = {}) {
+    const { w, h, id } = fmt;
+    const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d");
+    const ink = opts.ink || "#C8611F", soft = opts.soft || "rgba(200,97,31,0.12)";
+    x.lineWidth = Math.max(3, w / 300); x.strokeStyle = ink; x.fillStyle = soft;
+    const dash = (on) => x.setLineDash(on ? [w / 60, w / 90] : []);
+    const rect = (x0, y0, x1, y1, fill) => { if (fill) x.fillRect(x0, y0, x1 - x0, y1 - y0); x.strokeRect(x0, y0, x1 - x0, y1 - y0); };
+    const hline = (y) => { x.beginPath(); x.moveTo(0, y); x.lineTo(w, y); x.stroke(); };
+    const vline = (xx) => { x.beginPath(); x.moveTo(xx, 0); x.lineTo(xx, h); x.stroke(); };
+    // canvas border + centre lines
+    dash(false); x.strokeRect(1, 1, w - 2, h - 2);
+    dash(true); x.globalAlpha = 0.45; vline(w / 2); hline(h / 2); x.globalAlpha = 1;
+    dash(false);
+    if (id === "station") { rect(w * 0.1, h * 0.15, w * 0.9, h * 0.9, true); dash(true); hline(h * 0.9); }
+    if (id === "prop") rect(w * 0.15, h * 0.15, w * 0.85, h * 0.85, true);
+    if (id === "icon") rect(w * 0.1, h * 0.1, w * 0.9, h * 0.9, true);
+    if (id === "fx") { x.beginPath(); x.arc(w / 2, h / 2, w * 0.3, 0, Math.PI * 2); x.fill(); x.stroke(); }
+    if (id === "part") {
+      x.beginPath(); x.arc(w / 2, h / 2, w * 0.035, 0, Math.PI * 2); x.stroke();
+      x.lineWidth *= 1.6; x.beginPath(); x.moveTo(w / 2 - w * 0.08, h / 2); x.lineTo(w / 2 + w * 0.08, h / 2); x.moveTo(w / 2, h / 2 - w * 0.08); x.lineTo(w / 2, h / 2 + w * 0.08); x.stroke();
+    }
+    if (id === "char") { rect(w * 0.25, h * 0.06, w * 0.75, h * 0.92, true); dash(true); hline(h * 0.92); }
+    if (id === "npc") { rect(w * 0.15, h * 0.08, w * 0.85, h, true); dash(true); hline(h * 0.42); }
+    if (id === "bg") {
+      x.fillRect(0, h * 0.5, w, h * 0.5); dash(true); hline(h * 0.5);
+      dash(false); x.lineWidth *= 2; vline(w * 0.004); vline(w * 0.996);
+    }
+    return c;
+  }
+  function renderFormats() {
+    const cards = $("format-cards"), table = $("format-table");
+    for (const f of FORMATS) {
+      const imgId = `guide-${f.id}`;
+      const img = el("img", { id: imgId, alt: `Gabarit de cadrage : ${f.label}` });
+      cards.append(el("div", { class: "panel format-card" },
+        el("div", { class: "imgbox plain" }, img),
+        el("div", { class: "meta" }, el("strong", { text: f.label }), el("span", { class: "mono note", text: `${f.w} × ${f.h}` }), el("span", { class: "note", text: f.frame }))));
+      showCanvas(imgId, drawGuide(f, { soft: "rgba(200,97,31,0.10)" }));
+      table.append(el("tr", {}, el("td", { text: f.label }), el("td", { class: "num", text: `${f.w} × ${f.h}` }), el("td", { text: f.frame }), el("td", { text: f.screen }), el("td", {}, el("code", { text: f.file }))));
+    }
+  }
+
+  // ---------- templates & test batch ----------
+  function renderTemplates() {
+    const host = $("templates");
+    for (const t of TEMPLATES) {
+      host.append(el("div", { class: "panel" },
+        el("h3", { text: t.t }), el("pre", { class: "prompt", text: t.p }), el("p", { class: "note", text: t.note }),
+        el("div", { class: "row" }, el("button", { type: "button", class: "ghost", "data-copy-prompt": "1" }, "Copier le gabarit"))));
+    }
+  }
+  function renderTest() {
+    const host = $("test-batch"); const done = store.get("lot-test-done", {});
+    TEST.forEach((t, i) => {
+      const cb = el("input", { type: "checkbox", id: `test-${i}`, "aria-label": `Image ${i + 1} générée` });
+      cb.checked = !!done[t.f];
+      cb.addEventListener("click", (e) => e.stopPropagation());
+      cb.addEventListener("change", () => { done[t.f] = cb.checked; store.set("lot-test-done", done); });
+      const fmt = FORMATS.find((f) => f.id === t.fmt);
+      const d = el("details", { class: "prompt-item" },
+        el("summary", {}, el("span", { class: "idx", text: String(i + 1).padStart(2, "0") }),
+          el("span", { class: "what" }, el("b", { text: t.t }), el("code", { text: t.f })),
+          t.ref ? el("span", { class: "badge", text: "Référence" }) : null, cb),
+        el("div", { class: "body" },
+          el("p", { class: "note", text: `${fmt.label} · ${fmt.w} × ${fmt.h}${t.ref ? " · génère-la sans référence jointe : c'est elle qui deviendra la référence." : " · joins l'image 1 validée."}` }),
+          el("pre", { class: "prompt", text: t.p }),
+          el("div", { class: "row" }, el("button", { type: "button", "data-copy-prompt": "1" }, "Copier le prompt"))));
+      if (i === 0) d.open = true;
+      host.append(d);
+    });
+  }
+  function renderLists() {
+    for (const r of STATIONS) $("stations-table").append(el("tr", {}, el("td", { text: r[0] }), el("td", {}, el("code", { text: r[1] })), el("td", { text: r[2] }), el("td", { text: r[3] })));
+    for (const r of GROUPS) $("groups-table").append(el("tr", {}, el("td", { text: r[0] }), el("td", { text: r[1] }), el("td", { class: "num", text: r[2] })));
+    const qa = store.get("qa-checked", {});
+    QA.forEach((q, i) => {
+      const cb = el("input", { type: "checkbox", id: `qa-${i}` }); cb.checked = !!qa[i];
+      cb.addEventListener("change", () => { qa[i] = cb.checked; store.set("qa-checked", qa); });
+      $("qa-list").append(el("li", {}, el("label", { for: `qa-${i}` }, cb, el("span", { text: q }))));
+    });
+  }
+
+  // ---------- checker ----------
+  let checkImage = null;
+  function renderChecker() {
+    const fmt = FORMATS[+$("check-format").value];
+    const cv = $("check-canvas"); cv.width = fmt.w; cv.height = fmt.h;
+    const x = cv.getContext("2d"); x.clearRect(0, 0, fmt.w, fmt.h);
+    const src = checkImage || canvases["ref-style"];
+    if (src) {
+      const sw = src.naturalWidth || src.width, sh = src.naturalHeight || src.height;
+      const k = Math.min(fmt.w / sw, fmt.h / sh);
+      x.drawImage(src, (fmt.w - sw * k) / 2, (fmt.h - sh * k) / 2, sw * k, sh * k);
+      if (checkImage) {
+        const ratioOk = Math.abs(sw / sh - fmt.w / fmt.h) < 0.02;
+        $("check-info").textContent = `Image : ${sw} × ${sh} px. ${ratioOk ? "Proportions conformes au format." : `Proportions différentes du format attendu (${fmt.w} × ${fmt.h}) : régénère au bon format.`}`;
+      }
+    }
+    x.globalAlpha = +$("check-opacity").value / 100;
+    x.drawImage(drawGuide(fmt, { soft: "rgba(200,97,31,0.08)" }), 0, 0);
+    x.globalAlpha = 1;
+  }
+
+  // ---------- boot ----------
+  ERAS.forEach((e, i) => $("era-select").append(el("option", { value: String(i), text: `Ère ${e.n} · ${e.name}` })));
+  $("era-select").value = String(store.get("bible-era", 0));
+  $("era-select").addEventListener("change", renderPalette);
+  FORMATS.forEach((f, i) => $("check-format").append(el("option", { value: String(i), text: f.label })));
+  $("check-format").addEventListener("change", renderChecker);
+  $("check-opacity").addEventListener("input", renderChecker);
+  $("check-file").addEventListener("change", (e) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    const img = new Image();
+    img.onload = () => { checkImage = img; renderChecker(); };
+    img.onerror = () => toast("Image illisible : choisis un PNG, un JPEG ou un WebP.");
+    img.src = URL.createObjectURL(file);
+  });
+  document.querySelector("[data-copy-text='bible-text']").dataset.label = "Bible de style";
+
+  const boot = () => {
+    showCanvas("ref-style", drawStyleRef());
+    showCanvas("ref-camera", drawCameraRef());
+    renderPalette(); renderFormats(); renderTemplates(); renderTest(); renderLists(); renderChecker();
+  };
+  // Canvas text uses the web fonts: wait for them, but never block the page on it.
+  (document.fonts?.ready ?? Promise.resolve()).then(boot, boot);
+})();
+</script>
