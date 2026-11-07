@@ -290,7 +290,7 @@ func (g *Game) poly(dst *ebiten.Image, pts []float64, c color.RGBA) {
 	for i := 1; i < n-1; i++ {
 		is = append(is, 0, uint16(i), uint16(i+1))
 	}
-	dst.DrawTriangles(vs, is, g.white, &ebiten.DrawTrianglesOptions{AntiAlias: true})
+	dst.DrawTriangles(vs, is, g.white, nil)
 }
 
 func (g *Game) ellipse(dst *ebiten.Image, cx, cy, rx, ry float64, c color.RGBA) {
@@ -410,6 +410,9 @@ func saveScreenshot(screen *ebiten.Image, path string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	return png.Encode(f, img)
+	if err := png.Encode(f, img); err != nil {
+		_ = f.Close()
+		return err
+	}
+	return f.Close()
 }
