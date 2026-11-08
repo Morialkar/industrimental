@@ -33,29 +33,49 @@ func (g *Game) drawSheet(dst *ebiten.Image) {
 	}
 	title, sub := g.sheetTitle()
 	headH := 196.0
-	maxH := ScreenH * 0.8
-	h := math.Min(maxH, headH+g.sheetH+safeBottom+50)
-	top := ScreenH - h + (1-easeOut(g.sheetT))*h
+	// A station opens as a modal in the middle of the screen; the other
+	// screens slide up from the bottom.
+	modal := g.screen == scrStation
+	var frame ui.Rect
+	if modal {
+		maxH := float64(ScreenH) - safeTop - safeBottom - 20
+		h := math.Min(maxH, headH+g.sheetH+40)
+		top := safeTop + 10 + (maxH-h)/2 + (1-easeOut(g.sheetT))*80
+		frame = ui.Rect{X: 16, Y: top, W: ScreenW - 32, H: h}
+	} else {
+		h := math.Min(ScreenH*0.8, headH+g.sheetH+safeBottom+50)
+		top := ScreenH - h + (1-easeOut(g.sheetT))*h
+		frame = ui.Rect{X: 0, Y: top, W: ScreenW, H: h + 60}
+	}
+	top := frame.Y
 	k.Fill(dst, ui.Rect{X: 0, Y: 0, W: ScreenW, H: ScreenH}, scrimCol)
-	if dst == nil && k.Tapped(ui.Rect{X: 0, Y: 0, W: ScreenW, H: top}) {
+	if dst == nil && g.sheetT >= 1 && k.Tapped(ui.Rect{X: 0, Y: 0, W: ScreenW, H: ScreenH}) && !frame.Contains(g.pressPoint()) {
 		g.closeScreen()
 		return
 	}
-	g.panel(dst, ui.Rect{X: 0, Y: top, W: ScreenW, H: h + 60}, mk(24))
+	g.panel(dst, frame, mk(24))
 	x, w := sheetPad, ScreenW-2*sheetPad
+	if modal {
+		x, w = frame.X+sheetPad-12, frame.W-2*(sheetPad-12)
+	}
 	k.Shadowed(dst, k.Fit(title, 36, w-100, true), x, top+40, 36, inkLight, ui.Left, true)
 	if sub != "" {
 		k.Shadowed(dst, k.Fit(sub, smallSize, w-100, false), x, top+88, smallSize, inkSoft, ui.Left, false)
 	}
-	if g.roundButton(dst, ui.Rect{X: ScreenW - sheetPad - 72, Y: top + 34, W: 72, H: 72}, g.tr("ui.close"), "×").Tap {
+	if g.roundButton(dst, ui.Rect{X: x + w - 72, Y: top + 34, W: 72, H: 72}, g.tr("ui.close"), "×").Tap {
 		g.closeScreen()
 		return
 	}
 	g.separator(dst, x-10, top+112, w+20)
-	area := ui.Rect{X: 0, Y: top + headH, W: ScreenW, H: ScreenH - safeBottom - 10 - top - headH}
+	bottom := float64(ScreenH) - safeBottom - 10
+	if modal {
+		bottom = frame.Y + frame.H - 30
+	}
+	area := ui.Rect{X: 0, Y: top + headH, W: ScreenW, H: bottom - top - headH}
 	l := k.BeginList(dst, "sheet", area, g.sheetH)
 	d := l.Target()
 	y0 := l.Y()
+	g.bodyY0 = y0
 	var y float64
 	switch g.screen {
 	case scrStation:
@@ -149,21 +169,33 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 		return y
 	}
 	st := g.sim.Station(def.ID)
+	y = g.stationPicture(d, def, st, x, y, w)
 	if def.DescKey != "" {
 		y = g.quip(d, g.text(def.DescKey), x, y, w)
 	}
 	if !st.Built && !g.sim.StationAvailable(def.ID) {
 		y = g.statRow(d, g.tr("ui.needs"), g.nodeName(def.RequiresNode)+" ("+g.tr("ui.act.tree")+")", x, y, w, inkGold)
-		return y + g.statRow(d, g.tr("ui.cost"), g.amountsText(def.UnlockCost), x, y, w, inkLight) - y
+		return g.statRow(d, g.tr("ui.cost"), g.amountsText(def.UnlockCost), x, y, w, inkLight)
 	}
 	if st.Built {
-		y = g.statRow(d, g.tr("ui.station.spec"), g.text(g.variantOf(def, st.Variant).NameKey), x, y, w, inkLight)
 		col := inkGood
 		if st.Retooling > 0 || st.Limiting != "" {
 			col = inkBad
 		}
 		k.Shadowed(d, g.statusText(st), x, y, smallSize, col, ui.Left, false)
 		y += smallSize * 1.6
+		cost := g.sim.UpgradeCost(def.ID, 1)
+		label := fmt.Sprintf(g.tr("ui.upgrade"), st.Level+1) + " · " + g.amountsText(cost)
+		click := g.woodButton(d, ui.Rect{X: x, Y: y, W: w, H: btnH}, label, g.sim.CanAfford(cost), 24)
+		switch {
+		case click.Tap:
+			g.act(g.sim.Upgrade(def.ID, 1))
+		case click.Long:
+			// A long press buys as many levels as the stock can pay.
+			g.act(g.sim.Upgrade(def.ID, g.sim.MaxUpgrades(def.ID)))
+		}
+		y += btnH + gap + 6
+		y = g.statRow(d, g.tr("ui.station.spec"), g.text(g.variantOf(def, st.Variant).NameKey), x, y, w, inkLight)
 	}
 	pick := g.pick
 	if pick == "" {
@@ -192,9 +224,8 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 			}
 			g.insetBox(d, r, mk(9))
 			cy := r.Y + 18 + k.ShadowedParagraph(d, g.text(v.NameKey), r.X+18, r.Y+18, smallSize, tw-36, inkLight, true)
-			cur := v.ID == st.Variant
 			col := inkSoft
-			if cur {
+			if v.ID == st.Variant {
 				col = inkGood
 			}
 			k.ShadowedParagraph(d, g.recipeText(v.Recipe), r.X+18, cy+4, 18, tw-36, col, false)
@@ -223,17 +254,44 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 		}
 		y += btnH + gap
 	}
-	cost := g.sim.UpgradeCost(def.ID, 1)
-	label := fmt.Sprintf(g.tr("ui.upgrade"), st.Level+1) + " · " + g.amountsText(cost)
-	click := g.woodButton(d, ui.Rect{X: x, Y: y, W: w, H: btnH}, label, g.sim.CanAfford(cost), 24)
-	switch {
-	case click.Tap:
-		g.act(g.sim.Upgrade(def.ID, 1))
-	case click.Long:
-		// A long press buys as many levels as the stock can pay.
-		g.act(g.sim.Upgrade(def.ID, g.sim.MaxUpgrades(def.ID)))
+	return y
+}
+
+// stationPicture shows the building in a little window of sky: large, and
+// faded when it is not built yet.
+func (g *Game) stationPicture(d *ebiten.Image, def *content.Station, st sim.StationStatus, x, y, w float64) float64 {
+	const h = 330.0
+	if d != nil {
+		box := ui.Rect{X: x, Y: y, W: w, H: h}
+		g.insetBox(d, box, mk(12))
+		in := box.Inset(16)
+		sub := d.SubImage(rectI(in)).(*ebiten.Image)
+		g.kit.Fill(sub, in, rgb(0x9f, 0xc4, 0xcf))
+		g.kit.Fill(sub, ui.Rect{X: in.X, Y: in.Y + in.H*0.45, W: in.W, H: in.H * 0.55}, rgb(0xe6, 0xd3, 0xa4))
+		ground := in.Y + in.H - 46
+		g.kit.Fill(sub, ui.Rect{X: in.X, Y: ground, W: in.W, H: in.H}, rgb(0x8a, 0x77, 0x46))
+		cx := in.X + in.W/2 + 40
+		first := def.ID == g.era.Stations[0].ID
+		withPen(0.72, ground, 1, func() {
+			switch {
+			case first:
+				g.drawBush(sub, cx-40)
+			case st.Built:
+				g.drawWorkshop(sub, cx, st.Speed)
+			default:
+				g.drawEmptySlot(sub, cx-40)
+				withPen(0.72, ground, 0.35, func() { g.drawWorkshop(sub, cx, 0) })
+			}
+		})
+		if st.Built {
+			label := fmt.Sprintf("%s %d", g.tr("ui.level"), st.Level)
+			pw := g.kit.Width(label, 22, true) + 50
+			pr := ui.Rect{X: box.X + 26, Y: box.Y + 24, W: pw, H: 46}
+			g.plaque(d, pr)
+			g.kit.Shadowed(d, label, pr.X+pr.W/2, pr.Y+10, 22, inkGold, ui.Center, true)
+		}
 	}
-	return y + btnH + gap
+	return y + h + gap
 }
 
 // --- market ---------------------------------------------------------------
@@ -270,7 +328,7 @@ func (g *Game) marketBody(d *ebiten.Image, x, y, w float64) float64 {
 	y = g.groupTitle(d, g.tr("ui.market.resources"), x, y)
 	for i := range g.era.Resources {
 		r := &g.era.Resources[i]
-		if r.Kind == content.KindCurrency {
+		if r.Kind == content.KindCurrency || !g.sim.ResourceUnlocked(r.ID) {
 			continue
 		}
 		stock := g.sim.Stock(r.ID)
@@ -399,7 +457,18 @@ func (g *Game) questCard(d *ebiten.Image, q *content.Quest, x, y, w float64) flo
 		h += btnH + 10
 	}
 	can := g.sim.CanDeliver(q)
-	if d != nil && needs && can {
+	focus := q.ID == g.focusQuest
+	if focus && d == nil && g.focusPending && g.sheetT >= 0.6 {
+		// Bring the quest picked on the main screen to the top of the journal.
+		g.kit.ScrollTo("sheet", y-g.bodyY0-gap)
+		g.focusPending = false
+	}
+	switch {
+	case d == nil:
+	case focus:
+		a := 0.55 + 0.45*math.Sin(g.t*5)
+		k.Fill(d, ui.Rect{X: x - 7, Y: y - 7, W: w + 14, H: h + 14}, rgba(0xff, 0xd3, 0x6b, uint8(90+110*a)))
+	case needs && can:
 		k.Fill(d, ui.Rect{X: x - 4, Y: y - 4, W: w + 8, H: h + 8}, rgba(0xf2, 0xc1, 0x4e, 0x70))
 	}
 	in := g.card(d, x, y, w, h)

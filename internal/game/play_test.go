@@ -294,3 +294,37 @@ func TestEveryScreenLaysOut(t *testing.T) {
 		t.Error("a tap on the world above the sheet should close it")
 	}
 }
+
+func TestThePinnedQuestOpensAndHighlights(t *testing.T) {
+	f := newFinger(t, Options{Demo: true})
+	g := f.g
+	pinned := g.pinnedQuest()
+	if pinned == nil {
+		t.Fatal("the demo should pin a quest")
+	}
+	f.tap("quest-pin")
+	f.settle()
+	if g.screen != scrQuests || g.focusQuest != pinned.ID {
+		t.Fatalf("screen %q, focus %q, want the journal on %q", g.screen, g.focusQuest, pinned.ID)
+	}
+	if g.focusPending {
+		t.Error("the journal should have scrolled to the quest")
+	}
+	f.tap("Fermer")
+	if g.focusQuest != "" {
+		t.Error("closing the journal ends the highlight")
+	}
+}
+
+func TestTappingAStationOpensItsModal(t *testing.T) {
+	f := newFinger(t, Options{Demo: true})
+	g := f.g
+	f.tapAt(slotX(1)-g.scrollX, groundY-80)
+	f.settle()
+	if g.screen != scrStation || g.sheet != g.era.Stations[1].ID {
+		t.Fatalf("screen %q sheet %q", g.screen, g.sheet)
+	}
+	if _, ok := g.kit.RecordedPrefix("Améliorer au niveau"); !ok {
+		t.Errorf("the modal should offer the upgrade: %v", g.kit.RecordedLabels())
+	}
+}

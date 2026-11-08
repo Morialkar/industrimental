@@ -95,6 +95,10 @@ type Game struct {
 	resScroll, resBase float64 // resource bar, scrolled sideways
 	resDrag            bool
 
+	focusQuest   string  // quest highlighted in the journal (from the pinned quest)
+	focusPending bool    // the journal still has to scroll to it
+	bodyY0       float64 // top of the sheet's body content, this pass
+
 	selNode           string  // node shown in the tree's info panel
 	treeBoard         int     // branch board the carousel rests on
 	treePos, treeBase float64 // carousel position, in boards
@@ -323,7 +327,23 @@ func (g *Game) drawStations(dst *ebiten.Image) {
 // at converts a point of a station drawing (made at scale 1, origin at the
 // foot of the station) to the screen.
 func at(x, dx, dy float64) (float64, float64) {
-	return x + dx*stationScale, groundY + dy*stationScale
+	return x + dx*penScale, penGround + dy*penScale
+}
+
+// The pen draws the stations: in the panorama by default, larger in a
+// station's sheet. penAlpha fades a drawing (a station not built yet).
+var (
+	penScale  = stationScale
+	penGround = groundY
+	penAlpha  = 1.0
+)
+
+// withPen draws with another scale, ground line and opacity.
+func withPen(scale, ground, alpha float64, draw func()) {
+	s, gr, a := penScale, penGround, penAlpha
+	penScale, penGround, penAlpha = scale, ground, alpha
+	defer func() { penScale, penGround, penAlpha = s, gr, a }()
+	draw()
 }
 
 func (g *Game) sQuad(dst *ebiten.Image, x float64, pts [8]float64, c color.RGBA) {
@@ -346,13 +366,13 @@ func (g *Game) sTri(dst *ebiten.Image, x float64, pts [6]float64, c color.RGBA) 
 
 func (g *Game) sEllipse(dst *ebiten.Image, x, dx, dy, rx, ry float64, c color.RGBA) {
 	px, py := at(x, dx, dy)
-	g.ellipse(dst, px, py, rx*stationScale, ry*stationScale, c)
+	g.ellipse(dst, px, py, rx*penScale, ry*penScale, c)
 }
 
 func (g *Game) sLine(dst *ebiten.Image, x, x0, y0, x1, y1, w float64, c color.RGBA) {
 	ax, ay := at(x, x0, y0)
 	bx, by := at(x, x1, y1)
-	g.thickLine(dst, ax, ay, bx, by, w*stationScale, c)
+	g.thickLine(dst, ax, ay, bx, by, w*penScale, c)
 }
 
 // drawBush is the first station: the bush the player taps at the very start.
@@ -393,7 +413,7 @@ func (g *Game) drawWorkshop(dst *ebiten.Image, x, speed float64) {
 
 	// Wheel: rotating part with its own pivot.
 	wx, wy := at(x, -245, -120)
-	g.wheel(dst, wx, wy, 85*stationScale, g.t*1.2*speed)
+	g.wheel(dst, wx, wy, 85*penScale, g.t*1.2*speed)
 
 	// Hammer arm: oscillates around its pivot.
 	a := -0.6 + 0.5*math.Sin(g.t*4*speed)
@@ -415,9 +435,9 @@ func (g *Game) wheel(dst *ebiten.Image, cx, cy, r, angle float64) {
 	}
 	for i := 0; i < 4; i++ {
 		a := angle + float64(i)*math.Pi/2
-		g.thickLine(dst, cx, cy, cx+r*0.9*math.Cos(a), cy+r*0.9*math.Sin(a), 8*stationScale, rgb(0x5c, 0x40, 0x28))
+		g.thickLine(dst, cx, cy, cx+r*0.9*math.Cos(a), cy+r*0.9*math.Sin(a), 8*penScale, rgb(0x5c, 0x40, 0x28))
 	}
-	g.ellipse(dst, cx, cy, 14*stationScale, 14*stationScale, rgb(0x3b, 0x2a, 0x1a))
+	g.ellipse(dst, cx, cy, 14*penScale, 14*penScale, rgb(0x3b, 0x2a, 0x1a))
 }
 
 func (g *Game) drawParticles(dst *ebiten.Image) {
@@ -465,7 +485,7 @@ func (g *Game) quad(dst *ebiten.Image, x0, y0, x1, y1, x2, y2, x3, y3 float64, c
 func (g *Game) poly(dst *ebiten.Image, pts []float64, c color.RGBA) {
 	n := len(pts) / 2
 	vs := make([]ebiten.Vertex, n)
-	r, gg, b, a := float32(c.R)/255, float32(c.G)/255, float32(c.B)/255, float32(c.A)/255
+	r, gg, b, a := float32(c.R)/255, float32(c.G)/255, float32(c.B)/255, float32(c.A)/255*float32(penAlpha)
 	for i := 0; i < n; i++ {
 		vs[i] = ebiten.Vertex{DstX: float32(pts[2*i]), DstY: float32(pts[2*i+1]), SrcX: 1, SrcY: 1,
 			ColorR: r * a, ColorG: gg * a, ColorB: b * a, ColorA: a}

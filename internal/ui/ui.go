@@ -63,6 +63,7 @@ type Kit struct {
 	horizontal     bool // the current drag runs mostly sideways
 	longFired      bool
 	pressOwner     string // the list that captured the current press
+	touch          bool   // the last press came from a finger
 
 	scroll map[string]*scrollState
 	clip   *Rect // current list area, during a pass
@@ -92,13 +93,21 @@ func New() (*Kit, error) {
 // Update samples the input. Call it once per tick, before the layout pass.
 func (k *Kit) Update() {
 	x, y := ebiten.CursorPosition()
+	fx, fy := float64(x), float64(y)
 	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if ids := ebiten.AppendTouchIDs(nil); len(ids) > 0 {
 		x, y = ebiten.TouchPosition(ids[0])
+		fx, fy = float64(x), float64(y)
 		down = true
+		k.touch = true
+	} else if k.touch && !down {
+		// The finger just left the glass: a phone has no cursor, so the lift
+		// happens where the finger last was, not at the mouse's (0, 0).
+		fx, fy = k.x, k.y
+		k.touch = false
 	}
 	_, k.wheel = ebiten.Wheel()
-	k.Feed(float64(x), float64(y), down)
+	k.Feed(fx, fy, down)
 }
 
 // Feed gives the kit the pointer's state for this tick. Update does it from

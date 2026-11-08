@@ -50,6 +50,9 @@ type EraState struct {
 	// NodeRanks is the rank of each node of Nodes. Saves from before ranks
 	// existed lack it: their nodes count as fully ranked.
 	NodeRanks map[string]int `json:"nodeRanks,omitempty"`
+	// Unlocked lists the resources the player has come across. A station's
+	// by-products are only made once their resource is unlocked.
+	Unlocked []string `json:"unlocked,omitempty"`
 
 	Clock       float64 `json:"clock"`       // seconds lived, offline included
 	MarketClock float64 `json:"marketClock"` // seconds of open market: frozen offline

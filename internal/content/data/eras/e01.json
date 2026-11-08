@@ -1350,9 +1350,9 @@
       "col": 2,
       "art": "revolution",
       "cost": {
-        "sel": 1500000,
-        "grain": 3000000,
-        "outils-silex": 1500000
+        "sel": 1350000,
+        "grain": 2700000,
+        "outils-silex": 1350000
       },
       "requiresAll": [
         "cadence-max"

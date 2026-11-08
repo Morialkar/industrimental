@@ -74,6 +74,7 @@ type Sim struct {
 	stations []*station
 	byID     map[string]*station
 	nodes    map[string]*content.Node
+	unlocked []bool // by resource index, see refreshUnlocks
 	quests   map[string]*content.Quest
 	npcs     map[string]*content.NPC
 	bonus    bonuses
@@ -99,12 +100,18 @@ func Restore(era *content.Era, st *save.EraState) *Sim {
 	}
 	ensureMaps(st)
 	s.stock = make([]float64, len(era.Resources))
+	s.unlocked = make([]bool, len(era.Resources))
 	s.produced = make([]float64, len(era.Resources))
 	s.net = make([]float64, len(era.Resources))
 	for i, r := range era.Resources {
 		s.resIdx[r.ID] = i
 		s.stock[i] = st.Resources[r.ID]
 		s.produced[i] = st.Produced[r.ID]
+	}
+	for _, id := range st.Unlocked {
+		if i, ok := s.resIdx[id]; ok {
+			s.unlocked[i] = true
+		}
 	}
 	for i := range era.Stations {
 		def := &era.Stations[i]
@@ -379,6 +386,7 @@ func (b *bonuses) apply(fx content.Effect, f float64) {
 // recompute rebuilds bonuses and station rates after any change of levels,
 // variants or nodes.
 func (s *Sim) recompute() {
+	s.refreshUnlocks()
 	b := bonuses{
 		stationRate:  map[string]float64{},
 		resourceRate: map[string]float64{},
@@ -426,11 +434,97 @@ func (s *Sim) recompute() {
 			st.inputs = append(st.inputs, flow{s.resIdx[id], r.Inputs[id] * (1 - saving)})
 		}
 		for _, id := range sortedKeys(r.Outputs) {
+			if !s.unlocked[s.resIdx[id]] {
+				continue // a by-product nobody needs yet
+			}
 			st.outputs = append(st.outputs, flow{s.resIdx[id], r.Outputs[id] * (1 + b.resourceRate[id])})
 		}
 	}
 	s.bonus = b
 	s.solve(clock)
+}
+
+// ResourceUnlocked tells whether the player has come across a resource.
+func (s *Sim) ResourceUnlocked(id string) bool {
+	i, ok := s.resIdx[id]
+	return ok && s.unlocked[i]
+}
+
+// refreshUnlocks unlocks the resources the player now needs or makes on
+// purpose: the currency, the costs of what can be built or bought, the
+// inputs and main outputs of the running stations, what active quests, NPC
+// deals and contracts ask for. It reports whether anything new unlocked.
+func (s *Sim) refreshUnlocks() bool {
+	changed := false
+	mark := func(id string) {
+		if i, ok := s.resIdx[id]; ok && !s.unlocked[i] {
+			s.unlocked[i] = true
+			s.state.Unlocked = append(s.state.Unlocked, id)
+			changed = true
+		}
+	}
+	markAll := func(a content.Amounts) {
+		for id := range a {
+			mark(id)
+		}
+	}
+	mark(s.Era.Currency)
+	for _, st := range s.stations {
+		if st.state == nil {
+			if s.StationAvailable(st.def.ID) {
+				markAll(st.def.UnlockCost)
+			}
+			continue
+		}
+		markAll(st.def.LevelCost)
+		for i := range st.def.Variants {
+			if v := &st.def.Variants[i]; v.ID == st.state.Variant {
+				markAll(v.Recipe.Inputs)
+				top := 0.0
+				for _, q := range v.Recipe.Outputs {
+					top = math.Max(top, q)
+				}
+				for id, q := range v.Recipe.Outputs {
+					if q >= top {
+						mark(id)
+					}
+				}
+			}
+		}
+	}
+	for i := range s.Era.Tree {
+		if n := &s.Era.Tree[i]; s.NodeReqsMet(n.ID) && !s.NodeMaxed(n.ID) {
+			markAll(n.Cost)
+		}
+	}
+	var goal func(g content.Goal)
+	goal = func(g content.Goal) {
+		markAll(g.Have)
+		markAll(g.Deliver)
+		markAll(g.Produced)
+		for _, alt := range g.Any {
+			goal(alt)
+		}
+	}
+	for _, q := range s.ActiveQuests() {
+		goal(s.CurrentStep(q).Goal)
+	}
+	for i := range s.Era.NPCs {
+		if n := &s.Era.NPCs[i]; s.NPCPresent(n.ID) {
+			for j := range n.Deals {
+				markAll(n.Deals[j].Give)
+				markAll(n.Deals[j].Get)
+			}
+		}
+	}
+	for _, c := range s.state.Contracts {
+		for _, t := range s.Era.Contracts {
+			if t.ID == c.Template {
+				mark(t.Resource)
+			}
+		}
+	}
+	return changed
 }
 
 // refreshEffectsAfterRetool switches a variant's effects on when its retooling

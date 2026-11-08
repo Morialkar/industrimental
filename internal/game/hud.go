@@ -84,10 +84,17 @@ func (g *Game) open(screen string) {
 	g.kit.Reset("sheet")
 }
 
+// pressPoint is where the current or last press started.
+func (g *Game) pressPoint() (float64, float64) {
+	_, _, x, y := g.kit.Released()
+	return x, y
+}
+
 func (g *Game) closeScreen() {
 	g.screen = scrWorld
 	g.sheet = ""
 	g.pick = ""
+	g.focusQuest, g.focusPending = "", false
 }
 
 // --- world ----------------------------------------------------------------
@@ -99,7 +106,7 @@ func (g *Game) worldTap() {
 	if !k.Tapped(worldRect) || k.Tapped(harvestRect) {
 		return
 	}
-	x, y, _ := k.Pointer()
+	_, _, x, y := k.Released()
 	for i := range g.era.Stations {
 		def := &g.era.Stations[i]
 		sx := slotX(i) - g.scrollX
@@ -194,7 +201,7 @@ func (g *Game) shownResources() []*content.Resource {
 	var out []*content.Resource
 	for i := range g.era.Resources {
 		r := &g.era.Resources[i]
-		if r.ID == g.era.Currency || g.sim.Stock(r.ID) >= 0.05 || g.sim.Produced(r.ID) > 0 || math.Abs(g.sim.Rate(r.ID)) > 1e-6 {
+		if r.ID == g.era.Currency || g.sim.ResourceUnlocked(r.ID) {
 			out = append(out, r)
 		}
 	}
@@ -273,6 +280,7 @@ func (g *Game) drawQuestPin(dst *ebiten.Image) {
 	c, held := k.Control(dst, r, "quest-pin", true)
 	if c.Tap {
 		g.open(scrQuests)
+		g.focusQuest, g.focusPending = q.ID, true
 	}
 	if dst == nil {
 		return

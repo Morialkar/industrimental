@@ -187,6 +187,10 @@ func (s *Sim) updateQuests() {
 			}
 		}
 	}
+	// New quests, NPCs or contracts may ask for a by-product: start making it.
+	if s.refreshUnlocks() {
+		s.recompute()
+	}
 }
 
 func (s *Sim) failContract(q *content.Quest) {

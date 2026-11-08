@@ -439,3 +439,28 @@ func TestHarvestGrowsWithProduction(t *testing.T) {
 		t.Errorf("tap = %g for %g units/s, want %g", v, rate, want)
 	}
 }
+
+func TestByProductsWaitUntilUnlocked(t *testing.T) {
+	e := era1(t)
+	s := New(e, 1)
+	s.Grant("baies", 10)
+	if err := s.Build("cueillette", "juteuses"); err != nil {
+		t.Fatal(err)
+	}
+	s.Step(10)
+	if s.ResourceUnlocked("bois") || s.Stock("bois") != 0 {
+		t.Fatalf("the bush should not make wood nobody needs yet: %g", s.Stock("bois"))
+	}
+	if s.Stock("baies") <= 0 {
+		t.Fatal("berries are its main output")
+	}
+	// The flint workshop's levels cost wood: building it unlocks wood.
+	s.Grant("silex", 200)
+	if err := s.Build("atelier-taille", "pointes"); err != nil {
+		t.Fatal(err)
+	}
+	s.Step(10)
+	if !s.ResourceUnlocked("bois") || s.Stock("bois") <= 0 {
+		t.Errorf("wood should flow once needed: unlocked %v, stock %g", s.ResourceUnlocked("bois"), s.Stock("bois"))
+	}
+}
