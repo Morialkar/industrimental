@@ -55,7 +55,7 @@ type Options struct {
 }
 
 // DemoScreens names the screens Options.Tab opens, by index.
-var DemoScreens = []string{scrWorld, scrMarket, scrTree, scrQuests, scrEra, scrClan, scrShop, scrStation}
+var DemoScreens = []string{scrWorld, scrMarket, scrTree, scrQuests, scrEra, scrClan, scrShop, scrStation, scrResource}
 
 // Game implements ebiten.Game.
 type Game struct {
@@ -95,9 +95,10 @@ type Game struct {
 	resScroll, resBase float64 // resource bar, scrolled sideways
 	resDrag            bool
 
-	focusQuest   string  // quest highlighted in the journal (from the pinned quest)
-	focusPending bool    // the journal still has to scroll to it
-	bodyY0       float64 // top of the sheet's body content, this pass
+	focusQuest   string       // quest highlighted in the journal (from the pinned quest)
+	focusPending bool         // the journal still has to scroll to it
+	back         []backScreen // screens under the open one
+	bodyY0       float64      // top of the sheet's body content, this pass
 
 	selNode           string  // node shown in the tree's info panel
 	treeBoard         int     // branch board the carousel rests on
@@ -173,6 +174,9 @@ func New(opts Options) (*Game, error) {
 		if opts.Tab > 0 && opts.Tab < len(DemoScreens) {
 			g.screen = DemoScreens[opts.Tab]
 			g.sheet = era.Stations[1].ID
+			if g.screen == scrResource {
+				g.sheet = "outils-silex"
+			}
 			g.sheetT = 1
 		}
 	}

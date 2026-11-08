@@ -144,6 +144,20 @@ func (s *Sim) SellTo(npc, id string, qty float64) (float64, error) {
 	return earned, err
 }
 
+// SellToValue is what selling qty units to an NPC would bring now, in
+// currency, or 0 if they do not buy it.
+func (s *Sim) SellToValue(npc, id string, qty float64) float64 {
+	n, ok := s.npcs[npc]
+	if !ok {
+		return 0
+	}
+	mult, ok := n.Buys[id]
+	if !ok {
+		return 0
+	}
+	return s.SellValue(id, qty) * mult * (1 + s.AffinityBonus(npc))
+}
+
 func (s *Sim) sellWith(id string, qty, mult float64) (float64, error) {
 	r, err := s.sellable(id)
 	if err != nil {

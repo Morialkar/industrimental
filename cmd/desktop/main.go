@@ -17,7 +17,7 @@ func main() {
 	frames := flag.Int("frames", 30, "frame at which -screenshot is taken")
 	warmup := flag.Float64("warmup", 0, "seconds of simulation to run before the first frame")
 	demo := flag.Bool("demo", false, "start from an advanced game, without saving")
-	tab := flag.Int("tab", 0, "with -demo, screen to open: 0 world, 1 market, 2 skills, 3 quests, 4 timeline, 5 clan, 6 shop, 7 station")
+	tab := flag.Int("tab", 0, "with -demo, screen to open: 0 world, 1 market, 2 skills, 3 quests, 4 timeline, 5 clan, 6 shop, 7 station, 8 resource")
 	flag.Parse()
 
 	opts := game.Options{ScreenshotPath: *shot, ScreenshotFrame: *frames, Warmup: *warmup, Demo: *demo, Tab: *tab}

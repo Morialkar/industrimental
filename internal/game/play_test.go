@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/morialkar/industrimental/internal/content"
 	"github.com/morialkar/industrimental/internal/ui"
 )
 
@@ -110,7 +111,7 @@ func TestTheOpeningThroughTheInterface(t *testing.T) {
 	if g.screen != scrMarket {
 		t.Fatalf("screen = %q", g.screen)
 	}
-	f.tap("5 baies → 1 silex")
+	f.tap("deal bob silex")
 	if g.sim.Stock("silex") != 1 {
 		t.Fatalf("silex = %g", g.sim.Stock("silex"))
 	}
@@ -150,7 +151,7 @@ func TestLongPressBuysAllLevels(t *testing.T) {
 	g := f.g
 	f.openBush()
 	before := g.sim.Station("cueillette").Level
-	label, ok := g.kit.RecordedPrefix("Améliorer au niveau")
+	label, ok := g.kit.RecordedPrefix("upgrade")
 	if !ok {
 		t.Fatalf("no upgrade button: %v", g.kit.RecordedLabels())
 	}
@@ -158,7 +159,7 @@ func TestLongPressBuysAllLevels(t *testing.T) {
 	if got := g.sim.Station("cueillette").Level; got != before+1 {
 		t.Fatalf("a tap buys one level: %d -> %d", before, got)
 	}
-	label, _ = g.kit.RecordedPrefix("Améliorer au niveau")
+	label, _ = g.kit.RecordedPrefix("upgrade")
 	f.hold(label)
 	if got := g.sim.Station("cueillette").Level; got <= before+2 {
 		t.Fatalf("a long press should buy many levels: %d -> %d", before+1, got)
@@ -324,7 +325,48 @@ func TestTappingAStationOpensItsModal(t *testing.T) {
 	if g.screen != scrStation || g.sheet != g.era.Stations[1].ID {
 		t.Fatalf("screen %q sheet %q", g.screen, g.sheet)
 	}
-	if _, ok := g.kit.RecordedPrefix("Améliorer au niveau"); !ok {
+	if _, ok := g.kit.RecordedPrefix("upgrade"); !ok {
 		t.Errorf("the modal should offer the upgrade: %v", g.kit.RecordedLabels())
+	}
+}
+
+func TestAResourceSheetSaysWhereItComesFrom(t *testing.T) {
+	f := newFinger(t, Options{Demo: true})
+	g := f.g
+	f.tap("res baies")
+	f.settle()
+	if g.screen != scrResource || g.sheet != "baies" {
+		t.Fatalf("screen %q sheet %q, want the sheet of baies", g.screen, g.sheet)
+	}
+	src := g.producers("baies")
+	if len(src) == 0 {
+		t.Fatal("something makes baies")
+	}
+	see := "see " + src[0].st.ID + " " + src[0].v.ID
+	f.tap(see)
+	f.settle()
+	if g.screen != scrStation || g.sheet != src[0].st.ID {
+		t.Fatalf("Voir should open the station: screen %q sheet %q", g.screen, g.sheet)
+	}
+	f.tap("Fermer")
+	f.settle()
+	if g.screen != scrResource || g.sheet != "baies" {
+		t.Fatalf("closing the station comes back to the resource: screen %q sheet %q", g.screen, g.sheet)
+	}
+	f.tap("Fermer")
+	if g.screen != scrWorld {
+		t.Fatalf("then back to the world, got %q", g.screen)
+	}
+}
+
+func TestEveryResourceHasASource(t *testing.T) {
+	g := newFinger(t, Options{Demo: true}).g
+	for _, r := range g.era.Resources {
+		if r.Kind == content.KindCurrency {
+			continue
+		}
+		if line, _ := g.sourceLine(r.ID); line == g.tr("ui.res.none") {
+			t.Errorf("%s: the market would say nothing makes it", r.ID)
+		}
 	}
 }

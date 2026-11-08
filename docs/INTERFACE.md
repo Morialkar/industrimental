@@ -31,4 +31,10 @@ L'interface du jeu suit maintenant la [maquette](assets/maquette-interface.html)
 
 Pour garder l'équilibrage, les rangs se partagent le coût et l'effet de l'ancien nœud : acheter tous les rangs revient au même qu'avant (voir `content.Node`). La récolte au toucher vaut 5 % de la production par seconde, +5 points par rang de Main habile.
 
-Reste provisoire : les polices (Go au lieu d'Alegreya), les icônes de ressources (pentagones de couleur), le décor du monde et les stations (formes géométriques), et les nœuds sans illustration (glyphes).
+Lisibilité des ressources :
+
+- Chaque coût s'affiche en icônes avec la quantité, en rouge quand le stock ne suffit pas (amélioration, construction, reconversion, rang de capacité, trocs). Les recettes des spécialisations aussi : « 2 [silex] → 1 [outil] ».
+- Toucher une ressource du bandeau, ou le haut de sa carte au marché, ouvre sa fiche : ce que tu as, d'où ça vient (stations et spécialisations avec un bouton Voir, récolte, trocs), à quoi ça sert, et ce que ça vaut au marché. Fermer une fiche ouverte par-dessus une autre revient à la précédente.
+- Au marché, tes ressources passent avant les contrats et les marchands. Chaque carte dit combien tu en as, qui la fabrique (ou quoi construire pour en faire), le prix unitaire, et ce que rapporte chaque bouton (vendre 25 %, tout vendre, acheter 10). Les ventes aux marchands montrent aussi leur gain.
+
+Reste provisoire : les polices (Go au lieu d'Alegreya), les icônes de ressources (dessinées en formes simples dans `internal/game/icons.go`, en attendant celles du kit), le décor du monde et les stations (formes géométriques), et les nœuds sans illustration (glyphes).

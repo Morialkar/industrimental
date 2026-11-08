@@ -78,14 +78,6 @@ func (g *Game) amountsText(a content.Amounts) string {
 	return strings.Join(parts, " · ")
 }
 
-func (g *Game) recipeText(r content.Recipe) string {
-	out := g.amountsText(r.Outputs)
-	if len(r.Inputs) > 0 {
-		return g.amountsText(r.Inputs) + " → " + out
-	}
-	return out
-}
-
 func sortedAmounts(a content.Amounts) []string {
 	keys := make([]string, 0, len(a))
 	for k := range a {

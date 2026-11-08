@@ -20,7 +20,7 @@ Capture d'écran sans fenêtre (utilisée par l'intégration continue) :
 go run ./cmd/desktop -screenshot scene.png -frames 20 -warmup 4
 ```
 
-Pour voir un écran sur une partie avancée sans toucher à la sauvegarde : `-demo -tab 2` (0 monde, 1 marché, 2 capacités, 3 quêtes, 4 frise, 5 clan, 6 boutique, 7 fiche de station).
+Pour voir un écran sur une partie avancée sans toucher à la sauvegarde : `-demo -tab 2` (0 monde, 1 marché, 2 capacités, 3 quêtes, 4 frise, 5 clan, 6 boutique, 7 fiche de station, 8 fiche de ressource).
 
 ## Équilibrage
 

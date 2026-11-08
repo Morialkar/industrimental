@@ -509,16 +509,8 @@ func (g *Game) drawNodeInfo(dst *ebiten.Image) {
 	bottom := in.Y + in.H
 	btn := ui.Rect{X: in.X + in.W - 220, Y: bottom - 80, W: 220, H: 80}
 	if cost := g.sim.NextRankCost(n.ID); cost != nil {
-		have := content.Amounts{}
-		for id := range cost {
-			have[id] = math.Floor(g.sim.Stock(id))
-		}
-		col := inkLight
-		if !g.sim.CanAfford(cost) {
-			col = inkBad
-		}
-		line := fmt.Sprintf(g.tr("ui.tree.next"), g.amountsText(cost), g.amountsText(have))
-		k.ShadowedParagraph(dst, line, in.X, bottom-80, 19, in.W-240, col, false)
+		k.Shadowed(dst, g.tr("ui.tree.nextRank"), in.X, bottom-84, 19, inkSoft, ui.Left, false)
+		g.drawChips(dst, g.costChips(cost), in.X, bottom-56, in.W-240, 21, false, inkLight)
 	}
 	if why != "" {
 		k.Shadowed(dst, k.Fit(why, 19, in.W-240, false), in.X, bottom-24, 19, inkSoft, ui.Left, false)

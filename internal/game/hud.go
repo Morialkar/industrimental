@@ -22,7 +22,12 @@ const (
 	scrClan    = "clan"
 	scrEra     = "era"
 	scrTree    = "tree"
+	// scrResource is the sheet of one resource (g.sheet), opened from its chip.
+	scrResource = "resource"
 )
+
+// backScreen is a screen to come back to when the one over it closes.
+type backScreen struct{ screen, sheet string }
 
 // Layout of the main screen, in logical pixels (see mk for the mockup's units).
 var (
@@ -90,11 +95,20 @@ func (g *Game) pressPoint() (float64, float64) {
 	return x, y
 }
 
+// closeScreen closes the open screen, back to the one under it if any.
 func (g *Game) closeScreen() {
-	g.screen = scrWorld
-	g.sheet = ""
 	g.pick = ""
 	g.focusQuest, g.focusPending = "", false
+	if n := len(g.back); n > 0 {
+		b := g.back[n-1]
+		g.back = g.back[:n-1]
+		g.sheet = b.sheet
+		g.open(b.screen)
+		g.sheetT = 1
+		return
+	}
+	g.screen = scrWorld
+	g.sheet = ""
 }
 
 // --- world ----------------------------------------------------------------
@@ -226,6 +240,17 @@ func (g *Game) drawResources(dst *ebiten.Image) {
 			g.resDrag = false
 		}
 		g.resScroll = math.Max(0, math.Min(maxOff, g.resScroll))
+		// A tap on a chip opens the sheet of its resource.
+		for i, rd := range res {
+			x := inner.X + float64(i)*(chipW+8) - g.resScroll
+			x0, x1 := math.Max(x, inner.X), math.Min(x+chipW, inner.X+inner.W)
+			if x1 <= x0 {
+				continue
+			}
+			if c, _ := k.Control(nil, ui.Rect{X: x0, Y: inner.Y, W: x1 - x0, H: inner.H}, "res "+rd.ID, true); c.Tap {
+				g.openResource(rd.ID)
+			}
+		}
 		return
 	}
 	g.th.band.Draw(dst, r, mk(6), mk(26), mk(6), mk(26), 1)
@@ -241,7 +266,7 @@ func (g *Game) drawResources(dst *ebiten.Image) {
 			bg = goldSunk
 		}
 		k.Fill(sub, chip, bg)
-		g.pentagon(sub, x+22, chip.Y+chip.H/2, 15, resColor(rd.ID))
+		g.resIcon(sub, rd.ID, x+22, chip.Y+chip.H/2, 17)
 		k.Shadowed(sub, sim.Format(g.sim.Stock(rd.ID)), x+44, chip.Y+4, 25, inkLight, ui.Left, true)
 		rate := g.sim.Rate(rd.ID)
 		line, col := g.text(rd.NameKey), inkSoft

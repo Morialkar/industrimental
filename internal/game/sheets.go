@@ -35,7 +35,7 @@ func (g *Game) drawSheet(dst *ebiten.Image) {
 	headH := 196.0
 	// A station opens as a modal in the middle of the screen; the other
 	// screens slide up from the bottom.
-	modal := g.screen == scrStation
+	modal := g.screen == scrStation || g.screen == scrResource
 	var frame ui.Rect
 	if modal {
 		maxH := float64(ScreenH) - safeTop - safeBottom - 20
@@ -80,6 +80,8 @@ func (g *Game) drawSheet(dst *ebiten.Image) {
 	switch g.screen {
 	case scrStation:
 		y = g.stationBody(d, x, y0, w)
+	case scrResource:
+		y = g.resourceBody(d, x, y0, w)
 	case scrMarket:
 		y = g.marketBody(d, x, y0, w)
 	case scrQuests:
@@ -107,8 +109,10 @@ func (g *Game) sheetTitle() (string, string) {
 			return g.text(def.NameKey), g.tr("ui.station.notBuilt")
 		}
 		return g.text(def.NameKey), fmt.Sprintf("%s %d · %s", g.tr("ui.level"), st.Level, g.outputsText(def, st))
+	case scrResource:
+		return g.resName(g.sheet), g.tr("ui.res.subtitle")
 	case scrMarket:
-		return g.tr("ui.act.market"), ""
+		return g.tr("ui.act.market"), g.tr("ui.market.hint")
 	case scrQuests:
 		c := g.sim.Completion()
 		return g.tr("ui.quests.title"), fmt.Sprintf(fmt.Sprintf(g.tr("ui.era.index"), g.era.Index)+" · "+g.tr("ui.quests.progress"), c.QuestsDone, c.QuestsTotal)
@@ -175,7 +179,8 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 	}
 	if !st.Built && !g.sim.StationAvailable(def.ID) {
 		y = g.statRow(d, g.tr("ui.needs"), g.nodeName(def.RequiresNode)+" ("+g.tr("ui.act.tree")+")", x, y, w, inkGold)
-		return g.statRow(d, g.tr("ui.cost"), g.amountsText(def.UnlockCost), x, y, w, inkLight)
+		k.Shadowed(d, g.tr("ui.cost"), x, y, bodySize, inkSoft, ui.Left, false)
+		return y + g.drawChips(d, g.costChips(def.UnlockCost), x+140, y-4, w-140, bodySize, false, inkLight) + gap
 	}
 	if st.Built {
 		col := inkGood
@@ -185,8 +190,8 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 		k.Shadowed(d, g.statusText(st), x, y, smallSize, col, ui.Left, false)
 		y += smallSize * 1.6
 		cost := g.sim.UpgradeCost(def.ID, 1)
-		label := fmt.Sprintf(g.tr("ui.upgrade"), st.Level+1) + " · " + g.amountsText(cost)
-		click := g.woodButton(d, ui.Rect{X: x, Y: y, W: w, H: btnH}, label, g.sim.CanAfford(cost), 24)
+		label := fmt.Sprintf(g.tr("ui.upgrade"), st.Level+1)
+		click := g.costButton(d, ui.Rect{X: x, Y: y, W: w, H: costBtnH}, "upgrade", label, g.costChips(cost), g.sim.CanAfford(cost))
 		switch {
 		case click.Tap:
 			g.act(g.sim.Upgrade(def.ID, 1))
@@ -194,7 +199,7 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 			// A long press buys as many levels as the stock can pay.
 			g.act(g.sim.Upgrade(def.ID, g.sim.MaxUpgrades(def.ID)))
 		}
-		y += btnH + gap + 6
+		y += costBtnH + gap + 6
 		y = g.statRow(d, g.tr("ui.station.spec"), g.text(g.variantOf(def, st.Variant).NameKey), x, y, w, inkLight)
 	}
 	pick := g.pick
@@ -209,7 +214,7 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 	tw := (w - (n-1)*10) / n
 	th := 0.0
 	for i := range def.Variants {
-		th = math.Max(th, 40+g.paraH(g.text(def.Variants[i].NameKey), smallSize, tw-36)+g.paraH(g.recipeText(def.Variants[i].Recipe), 18, tw-36))
+		th = math.Max(th, 40+g.paraH(g.text(def.Variants[i].NameKey), smallSize, tw-36)+g.drawChips(nil, recipeChips(def.Variants[i].Recipe, 1), 0, 0, tw-36, 19, false, inkSoft))
 	}
 	th += 20
 	for i := range def.Variants {
@@ -228,7 +233,7 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 			if v.ID == st.Variant {
 				col = inkGood
 			}
-			k.ShadowedParagraph(d, g.recipeText(v.Recipe), r.X+18, cy+4, 18, tw-36, col, false)
+			g.drawChips(d, recipeChips(v.Recipe, 1), r.X+18, cy+4, tw-36, 19, false, col)
 		}
 	}
 	y += th + gap
@@ -236,23 +241,21 @@ func (g *Game) stationBody(d *ebiten.Image, x, y, w float64) float64 {
 		y += k.ShadowedParagraph(d, g.effectsText(v.Effects, 1), x, y, smallSize, w, inkGood, false) + 6
 	}
 	if !st.Built {
-		y = g.statRow(d, g.tr("ui.cost"), g.amountsText(def.UnlockCost), x, y, w, inkLight)
-		if g.woodButton(d, ui.Rect{X: x, Y: y, W: w, H: btnH}, g.tr("ui.build"), g.sim.CanAfford(def.UnlockCost), 26).Tap {
+		if g.costButton(d, ui.Rect{X: x, Y: y, W: w, H: costBtnH}, g.tr("ui.build"), g.tr("ui.build"), g.costChips(def.UnlockCost), g.sim.CanAfford(def.UnlockCost)).Tap {
 			g.act(g.sim.Build(def.ID, pick))
 			g.pick = ""
 		}
-		return y + btnH + gap
+		return y + costBtnH + gap
 	}
 	k.ShadowedParagraph(d, g.tr("ui.station.retoolHint"), x, y, 19, w, inkSoft, false)
 	y += g.paraH(g.tr("ui.station.retoolHint"), 19, w) + gap
 	if pick != st.Variant {
 		cost := g.sim.RetoolCost(def.ID)
-		label := g.tr("ui.retool") + " · " + g.amountsText(cost)
-		if g.woodButton(d, ui.Rect{X: x, Y: y, W: w, H: btnH}, label, g.sim.CanAfford(cost), 24).Tap {
+		if g.costButton(d, ui.Rect{X: x, Y: y, W: w, H: costBtnH}, "retool", g.tr("ui.retool"), g.costChips(cost), g.sim.CanAfford(cost)).Tap {
 			g.act(g.sim.Retool(def.ID, pick))
 			g.pick = ""
 		}
-		y += btnH + gap
+		y += costBtnH + gap
 	}
 	return y
 }
@@ -305,10 +308,16 @@ func (g *Game) marketBody(d *ebiten.Image, x, y, w float64) float64 {
 	k := g.kit
 	if !g.sim.MarketOpen() {
 		y += k.ShadowedParagraph(d, g.tr("ui.market.closed"), x, y, bodySize, w, inkSoft, false) + gap
+		return g.npcDeals(d, x, y, w)
 	}
-	y = g.npcDeals(d, x, y, w)
-	if !g.sim.MarketOpen() {
-		return y
+	// What you have comes first, then the orders, then the merchants.
+	y = g.groupTitle(d, g.tr("ui.market.resources"), x, y)
+	for i := range g.era.Resources {
+		r := &g.era.Resources[i]
+		if r.Kind == content.KindCurrency || !g.sim.ResourceUnlocked(r.ID) {
+			continue
+		}
+		y = g.marketCard(d, r, x, y, w)
 	}
 	if open := g.sim.Contracts(); len(open) > 0 {
 		y = g.groupTitle(d, g.tr("ui.market.contracts"), x, y)
@@ -325,40 +334,41 @@ func (g *Game) marketBody(d *ebiten.Image, x, y, w float64) float64 {
 			y += h + gap
 		}
 	}
-	y = g.groupTitle(d, g.tr("ui.market.resources"), x, y)
-	for i := range g.era.Resources {
-		r := &g.era.Resources[i]
-		if r.Kind == content.KindCurrency || !g.sim.ResourceUnlocked(r.ID) {
-			continue
-		}
-		stock := g.sim.Stock(r.ID)
-		h := 40 + 76 + btnH
-		in := g.card(d, x, y, w, h)
-		g.pentagon(d, in.X+14, in.Y+16, 13, resColor(r.ID))
-		k.Shadowed(d, g.text(r.NameKey), in.X+38, in.Y, titleSize, inkLight, ui.Left, true)
-		arrow, col := "▲", inkGood
-		if g.sim.Trend(r.ID) < 0 {
-			arrow, col = "▼", inkBad
-		}
-		k.Shadowed(d, sim.Format(g.sim.Price(r.ID))+" "+arrow, in.X+in.W, in.Y, titleSize, col, ui.Right, true)
-		k.Shadowed(d, fmt.Sprintf("%s (%s/s)", sim.Format(stock), signed(g.sim.Rate(r.ID))), in.X, in.Y+38, smallSize, inkSoft, ui.Left, false)
-		bw := (in.W - 2*10) / 3
-		by := in.Y + 76
-		if g.woodBtn(d, ui.Rect{X: in.X, Y: by, W: bw, H: btnH}, "sell-quarter "+r.ID, g.tr("ui.sell.quarter"), stock >= 4, 20).Tap {
-			_, err := g.sim.Sell(r.ID, stock/4)
-			g.act(err)
-		}
-		if g.woodBtn(d, ui.Rect{X: in.X + bw + 10, Y: by, W: bw, H: btnH}, "sell-all "+r.ID, g.tr("ui.sell.all"), stock >= 1, 20).Tap {
-			_, err := g.sim.Sell(r.ID, stock)
-			g.act(err)
-		}
-		cost := g.sim.BuyCost(r.ID, 10)
-		if g.woodBtn(d, ui.Rect{X: in.X + 2*(bw+10), Y: by, W: bw, H: btnH}, "buy-ten "+r.ID, g.tr("ui.buy.ten"), g.sim.Stock(g.era.Currency) >= cost, 20).Tap {
-			g.act(g.sim.Buy(r.ID, 10))
-		}
-		y += h + gap
+	return g.npcDeals(d, x, y, w)
+}
+
+// marketCard is one resource on the market: what it is, how much you have,
+// where it comes from, and the trades with what each brings. Tapping the top
+// of the card opens the resource sheet.
+func (g *Game) marketCard(d *ebiten.Image, r *content.Resource, x, y, w float64) float64 {
+	k := g.kit
+	h := 40 + 160 + costBtnH
+	in := g.card(d, x, y, w, h)
+	info := ui.Rect{X: in.X - 20, Y: in.Y - 16, W: in.W + 40, H: 150}
+	if c, held := k.Control(d, info, "res-info "+r.ID, true); c.Tap {
+		g.openResource(r.ID)
+	} else if held {
+		k.Fill(d, info, rgba(0xff, 0xff, 0xff, 0x18))
 	}
-	return y
+	g.resIcon(d, r.ID, in.X+24, in.Y+18, 24)
+	k.Shadowed(d, g.text(r.NameKey), in.X+60, in.Y, titleSize, inkLight, ui.Left, true)
+	k.Shadowed(d, g.tr("ui.res.details"), in.X+in.W, in.Y+4, smallSize, inkSoft, ui.Right, false)
+	stock := g.sim.Stock(r.ID)
+	rate := g.sim.Rate(r.ID)
+	have := fmt.Sprintf("%s %s", g.tr("ui.res.have"), sim.Format(stock))
+	if rate > 1e-6 || rate < -1e-6 {
+		have += fmt.Sprintf(" (%s/s)", signed(rate))
+	}
+	k.Shadowed(d, have, in.X, in.Y+48, bodySize, inkLight, ui.Left, true)
+	src, ok := g.sourceLine(r.ID)
+	col := inkSoft
+	if !ok {
+		col = inkGold
+	}
+	k.Shadowed(d, k.Fit(src, smallSize, in.W, false), in.X, in.Y+86, smallSize, col, ui.Left, false)
+	g.priceLine(d, r.ID, in.X, in.Y+118, in.W)
+	g.tradeButtons(d, r.ID, in.X, in.Y+160, in.W)
+	return y + h + gap
 }
 
 func (g *Game) npcDeals(d *ebiten.Image, x, y, w float64) float64 {
@@ -373,7 +383,7 @@ func (g *Game) npcDeals(d *ebiten.Image, x, y, w float64) float64 {
 			y = g.groupTitle(d, g.tr("ui.market.npcs"), x, y)
 			shown = true
 		}
-		h := 40 + 44 + float64(len(n.Deals))*(btnH+44) + float64(len(n.Buys))*(btnH+10)
+		h := 40 + 44 + float64(len(n.Deals))*(costBtnH+44) + float64(len(n.Buys))*(costBtnH+10)
 		in := g.card(d, x, y, w, h)
 		k.Shadowed(d, g.text(n.NameKey), in.X, in.Y, titleSize, inkLight, ui.Left, true)
 		k.Shadowed(d, fmt.Sprintf("%s %.0f", g.tr("ui.affinity"), g.sim.Affinity(n.ID)), in.X+in.W, in.Y+4, smallSize, inkSoft, ui.Right, false)
@@ -383,20 +393,22 @@ func (g *Game) npcDeals(d *ebiten.Image, x, y, w float64) float64 {
 			give := g.sim.DealGive(n.ID, deal)
 			k.Shadowed(d, k.Fit(g.text(deal.NameKey), smallSize, in.W, false), in.X, cy, smallSize, inkSoft, ui.Left, false)
 			cy += 36
-			label := g.amountsText(give) + " → " + g.amountsText(deal.Get)
-			if g.woodButton(d, ui.Rect{X: in.X, Y: cy, W: in.W, H: btnH}, label, g.sim.CanAfford(give), 22).Tap {
+			chips := append(g.costChips(give), chip{text: "→"})
+			chips = append(chips, amountChips(deal.Get, true)...)
+			if g.costButton(d, ui.Rect{X: in.X, Y: cy, W: in.W, H: costBtnH}, "deal "+n.ID+" "+deal.ID, g.tr("ui.trade"), chips, g.sim.CanAfford(give)).Tap {
 				g.act(g.sim.Trade(n.ID, deal.ID))
 			}
-			cy += btnH + 8
+			cy += costBtnH + 8
 		}
 		for _, id := range sortedBuys(n.Buys) {
 			stock := g.sim.Stock(id)
-			label := fmt.Sprintf("%s %s ×%.1f", g.tr("ui.sells.to"), strings.ToLower(g.resName(id)), n.Buys[id])
-			if g.woodButton(d, ui.Rect{X: in.X, Y: cy, W: in.W, H: btnH}, label, g.sim.MarketOpen() && stock >= 1, 22).Tap {
+			label := fmt.Sprintf(g.tr("ui.sells.toAll"), strings.ToLower(g.resName(id)), n.Buys[id])
+			chips := []chip{{id: id, qty: stock}, {text: "→"}, {id: g.era.Currency, qty: g.sim.SellToValue(n.ID, id, stock), plus: true}}
+			if g.costButton(d, ui.Rect{X: in.X, Y: cy, W: in.W, H: costBtnH}, "sell-to "+n.ID+" "+id, label, chips, g.sim.MarketOpen() && stock >= 1).Tap {
 				_, err := g.sim.SellTo(n.ID, id, stock)
 				g.act(err)
 			}
-			cy += btnH + 10
+			cy += costBtnH + 10
 		}
 		y += h + gap
 	}
@@ -629,7 +641,7 @@ func (g *Game) drawAway(dst *ebiten.Image) {
 		if float64(i) >= rows {
 			break
 		}
-		g.pentagon(dst, 92, y+16, 12, resColor(id))
+		g.resIcon(dst, id, 92, y+16, 15)
 		k.Shadowed(dst, g.resName(id), 116, y, bodySize, inkLight, ui.Left, false)
 		k.Shadowed(dst, "+"+sim.Format(rep.Gains[id]), ScreenW-80, y, bodySize, inkGood, ui.Right, true)
 		y += 44
