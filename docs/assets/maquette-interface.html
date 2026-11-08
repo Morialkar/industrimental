@@ -195,7 +195,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .trunk-grid .node { width: 34px; height: 34px; border-radius: 8px; }
 .trunk-grid .node svg { width: 20px; height: 20px; }
 .trunk-grid .node .rank { min-width: 22px; height: 13px; font-size: 9px; right: -7px; bottom: -5px; }
-.trunk-grid .node-name { font-size: 8.5px; }
+.trunk-grid .node-name { font-size: 8px; letter-spacing: -.1px; }
 svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
 .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; min-height: 0; }
 .carousel::-webkit-scrollbar { display: none; }
@@ -207,7 +207,7 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
 .grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; min-height: 0; }
 .grid svg.links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .cell { display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 0; }
-.node-name { font-size: 9.5px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mat-ink-2); }
+.node-name { display: block; position: relative; z-index: 3; font-size: 9.5px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mat-ink-2); }
 .node-name.key { color: var(--gold); }
 .node { position: relative; width: 42px; height: 42px; border-radius: 10px; border: 2px solid var(--mat-edge); background: var(--mat-socket); display: grid; place-items: center; padding: 0; box-shadow: inset 0 2px 0 var(--mat-hi), 0 2px 0 rgba(0,0,0,.4); }
 .node svg { width: 24px; height: 24px; }
@@ -245,24 +245,82 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
 .note b { color: var(--desk-ink); }
 .note .q { color: var(--gold); font-weight: 700; }
 .hint { font-size: 13px; color: var(--desk-muted); }
+
+/* ===== UI kit, era 1 (wood): images replace every CSS-faked material ===== */
+.kit-note { color: var(--desk-muted); font-size: 14px; margin: 0; }
+.phone { --mat-ink: #fff3dd; --mat-ink-2: #f3d9ae; --mat-sunk: transparent; --mat-accent: #e9782a; --txt-shadow: 0 1px 0 rgba(40,18,4,.85), 0 0 4px rgba(40,18,4,.6); }
+.phone .panel, .phone .sheet, .phone .tree, .phone .quest-pin, .phone .actionbar {
+  background: none; box-shadow: none; border-style: solid; border-color: transparent;
+  border-width: 22px; border-image: url("ui/panneau.webp") 20% fill / 22px stretch; text-shadow: var(--txt-shadow);
+}
+.phone .panel.riveted::before, .phone .panel.riveted::after { display: none; }
+.phone .quest-pin { border-width: 14px; border-image-width: 14px; padding: 0 2px 2px; }
+.phone .res-bar { border-width: 6px 26px; border-image: url("ui/bandeau.webp") 45% 15% fill / 6px 26px stretch; border-radius: 0; padding: 2px 0; }
+.phone .res { background: rgba(48,22,6,.35); border-radius: 6px; }
+.phone .res.currency { background: rgba(242,193,78,.25); }
+.phone .actionbar { border-width: 18px 16px 10px; border-image-width: 18px 16px 10px; padding: 0 0 8px; gap: 2px; }
+.phone .act { background: none; padding: 2px 0; }
+.phone .act img { width: 40px; height: 40px; display: block; filter: drop-shadow(0 2px 2px rgba(0,0,0,.4)); }
+.phone .act span { text-shadow: var(--txt-shadow); color: var(--mat-ink); }
+.phone .act:active img { transform: translateY(1px) scale(.96); }
+.phone .harvest { bottom: auto; top: 300px; width: 104px; height: 120px; border: 0; background: none; padding: 0; display: grid; justify-items: center; align-content: start; }
+.phone .harvest::before { content: ""; position: absolute; top: 0; left: 0; width: 104px; height: 104px; background: url("ui/bouton_rond.webp") center/contain no-repeat; filter: drop-shadow(0 4px 4px rgba(0,0,0,.45)); }
+.phone .harvest-ic { position: relative; width: 66px; height: 66px; margin-top: 19px; border-radius: 50%; }
+.phone .harvest-label { position: relative; margin-top: -14px; display: grid; justify-items: center; line-height: 1.05; padding: 3px 10px 4px; background: url("ui/plaque_rang.webp") center/100% 100% no-repeat; min-width: 96px; }
+.phone .harvest-label b { font-family: var(--font-display); font-size: 12px; color: #fff3dd; text-shadow: var(--txt-shadow); }
+.phone .harvest-label small { font-size: 10px; color: var(--gold); text-shadow: var(--txt-shadow); }
+.phone .bar { height: 14px; border-radius: 0; background: none; border-style: solid; border-color: transparent; border-width: 4px 12px; border-image: url("ui/barre.webp") 45% 7% fill / 4px 12px stretch; overflow: visible; }
+.phone .bar i { height: 100%; border-radius: 2px; background: linear-gradient(180deg, #ffc35a, #e26f1f); box-shadow: inset 0 1px 0 rgba(255,255,255,.45); }
+.phone .btn { border-style: solid; border-color: transparent; border-width: 10px 20px; border-image: url("ui/bouton.webp") 30% 14% fill / 10px 20px stretch; background: none; box-shadow: none; padding: 2px 6px; color: #fff6e6; text-shadow: var(--txt-shadow); border-radius: 0; }
+.phone .btn:active:not(:disabled) { border-image-source: url("ui/bouton_presse.webp"); }
+.phone .btn.gold { filter: hue-rotate(12deg) saturate(1.2) brightness(1.08); color: #fff6e6; }
+.phone .tab { border-style: solid; border-color: transparent; border-width: 6px 18px; border-image: url("ui/onglet.webp") 40% 19% fill / 6px 18px stretch; background: none; border-radius: 0; padding: 1px 4px; color: #f6dfb8; text-shadow: var(--txt-shadow); }
+.phone .tab[aria-selected="true"] { border-image-source: url("ui/onglet_actif.webp"); color: #fff6e6; }
+.phone .close { background: url("ui/bouton_rond.webp") center/contain no-repeat; width: 36px; height: 36px; border-radius: 50%; color: #3a2312; font-weight: 800; text-shadow: 0 1px 0 rgba(255,255,255,.4); }
+.phone .sheet { border-width: 24px; border-image-width: 24px; border-radius: 0; max-height: 80%; }
+.phone .sheet-head { padding: 0 2px 4px; }
+.phone .sep { display: block; width: 100%; height: auto; margin: -2px 0 6px; }
+.phone .sheet-body { padding: 0 2px 4px; }
+.phone .qcard, .phone .node-info, .phone .trunk, .phone .spec {
+  background: none; border-style: solid; border-color: transparent; border-width: 12px; border-image: url("ui/encart.webp") 20% fill / 12px stretch; border-radius: 0; text-shadow: var(--txt-shadow);
+}
+.phone .qcard { padding: 0 2px; }
+.phone .qcard.done { outline: 0; filter: drop-shadow(0 0 6px rgba(242,193,78,.8)); }
+.phone .spec { padding: 0 2px; border-width: 9px; border-image-width: 9px; }
+.phone .spec[aria-pressed="true"] { filter: drop-shadow(0 0 5px rgba(242,193,78,.9)); }
+.phone .tree { border-width: 26px 18px 18px; border-image-width: 26px 18px 18px; padding-top: 8px; }
+.phone .board { background: url("ui/fond_planche.webp") center/256px repeat; border-radius: 6px; box-shadow: inset 0 0 0 2px rgba(40,18,4,.6), inset 0 0 18px rgba(30,12,2,.65); }
+.phone .trunk { padding: 0 2px; }
+.phone .node { width: 50px; height: 50px; border: 0; border-radius: 0; background: url("ui/case.webp") center/contain no-repeat; box-shadow: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,.45)); }
+.phone .node.key { width: 60px; height: 60px; background-image: url("ui/case_tournant.webp"); box-shadow: none; }
+.phone .node .node-art { position: absolute; inset: 21%; width: 58%; height: 58%; object-fit: cover; border-radius: 3px; }
+.phone .node.key .node-art { inset: 23%; width: 54%; height: 54%; }
+.phone .node svg { width: 46%; height: 46%; opacity: .75; filter: drop-shadow(0 1px 0 rgba(255,220,170,.35)); }
+.phone .node .rank { background: url("ui/plaque_rang.webp") center/100% 100% no-repeat; border: 0; min-width: 32px; height: 15px; right: -10px; bottom: -6px; color: #ffe8bf; text-shadow: var(--txt-shadow); }
+.phone .node.can::after { inset: -3px; border-radius: 6px; border-color: #ffd36b; box-shadow: 0 0 10px rgba(255,211,107,.8); }
+.phone .node.selected { outline: 0; filter: drop-shadow(0 0 7px rgba(255,211,107,.95)); }
+.phone .trunk-grid .node { width: 38px; height: 38px; }
+.phone .node-name { color: #ffe9c4; text-shadow: var(--txt-shadow); }
+.phone .node-name.key { color: var(--gold); }
+.phone .lock-band { background: repeating-linear-gradient(135deg, rgba(40,18,4,.55) 0 8px, rgba(40,18,4,.35) 8px 16px); border-color: rgba(255,220,170,.3); }
+.phone .era-btn { border-image: none; border: 0; background: url("ui/plaque_rang.webp") center/100% 100% no-repeat; padding: 5px 16px 6px; margin-top: -2px; }
+.phone .era-btn b, .phone .era-btn span { color: #ffe9c4; text-shadow: var(--txt-shadow); }
+.phone .jump button { border-image: none; border: 0; background: url("ui/bouton.webp") center/100% 100% no-repeat; padding: 9px 14px; color: #fff6e6; text-shadow: var(--txt-shadow); border-radius: 0; }
+.phone .station .plate { border-image: none; border: 0; background: url("ui/plaque_rang.webp") center/100% 100% no-repeat; padding: 4px 12px 5px; border-radius: 0; color: #ffe9c4; text-shadow: var(--txt-shadow); }
+.phone .tabs { gap: 2px; }
+.phone .hy-toggle { text-shadow: var(--txt-shadow); color: var(--mat-ink-2); }
 </style>
 
 <div class="page">
   <header class="page-head">
     <h1>Maquette d'interface</h1>
     <p>Prototype jouable de la nouvelle interface : un monde plein écran avec une barre d'actions, une récolte au toucher, des quêtes lisibles et un arbre façon Diablo 2 qu'on fait glisser branche par branche. Les chiffres et les noms des nœuds sont provisoires.</p>
-    <div class="mat-switch" role="group" aria-label="Matière de l'interface">
-      <span>Matière par ère :</span>
-      <button type="button" data-mat="wood" aria-pressed="true">Bois · ère 1</button>
-      <button type="button" data-mat="stone" aria-pressed="false">Pierre · ère 2</button>
-      <button type="button" data-mat="iron" aria-pressed="false">Métal brut · ères 3 à 5</button>
-      <button type="button" data-mat="steel" aria-pressed="false">Métal poli · ères 6+</button>
-    </div>
+    <p class="kit-note">Interface habillée avec le kit d'interface de l'ère 1 (bois), généré avec ChatGPT. Les kits pierre et métal viendront avec leurs ères ; le décor du monde reste provisoire en attendant ses propres images.</p>
   </header>
 
   <div class="layout">
     <div class="phone-wrap">
-      <div class="phone" id="phone" data-material="wood">
+      <div class="phone" id="phone">
         <div class="world" id="world">
           <div class="world-track" id="track">
             <div class="world-sky"></div>
@@ -290,16 +348,16 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
           </button>
         </div>
 
-        <button type="button" class="harvest panel" id="harvestBtn" aria-label="Récolter">
-          <span><b>Récolter</b><small id="harvestVal">+1</small></span>
+        <button type="button" class="harvest" id="harvestBtn" aria-label="Récolter">
+          <img class="harvest-ic" src="ui/cap_main-habile.webp" alt=""><span class="harvest-label"><b>Récolter</b><small id="harvestVal">+1</small></span>
         </button>
 
         <nav class="actionbar panel riveted" aria-label="Actions">
-          <button type="button" class="act" data-open="tree"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L22 11 L19 11 L24 18 L20 18 L25 25 L7 25 L12 18 L8 18 L13 11 L10 11Z" fill="currentColor"/><rect x="14" y="25" width="4" height="5" fill="currentColor"/></svg><span>Capacités</span><i class="badge" id="badgeTree" hidden>!</i></button>
-          <button type="button" class="act" data-open="market"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4v24M6 9h20M6 9l-4 9h8zM26 9l-4 9h8z" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linejoin="round"/><path d="M10 28h12" stroke="currentColor" stroke-width="3"/></svg><span>Marché</span></button>
-          <button type="button" class="act" data-open="quests"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4h14l4 4v20H8z" fill="currentColor" opacity=".9"/><path d="M12 12h10M12 17h10M12 22h6" stroke="#000" stroke-opacity=".45" stroke-width="2"/></svg><span>Quêtes</span><i class="badge" id="badgeQuests" hidden>1</i></button>
-          <button type="button" class="act" data-open="shop"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12h22l-2 15H7z" fill="currentColor"/><path d="M11 12a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 16l1.6 3.4 3.6.4-2.7 2.4.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.7-2.4 3.6-.4z" fill="#000" fill-opacity=".45"/></svg><span>Boutique</span></button>
-          <button type="button" class="act" data-open="clan"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="11" r="5" fill="currentColor"/><path d="M6 28c0-6 4.5-10 10-10s10 4 10 10z" fill="currentColor"/></svg><span>Clan</span></button>
+          <button type="button" class="act" data-open="tree"><img src="ui/ic_capacites.webp" alt="" width="40" height="40"><span>Capacités</span><i class="badge" id="badgeTree" hidden>!</i></button>
+          <button type="button" class="act" data-open="market"><img src="ui/ic_marche.webp" alt="" width="40" height="40"><span>Marché</span></button>
+          <button type="button" class="act" data-open="quests"><img src="ui/ic_quetes.webp" alt="" width="40" height="40"><span>Quêtes</span><i class="badge" id="badgeQuests" hidden>1</i></button>
+          <button type="button" class="act" data-open="shop"><img src="ui/ic_boutique.webp" alt="" width="40" height="40"><span>Boutique</span></button>
+          <button type="button" class="act" data-open="clan"><img src="ui/ic_clan.webp" alt="" width="40" height="40"><span>Clan</span></button>
         </nav>
 
         <div class="scrim" id="scrim" hidden></div>
@@ -316,8 +374,7 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
           <li>Glisse le monde à gauche et à droite ; touche une station pour sa fiche.</li>
           <li>Ouvre les <b>Capacités</b>, glisse à gauche ou à droite pour changer de branche, de haut en bas pour parcourir la branche (boutons <b>Haut</b> et <b>Tournant</b> pour sauter aux extrémités), touche un nœud puis <b>Investir</b>. Monte « Main habile » pour voir la récolte grandir.</li>
           <li>Touche <b>Ère 1 · Troc</b> en haut pour ouvrir la frise.</li>
-          <li>Change de matière en haut pour voir l'interface de chaque grande époque.</li>
-        </ul>
+                  </ul>
       </div>
       <div class="note">
         <h2>Ce qui change par rapport au GDD</h2>
@@ -329,7 +386,7 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
           <li><b>Capacités façon Diablo 2</b> : le tronc commun reste fixe en haut ; de « Le Cercle » partent 4 lignes qui suivent les branches quand on glisse. Chaque branche est une planche de 3 colonnes sur 6 rangées, avec flèches de prérequis, rangs (0/5) payés en ressources, et synergies.</li>
           <li><b>Rangées verrouillées par la progression de l'ère</b> : ici, une rangée de plus tous les 2 bâtiments construits.</li>
           <li><b>Fins hybrides (ère 3+)</b> : coche « Voir les ponts hybrides » dans l'arbre ; un nœud pont affiche la branche voisine, et un toucher sur l'étiquette y fait glisser.</li>
-          <li><b>Micro-skeuomorphisme par ère</b> : bois, pierre, métal brut, métal poli ; seule la matière change, la disposition reste identique.</li>
+          <li><b>Vraies matières</b> : cadres, boutons, onglets, cases et icônes viennent du kit d'interface de l'ère 1 (bois). Les cadres sont découpés en 9 morceaux : les coins restent intacts, le reste s'étire. Chaque ère aura son kit (pierre, métal brut, métal poli) avec la même disposition.</li>
         </ul>
       </div>
       <div class="note">
@@ -555,7 +612,7 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
 
   // ---------------- sheets ----------------
   function openSheet(html, onMount) {
-    $("scrim").hidden = false; const s = $("sheet"); s.innerHTML = html; s.hidden = false;
+    $("scrim").hidden = false; const s = $("sheet"); s.innerHTML = html.replace("</div><div class=\"sheet-body\">", "</div><img class=\"sep\" src=\"ui/separateur.webp\" alt=\"\"><div class=\"sheet-body\">"); s.hidden = false;
     s.querySelector(".close")?.addEventListener("click", closeAll);
     onMount?.(s);
   }
@@ -623,12 +680,13 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
     `<path d="M5 9h22v5H5zM8 16h16v11H8z" fill="currentColor"/>`,
     `<path d="M16 3l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="currentColor"/>`,
   ];
+  const CAP = { main: "main-habile", feu: "feu", langage: "langage", sedent: "sedentarisation", paniers: "paniers", cercle: "cercle", pacte: "pacte", revol: "revolution", maitrise: "maitrise-feu", conteurs: "conteurs" };
   function nodeButton(n) {
     const btn = document.createElement("button"); btn.type = "button"; btn.id = "node-" + n.id;
     const off = !rowOpen(n) || (!reqMet(n) && n.rank === 0);
     btn.className = "node" + (n.key ? " key" : "") + (n.hybrid ? " hybrid" : "") + (off ? " off" : "") + (canInvest(n) ? " can" : "") + (n.rank >= n.max ? " maxed" : "") + (selected === n.id ? " selected" : "");
-    btn.style.color = n.key ? "var(--gold)" : "var(--mat-ink)";
-    btn.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true">${n.key ? GLYPHS[4] : GLYPHS[(n.row + n.col) % 4]}</svg><span class="rank">${n.rank}/${n.max}</span>${n.hybrid ? `<span class="hy-tag">↔ ${BOARDS.find((x) => x.id === n.hybrid).name}</span>` : ""}`;
+    btn.style.color = "#3a2312";
+    btn.innerHTML = `${CAP[n.id] ? `<img class="node-art" src="ui/cap_${CAP[n.id]}.webp" alt="">` : `<svg viewBox="0 0 32 32" aria-hidden="true">${GLYPHS[(n.row + n.col) % 4]}</svg>`}<span class="rank">${n.rank}/${n.max}</span>${n.hybrid ? `<span class="hy-tag">↔ ${BOARDS.find((x) => x.id === n.hybrid).name}</span>` : ""}`;
     btn.setAttribute("aria-label", `${n.name}, rang ${n.rank} sur ${n.max}`);
     btn.addEventListener("click", () => { selected = n.id; renderBoards(); showNode(n); });
     btn.querySelector(".hy-tag")?.addEventListener("click", (e) => { e.stopPropagation(); goBoard(BOARDS.findIndex((x) => x.id === n.hybrid)); });
@@ -775,12 +833,6 @@ svg.fan { width: 100%; height: 30px; display: block; overflow: hidden; }
   }));
 
   $("eraBtn").addEventListener("click", () => openSimple("Frise des ères", "Les 10 ères de gauche à droite, avec les Héritages gagnés. Touche une ère passée pour ouvrir ses Archives. On y accède en touchant le nom de l'ère en haut de l'écran."));
-
-  // ---------------- material switch ----------------
-  document.querySelectorAll("[data-mat]").forEach((b) => b.addEventListener("click", () => {
-    $("phone").dataset.material = b.dataset.mat;
-    document.querySelectorAll("[data-mat]").forEach((x) => x.setAttribute("aria-pressed", x === b));
-  }));
 
   // ---------------- loop ----------------
   renderRes(); renderWorld(); updateQuestPin();

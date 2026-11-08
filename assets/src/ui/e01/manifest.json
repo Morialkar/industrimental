@@ -1,0 +1,557 @@
+{
+  "titre": "Industrimental — UI Kit Ère 1",
+  "version": "finale",
+  "assets_officiels_valides": 29,
+  "assets_bonus": 1,
+  "repertoire_assets": "assets/src/ui/e01/",
+  "note_bonus": "note.md",
+  "assets": [
+    {
+      "id": "UI-01",
+      "nom": "Panneau principal (9 morceaux)",
+      "fichier": "ui_e01_panneau.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_panneau.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1847930,
+      "sha256": "8b9407fa9734d569a2b2654d1fcf1c467c68c85d949c94d49d1df3b652e87512"
+    },
+    {
+      "id": "UI-02",
+      "nom": "Encart creusé (9 morceaux)",
+      "fichier": "ui_e01_encart.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_encart.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1743798,
+      "sha256": "9d0241ed5a5066e420fd0a2fc5188caae3fabba1e7303f22c408fd102be5a567"
+    },
+    {
+      "id": "UI-03",
+      "nom": "Bouton planche, normal",
+      "fichier": "ui_e01_bouton.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_bouton.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        254
+      ],
+      "taille_octets": 1731322,
+      "sha256": "c5effab158898ef7da41835d4b28430abba563f1ae1d9f73b28a1f2f69cc7dd0"
+    },
+    {
+      "id": "UI-04",
+      "nom": "Bouton planche, enfoncé",
+      "fichier": "ui_e01_bouton_presse.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_bouton_presse.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        254
+      ],
+      "taille_octets": 1571891,
+      "sha256": "cb539c85e7b0251872c7af024ef20a0658ca88d6a81af9bbb5c1c8ab2971972e"
+    },
+    {
+      "id": "UI-05",
+      "nom": "Gros bouton rond (Récolter)",
+      "fichier": "ui_e01_bouton_rond.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_bouton_rond.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1087101,
+      "sha256": "3ce20fb0ae6f1da58464cb506c549fd170d1f386932266402f23a1c179257c9d"
+    },
+    {
+      "id": "UI-06",
+      "nom": "Onglet, normal",
+      "fichier": "ui_e01_onglet.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_onglet.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 956539,
+      "sha256": "12db56443c242fd21da55a40a8d8420561f57369ae5fc9d53065cf485de87693"
+    },
+    {
+      "id": "UI-07",
+      "nom": "Onglet, actif",
+      "fichier": "ui_e01_onglet_actif.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_onglet_actif.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 922276,
+      "sha256": "0101f19661e045a4958ccd3b5b6d0ba9f0975f497847492f86c7da86e39e3beb"
+    },
+    {
+      "id": "UI-08",
+      "nom": "Case de capacité",
+      "fichier": "ui_e01_case.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_case.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1475233,
+      "sha256": "6bb448d09f709c3229de64a55783442ed0762c609df1a70703e6d644f79fed8a"
+    },
+    {
+      "id": "UI-09",
+      "nom": "Case du Tournant historique",
+      "fichier": "ui_e01_case_tournant.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_case_tournant.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1538076,
+      "sha256": "468eaef42ba70fd90ba4d91dd04742608483654741113eaec4b902462aa8d3a6"
+    },
+    {
+      "id": "UI-10",
+      "nom": "Plaquette de rang (« 2/5 »)",
+      "fichier": "ui_e01_plaque_rang.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_plaque_rang.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 577368,
+      "sha256": "60277076f9edc333ccee2123ba26c61f273e1332b3053d738f21931ef8bcfad1"
+    },
+    {
+      "id": "UI-11",
+      "nom": "Cadre de barre de progression",
+      "fichier": "ui_e01_barre.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_barre.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 399861,
+      "sha256": "c45a46d7acba46f3a42af11dada7ebd9c5baa54f9b0bed974cf59c2dc71c7757"
+    },
+    {
+      "id": "UI-12",
+      "nom": "Séparateur orné",
+      "fichier": "ui_e01_separateur.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_separateur.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 239373,
+      "sha256": "586c8622b26bcaca6d491d8b89f36beae8d3c2afddce68fe52e7da4fadca22e8"
+    },
+    {
+      "id": "UI-13",
+      "nom": "Fond de la planche des capacités (répétable)",
+      "fichier": "ui_e01_fond_planche.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_fond_planche.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        255,
+        255
+      ],
+      "taille_octets": 1608468,
+      "sha256": "affd5ed1ea7cb0a325f72c2e7a3997051f4c4ceb951f3841252119c946c7daa0"
+    },
+    {
+      "id": "UI-14",
+      "nom": "Bandeau des ressources (3 morceaux)",
+      "fichier": "ui_e01_bandeau.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_bandeau.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 614894,
+      "sha256": "49332bb7acb8248a630796ab52e1121007ca564a6ae37da3266cb81bc491a38d"
+    },
+    {
+      "id": "UI-15",
+      "nom": "a small carved wooden tree with glowing branch nodes (skills)",
+      "fichier": "ui_e01_ic_capacites.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_ic_capacites.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1299661,
+      "sha256": "6779ccec33df6f005ef9adcd58a6c8d40e199466570b7cbf8c5ecf472de1b4ee"
+    },
+    {
+      "id": "UI-16",
+      "nom": "a primitive balance scale made of a stick and two woven baskets, one holding shells",
+      "fichier": "ui_e01_ic_marche.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_ic_marche.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1319149,
+      "sha256": "3dce88f7f7b4cdf27a70b7bb30682d237cf2cf447f3f71394cb0a0d26ffafe89"
+    },
+    {
+      "id": "UI-17",
+      "nom": "a rolled hide scroll tied with a cord, with a small ochre mark",
+      "fichier": "ui_e01_ic_quetes.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_ic_quetes.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1018509,
+      "sha256": "f1da904cac545ce14faa084a2162d432bc3c58474a34b4b547c8b7324bcb67d4"
+    },
+    {
+      "id": "UI-18",
+      "nom": "an open woven pouch spilling a few glowing sparks and shell beads",
+      "fichier": "ui_e01_ic_boutique.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_ic_boutique.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1334893,
+      "sha256": "bdde7607b660d5e965c466940e843a8ac5c8f6550557cd5f557e71fd91ce28e7"
+    },
+    {
+      "id": "UI-19",
+      "nom": "three small figures around a campfire, seen as simple low-poly silhouettes",
+      "fichier": "ui_e01_ic_clan.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_ic_clan.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1287907,
+      "sha256": "381e75f7b8732da89bce223ea678f117741e2ed5951f0ccf6fb80afec852c2cb"
+    },
+    {
+      "id": "UI-20",
+      "nom": "Main habile",
+      "fichier": "ui_e01_cap_main-habile.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_main-habile.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        0,
+        255
+      ],
+      "taille_octets": 1425640,
+      "sha256": "90fb923d2f29a4287b4509e9c028cd1420d3c12f6418b48ddb622f564d805205"
+    },
+    {
+      "id": "UI-21",
+      "nom": "Le feu apprivoisé",
+      "fichier": "ui_e01_cap_feu.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_feu.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        255,
+        255
+      ],
+      "taille_octets": 1440514,
+      "sha256": "3fc0779f804d66e74bfaacae4fd800e933693fd301bf5d83ab0f9a1a7d6bb899"
+    },
+    {
+      "id": "UI-22",
+      "nom": "Langage du troc",
+      "fichier": "ui_e01_cap_langage.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_langage.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        255,
+        255
+      ],
+      "taille_octets": 1384434,
+      "sha256": "0fa61bbe950f9b2a3ed8af906e7ca6bd23999e9e14a8fc2dd80e6ca0c164c9e2"
+    },
+    {
+      "id": "UI-23",
+      "nom": "Sédentarisation",
+      "fichier": "ui_e01_cap_sedentarisation.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_sedentarisation.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGBA",
+      "alpha_present": true,
+      "plage_alpha": [
+        255,
+        255
+      ],
+      "taille_octets": 1466903,
+      "sha256": "849b2ee5910ffb80dee047802c203ef47365fafb4ed74d62b6cb4749a445b466"
+    },
+    {
+      "id": "UI-24",
+      "nom": "Premiers paniers",
+      "fichier": "ui_e01_cap_paniers.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_paniers.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGB",
+      "alpha_present": false,
+      "plage_alpha": null,
+      "taille_octets": 1481729,
+      "sha256": "c441db101caf1e2d4e959dc1f916e423ff28f49e9fa660efe309a3815abc8201"
+    },
+    {
+      "id": "UI-25",
+      "nom": "Le Cercle",
+      "fichier": "ui_e01_cap_cercle.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_cercle.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGB",
+      "alpha_present": false,
+      "plage_alpha": null,
+      "taille_octets": 1255948,
+      "sha256": "a7ebae9adbdcbf64d7ef954b94681d4841ad5e40642eb23b752150c7042ad5c4"
+    },
+    {
+      "id": "UI-26",
+      "nom": "Le Pacte des Marchands",
+      "fichier": "ui_e01_cap_pacte.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_pacte.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGB",
+      "alpha_present": false,
+      "plage_alpha": null,
+      "taille_octets": 954057,
+      "sha256": "16e5c612ab2c0d1abb1cab66681f930fa6da5c402dc0b606542d7d10499b1e44"
+    },
+    {
+      "id": "UI-27",
+      "nom": "La Révolution des Champs",
+      "fichier": "ui_e01_cap_revolution.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_revolution.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGB",
+      "alpha_present": false,
+      "plage_alpha": null,
+      "taille_octets": 1359743,
+      "sha256": "48b2c05efa2e39bec7ae7be810189ef69f511976c36a0d953350b12e77cf2136"
+    },
+    {
+      "id": "UI-28",
+      "nom": "Maîtrise du feu",
+      "fichier": "ui_e01_cap_maitrise-feu.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_maitrise-feu.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGB",
+      "alpha_present": false,
+      "plage_alpha": null,
+      "taille_octets": 1185662,
+      "sha256": "e092cb461ba618602430c3ca254f02821005ce9c2e85678ecb76cb60ca9ca142"
+    },
+    {
+      "id": "UI-29",
+      "nom": "Le Cercle des conteurs",
+      "fichier": "ui_e01_cap_conteurs.png",
+      "chemin_archive": "assets/src/ui/e01/ui_e01_cap_conteurs.png",
+      "statut": "valide",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "mode_couleur": "RGB",
+      "alpha_present": false,
+      "plage_alpha": null,
+      "taille_octets": 1708441,
+      "sha256": "672bfcd2f716b0d8e3545766ec519a2886b50cabf50bf1c62f7750054ebe68f6"
+    }
+  ],
+  "bonus": [
+    {
+      "nom": "Le Premier Tisserand",
+      "fichier": "ui_e01_cap_premier_tisserand_bonus.png",
+      "chemin_archive": "bonus/ui_e01_cap_premier_tisserand_bonus.png",
+      "statut": "bonus exploratoire (hors 29 assets officiels)",
+      "dimensions_px": [
+        1024,
+        1024
+      ],
+      "taille_octets": 1419719,
+      "sha256": "9b3c2ff2eabae4fb573ee1822425de2a83cad1147bc36a41d44032e73dd58a69"
+    }
+  ]
+}
