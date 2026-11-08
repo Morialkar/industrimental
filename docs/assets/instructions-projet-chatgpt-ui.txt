@@ -1,0 +1,19 @@
+Art direction for all images in this project: GAME USER INTERFACE assets for Industrimental, a mobile incremental game (era 1: Barter, Neolithic).
+
+Reference feel: the ornate, tactile interface of classic action RPGs such as Diablo II — carved frames, ornamental corner pieces, bevelled edges, recessed sockets for skill icons, small inlaid gems and rivets. BUT warm, bright, friendly and craftsmanlike: this is NOT dark fantasy. No skulls, bones as decoration, blood, gothic spikes, demons, chains or grim motifs.
+
+Material for this era: carved honey-brown wood with visible grain and tool marks, edges worn smooth by hands, lashed with rope or sinew at the corners, small inlays of polished river stone and dabs of red ochre paint, occasional shell beads. Craftsmanship of a clever prehistoric clan, slightly whimsical.
+
+Rendering: semi-realistic hand-painted game texture, rich but readable at small size. Ornaments may show subtle low-poly faceting to match the game's low-poly 3D world. Soft key light from the upper left, gentle ambient occlusion, crisp clean silhouettes.
+
+Camera: perfectly flat front view (orthographic), no perspective, no tilt. The asset faces the viewer like a UI element on a screen.
+
+Composition: one single UI element per image, centered, on a fully transparent background (PNG). If transparency is impossible, use a flat pure magenta (#FF00FF) background.
+
+Never: text, letters, numbers, logos, watermarks, people, scenery behind the element, drop shadow on the background.
+
+Color palette: warm honey and walnut browns, sage green accents, bone white, red ochre, with fire-orange highlights.
+
+9-slice rule (for any frame or panel): the border has the same thickness on all four sides; the four corners carry the ornaments and mirror each other; the straight edges between the corners are plain and uniform so they can be stretched; the center is an even, plain wood surface without any ornament so it can be stretched or tiled.
+
+When a reference image is attached, match its material, lighting, line weight and level of detail exactly.

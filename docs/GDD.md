@@ -66,11 +66,11 @@ Une ère est un chapitre autonome : environ 10 stations, 6 à 8 ressources criti
 
 Une ère est terminée quand les trois conditions sont remplies :
 
-1. **Une branche de l'arbre achevée** : le nœud final (« Clé d'ère ») d'une des 4 branches est acheté.
+1. **Une branche de l'arbre achevée** : le nœud final (« Tournant historique ») d'une des 4 branches est acheté.
 2. **Toutes les stations débloquées** : chaque station de l'ère existe au moins une fois, peu importe la variante choisie.
 3. **Toutes les quêtes de l'ère remplies** : les quêtes principales sont communes à toutes les branches ; les quêtes optionnelles de branche ne comptent pas.
 
-Le portail vers l'ère suivante apparaît à droite du panorama quand les trois jauges sont pleines. Le joueur choisit le moment du passage : il peut rester pour optimiser son héritage.
+Le Passage des âges vers l'ère suivante apparaît à droite du panorama quand les trois jauges sont pleines. Le joueur choisit le moment du passage : il peut rester pour optimiser son héritage.
 
 ### Les stations et leurs variantes
 
@@ -96,54 +96,54 @@ Chaque arbre a la même grammaire, déclinée différemment à chaque ère :
   - **Négoce** : marché, prix, contrats, marchands.
   - **Cadence** : volume de production, nombre de stations, rendement brut.
   - **Ingéniosité** : recettes avancées, automatisation, efficacité des transformations.
-  - **Communauté** : main-d'œuvre, moral, événements, quêtes.
-- Chaque branche compte 10 à 14 nœuds et **2 ou 3 chemins parallèles** vers la Clé d'ère. Exemple en Négoce : le chemin des Caravanes (volume, routes) ou celui des Foires (prix, événements). Chaque chemin consomme des ressources différentes.
+  - **Société** : main-d'œuvre, moral, événements, quêtes.
+- Chaque branche compte 10 à 14 nœuds et **2 ou 3 chemins parallèles** vers le Tournant historique. Exemple en Négoce : le chemin des Caravanes (volume, routes) ou celui des Foires (prix, événements). Chaque chemin consomme des ressources différentes.
 - Des **ponts** relient les branches voisines : un nœud pont compte pour les deux branches, mais coûte plus cher.
-- La **fin hybride secrète** (à partir de l'ère 3) se débloque en atteignant 75 % de deux branches voisines. Elle donne un Brevet unique et une séquence narrative bonus.
+- La **fin hybride secrète** (à partir de l'ère 3) se débloque en atteignant 75 % de deux branches voisines. Elle donne un Héritage unique et une séquence narrative bonus.
 - Les nœuds se paient en ressources de l'ère. Il n'y a pas de « points de compétence » séparés : l'économie reste au centre.
 
 ### Ce que change une fin
 
-La fin choisie fixe le **Brevet** gagné (voir section 5) et colore le début de l'ère suivante. Exemple : finir l'ère du Troc en Négoce fait arriver dans l'ère des Marchés avec un marchand PNJ supplémentaire et des prix de départ plus favorables.
+La fin choisie fixe l'**Héritage gagné** (voir section 5) et colore le début de l'ère suivante. Exemple : finir l'ère du Troc en Négoce fait arriver dans l'ère des Marchés avec un marchand PNJ supplémentaire et des prix de départ plus favorables.
 
 ## 5. Transition et héritage
 
-Passer une ère donne un héritage ciblé (Brevet + Savoir-faire), et l'ère quittée continue de tourner au ralenti. Rien n'est jamais remis à zéro deux fois.
+Passer une ère rapporte un Héritage et des Acquis, et l'ère quittée continue de tourner au ralenti. Rien n'est jamais remis à zéro deux fois.
 
 ### Ce qui se passe au passage
 
 | Élément | Sort |
 | --- | --- |
 | Ressources, stations, niveaux de l'ère | Restent dans l'ère, qui passe en régime de croisière |
-| Brevet de la fin choisie | Gagné pour toujours ; effet permanent sur toutes les ères suivantes |
-| Savoir-faire | Monnaie d'héritage, du type de la fin (Négoce, Cadence, Ingéniosité, Communauté) |
+| Héritage de la fin choisie | Gagné pour toujours ; effet permanent sur toutes les ères suivantes |
+| Acquis | Monnaie d'héritage, du type de la fin (Négoce, Cadence, Ingéniosité, Société) |
 | Arbre de l'ère | Figé, consultable ; les branches non finies restent achetables en Archives |
 | Quêtes de l'ère | Terminées ; les quêtes de branche non faites restent disponibles en Archives |
 
-### Brevets
+### Héritages
 
-- Un Brevet par fin, soit 4 par ère (+ 1 secret à partir de l'ère 3).
-- Effets **de gameplay**, pas seulement des pourcentages. Exemples : « Bouche-à-oreille » (les contrats affichent un client de plus), « Contremaître » (une station par ère produit pendant sa reconversion), « Brouillon de génie » (première recette avancée débloquée dès le début).
+- Un Héritage par fin, soit 4 par ère (+ 1 secret à partir de l'ère 3).
+- Effets **de gameplay**, pas seulement des pourcentages. Exemples : « Le Bruit court » (les contrats affichent un client de plus), « Contremaître » (une station par ère produit pendant sa reconversion), « L'Étincelle de génie » (première recette avancée débloquée dès le début).
 - Ils s'affichent sur la frise, sous forme de vitrine de trouvailles : c'est la collection longue durée du joueur.
 
-### Savoir-faire
+### Acquis
 
 - Gagné à la fin d'une ère, en quantité liée à la performance (quêtes de branche faites, production totale, temps).
 - Dépensé dans un petit **arbre d'Atelier** global (environ 30 nœuds) : confort de jeu, plafond hors-ligne, emplacements de modules, vitesse de reconversion.
-- Les 4 types de Savoir-faire poussent le joueur à varier ses fins d'une ère à l'autre.
+- Les 4 types d'Acquis poussent le joueur à varier ses fins d'une ère à l'autre.
 
 ### Ères passées en régime de croisière
 
 - Une ère terminée produit à 10 % de son rythme final, sans intervention.
-- Elle exporte des **ressources d'époque** vers les ères suivantes via le **Comptoir temporel** (un bâtiment présent dans chaque ère). Exemple : la poterie de l'ère 2 sert de contenant dans certaines recettes de l'ère 4.
-- Règle d'or : une ressource d'époque est **un bonus, jamais une condition**. Elle remplace un intrant ou accélère une recette, mais aucune progression n'en dépend.
+- Elle exporte des **Marchandises d'antan** vers les ères suivantes via le **Carrefour des siècles** (un bâtiment présent dans chaque ère). Exemple : la poterie de l'ère 2 sert de contenant dans certaines recettes de l'ère 4.
+- Règle d'or : une marchandise d'antan est **un bonus, jamais une condition**. Elle remplace un intrant ou accélère une recette, mais aucune progression n'en dépend.
 
 ### Archives : revenir sans recommencer
 
-- Le joueur peut revisiter une ère passée pour finir une autre branche et gagner son Brevet.
+- Le joueur peut revisiter une ère passée pour finir une autre branche et gagner son Héritage.
 - L'ère reprend là où il l'a laissée : pas de reset. Les nœuds restants gardent leur plein coût : compléter toutes les branches d'une ancienne ère est un gros avantage pour les ères suivantes, et le travail demandé doit être à la hauteur.
-- Coût croissant : chaque Brevet obtenu dans une ère augmente le coût des autres branches de cette même ère (piste d'équilibrage : ×2,5 par Brevet déjà obtenu dans l'ère). Les Brevets des autres ères n'ont aucun effet. On ne peut donc pas tout avoir vite : l'ordre dans lequel on prend les Brevets devient une stratégie, et le temps idle sert à financer les plus chers.
-- Collectionner les 40+ Brevets de la v1 devient l'objectif de fin de jeu, sans prestige.
+- Coût croissant : chaque Héritage obtenu dans une ère augmente le coût des autres branches de cette même ère (piste d'équilibrage : ×2,5 par Héritage déjà obtenu dans l'ère). Les Héritages des autres ères n'ont aucun effet. On ne peut donc pas tout avoir vite : l'ordre dans lequel on prend les Héritages devient une stratégie, et le temps idle sert à financer les plus chers.
+- Collectionner les 40+ Héritages de la v1 devient l'objectif de fin de jeu, sans prestige.
 
 ## 6. Économie
 
@@ -155,9 +155,9 @@ L'économie repose sur trois couches : des ressources produites, des recettes qu
 | --- | --- | --- |
 | Base | Produite sans intrant, alimente tout | Baies, silex, bois |
 | Intermédiaire | Issue d'une recette, sert d'intrant | Outils taillés, peaux tannées |
-| Critique | Exigée par l'arbre et les Clés d'ère | Parures, ocre, sel |
+| Critique | Exigée par l'arbre et les Tournants historiques | Parures, ocre, sel |
 | Monnaie d'ère | Unité d'échange du marché (coquillages, drachmes, livres, crédits…) | Coquillages |
-| D'époque | Importée d'une ère passée, bonus seulement | — |
+| Marchandise d'antan | Importée d'une ère passée, bonus seulement | — |
 
 ### Recettes
 
@@ -178,7 +178,7 @@ P = P_0 \cdot \left( \frac{D}{D + S} \right)^{\varepsilon} \cdot (1 + \text{tend
 - Vendre en masse fait chuter le prix ; il remonte avec le temps. Diversifier ses ventes paie.
 - La **tendance** suit des cycles de 4 à 12 h et les événements (une sécheresse fait grimper le grain).
 - **Marchands PNJ** : 3 à 5 par ère. Chacun achète certaines ressources plus cher et vend des choses introuvables ailleurs. Leur humeur monte avec les échanges.
-- **Contrats** : livrer X unités avant un délai, contre une prime en monnaie, en ressources rares ou en Savoir-faire.
+- **Contrats** : livrer X unités avant un délai, contre une prime en monnaie, en ressources rares ou en Acquis.
 - Le marché évolue avec les ères : troc direct à taux négociés (ère 1), monnaie (ère 2), lettres de change (ère 4), bourse (ère 7), marchés algorithmiques (ère 9).
 
 ### Gains hors-ligne
@@ -196,11 +196,11 @@ P = P_0 \cdot \left( \frac{D}{D + S} \right)^{\varepsilon} \cdot (1 + \text{tend
 
 ## 7. La frise des 10 ères
 
-La v1 couvre 10 ères, du Troc à l'ère Spatiale ; les fins sont listées dans l'ordre Négoce / Cadence / Ingéniosité / Communauté.
+La v1 couvre 10 ères, du Troc à l'ère Spatiale ; les fins sont listées dans l'ordre Négoce / Cadence / Ingéniosité / Société.
 
 | # | Ère | Période | Monnaie | Ressources critiques | Stations phares | Fins (N / C / I / Co) |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Troc | Néolithique | Coquillages | Parures, ocre, sel, peaux tannées, outils de silex, grain, poteries crues, fresques | Cueillette, Atelier de taille, Feu de camp, Tannerie, Grenier, Cercle de troc | Grand Cercle d'échange / Village agricole / Maîtrise du feu / Clan des conteurs |
+| 1 | Troc | Néolithique | Coquillages | Parures, ocre, sel, peaux tannées, outils en silex, grain, poteries crues, peintures rupestres | Coin de cueillette, Atelier de taille, Foyer du clan, Atelier des peaux, Premiers champs, Place du troc | Le Pacte des Marchands / La Révolution des Champs / Maîtrise du feu / Le Cercle des conteurs |
 | 2 | Marchés antiques | 3000 av. – 500 apr. J.-C. | Drachmes | Bronze, poterie, huile, vin, papyrus, pièces frappées | Fonderie, Potier, Pressoir, Vignoble, Scriptorium, Agora | Thalassocratie / Grenier de l'Empire / École d'ingénieurs / Cité-forum |
 | 3 | Guildes | 500 – 1450 | Deniers | Laine, fer, cuir, bière, parchemin, sceaux de guilde | Moulin à eau, Forge, Tisserand, Brasserie, Copiste, Halle de foire | Ligue des ports / Bourg moulinier / Atelier des maîtres / Commune libre |
 | 4 | Comptoirs maritimes | 1450 – 1700 | Florins | Épices, sucre, bois de marine, cartes, lettres de change, imprimés | Chantier naval, Comptoir, Cartographe, Banque, Imprimerie, Raffinerie | Compagnie des Sept Mers / Arsenal / Presse & cartographie / Société par actions |
@@ -226,33 +226,33 @@ L'ère du Troc sert de tutoriel long : 1 à 2 jours, 10 stations, 8 ressources c
 2. Bob propose d'échanger 5 baies contre 1 silex : premier troc.
 3. Le premier silex débloque la Carrière, et la récolte devient automatique.
 4. L'Atelier de taille introduit la première recette, puis le premier choix de variante.
-5. Le Cercle de troc ouvre le marché. L'arbre apparaît à la 20ᵉ minute environ.
+5. La Place du troc ouvre le marché. L'arbre apparaît à la 20ᵉ minute environ.
 
 ### Stations
 
-| Station | Produit / recette | Variantes au déblocage |
+| Station | Produit / recette | Spécialisations au déblocage |
 | --- | --- | --- |
-| Buisson de cueillette | Baies (base) | Baies juteuses (nourriture) · Herbes médicinales (moral) · Fibres (cordes) |
-| Carrière de silex | Silex (base) | Silex fin (outils) · Pierres de meule (grain) · Galets polis (parures) |
-| Camp de chasse | Viande + peaux brutes | Gros gibier (peaux) · Pêche (coquillages) · Pièges (lent mais constant) |
-| Atelier de taille | Silex → outils de silex | Pointes de chasse · Outils agricoles · Parures |
-| Feu de camp | Bois → chaleur, cuisson | Fumoir (stock conservé) · Four à ocre (ocre) · Veillée (fresques) |
-| Tannerie | Peaux brutes + sel → peaux tannées | Cuir épais · Fourrures de luxe (négoce) · Outres (stockage) |
-| Champ primitif | Grain | Blé sauvage · Lentilles (nourriture) · Lin (fibres) |
-| Source salée | Sel | Évaporation · Mine de sel · Sel marin (+ coquillages) |
-| Fosse à argile | Argile + feu → poteries crues | Jarres (stockage) · Figurines (parures) · Tuiles (village) |
-| Cercle de troc | Marché de l'ère | Pierre aux échanges (meilleurs taux) · Foire saisonnière (événements) · Conseil des anciens (contrats) |
+| Coin de cueillette | Baies (base) | Baies sauvages (nourriture) · Herbes du clan (moral) · Herbes à tresser (fibres, cordes) |
+| Carrière de silex | Silex (base) | Silex de taille (outils) · Pierres à moudre (grain) · Galets de parure (parures) |
+| Camp de chasse | Viande + peaux brutes | Chasse au gros gibier (peaux) · Pêche (coquillages) · Chasse au piège (lent mais constant) |
+| Atelier de taille | Silex → outils en silex | Pointes de chasse · Outils agricoles · Parures d'échange |
+| Foyer du clan | Bois → chaleur, cuisson | Fumoir (stock conservé) · Foyer à ocre (ocre) · Assemblée du soir (peintures rupestres) |
+| Atelier des peaux | Peaux brutes + sel → peaux tannées | Cuir épais · Fourrures de prestige (négoce) · Outres (stockage) |
+| Premiers champs | Grain | Blé sauvage · Lentilles (nourriture) · Lin (fibres) |
+| Terres salées | Sel | Évaporation · Mine de sel · Sel marin (+ coquillages) |
+| Argilière | Argile + feu → poteries crues | Jarres d'argile (stockage) · Figurines d'argile (parures) · Tuiles d'argile (village) |
+| Place du troc | Marché de l'ère | Pierre du troc (meilleurs taux) · Foire saisonnière (événements) · Conseil des anciens (contrats) |
 
 ### Ressources critiques et fins
 
 Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre et partage les deux autres avec ses voisines.
 
-| Fin | Ressources exigées par la Clé d'ère | Brevet gagné |
+| Fin | Ressources exigées par le Tournant historique | Héritage gagné |
 | --- | --- | --- |
-| Négoce — Grand Cercle d'échange | Parures, sel, **peaux tannées** | Bouche-à-oreille : les contrats proposent un client de plus et annoncent la prochaine tendance du marché |
-| Cadence — Village agricole | Sel, **grain**, outils de silex | Greniers pleins : +2 h de plafond hors-ligne et stations de base au niveau 5 dès le début de chaque ère |
-| Ingéniosité — Maîtrise du feu | Outils de silex, **poteries crues**, ocre | Brouillon de génie : la première recette avancée de chaque ère est débloquée d'office |
-| Communauté — Clan des conteurs | Ocre, **fresques**, parures | Mémoire du clan : chaque événement propose un troisième choix |
+| Négoce — Le Pacte des Marchands | Parures, sel, **peaux tannées** | Le Bruit court : les contrats affichent un client supplémentaire et annoncent la prochaine tendance du marché |
+| Cadence — La Révolution des Champs | Sel, **grain**, outils en silex | Le Sens des réserves : +2 h de plafond hors-ligne et stations de base au niveau 5 dans les ères suivantes |
+| Ingéniosité — Maîtrise du feu | Outils en silex, **poteries crues**, ocre | L'Étincelle de génie : la première recette avancée de chaque nouvelle ère est débloquée d'office |
+| Société — Le Cercle des conteurs | Ocre, **peintures rupestres**, parures | La Troisième Voie : chaque événement propose une troisième réponse |
 
 ### Arbre de l'ère 1
 
@@ -260,7 +260,7 @@ Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre 
 - **Négoce** : chemin des Porteurs (volume de peaux, contrats longue distance) ou chemin des Foires (prix des parures, événements de foire).
 - **Cadence** : chemin des Champs (grain, sel) ou chemin des Ateliers (outils, doublons de stations).
 - **Ingéniosité** : chemin du Four (poteries, cuisson) ou chemin des Pigments (ocre, recettes à 2 intrants).
-- **Communauté** : chemin des Veillées (fresques, moral) ou chemin des Anciens (quêtes, récompenses de PNJ).
+- **Société** : chemin des Veillées (peintures rupestres, moral) ou chemin des Anciens (quêtes, récompenses de PNJ).
 
 ### PNJ de l'ère
 
@@ -277,14 +277,14 @@ Les 8 ressources critiques forment un anneau : chaque fin a sa ressource propre 
 
 ## 9. Quêtes, PNJ et événements
 
-Chaque ère compte environ 25 quêtes principales (obligatoires pour la complétion) et 8 à 12 quêtes de branche (optionnelles, qui augmentent le Savoir-faire gagné).
+Chaque ère compte environ 25 quêtes principales (obligatoires pour la complétion) et 8 à 12 quêtes de branche (optionnelles, qui augmentent les Acquis gagnés).
 
 ### Types de quêtes
 
 | Type | Part | Fonctionnement | Récompense type |
 | --- | --- | --- | --- |
 | Production | \~40 % | Atteindre un stock, un rythme (X/min) ou un niveau de station | Ressources, déblocage de station |
-| Narrative / PNJ | \~35 % | Arc de 3 à 5 étapes par PNJ, mêlant production, choix et dialogues | Variante bonus, cosmétique, Savoir-faire |
+| Narrative / PNJ | \~35 % | Arc de 3 à 5 étapes par PNJ, mêlant production, choix et dialogues | Variante bonus, cosmétique, Acquis |
 | Contrat commercial | \~25 % | Livrer X unités avant un délai (30 min à 12 h) | Monnaie, ressources rares, réputation |
 
 - Les quêtes principales sont neutres : chaque branche peut les remplir, parfois par des moyens différents (livrer 50 parures **ou** 50 outils).
@@ -301,7 +301,7 @@ Chaque ère compte environ 25 quêtes principales (obligatoires pour la complét
 ### Événements
 
 - 2 à 4 événements par jour de jeu actif, annoncés par une bulle dans le panorama. Ils restent ouverts 30 min à 2 h et n'interrompent jamais.
-- Chaque événement propose 2 choix (3 avec le Brevet Mémoire du clan), aux conséquences temporaires (1 à 6 h).
+- Chaque événement propose 2 choix (3 avec l'Héritage La Troisième Voie), aux conséquences temporaires (1 à 6 h).
 - Ils ne sont jamais punitifs sans contrepartie : une crise ouvre toujours une opportunité.
 - Exemples :
   - *Sécheresse (ère 1)* : le grain se vend à ×3 pendant 3 h. Vendre maintenant, ou stocker pour nourrir le clan (+ moral) ?
@@ -325,7 +325,7 @@ L'écran est coupé en deux : le panorama vivant en haut (environ 55 %), le pann
 - Taper une station (dans le panorama ou dans la liste) ouvre une **fiche coulissante** : variante, recette, intrants et goulet, niveau, modules, bouton de reconversion.
 - L'**achat en lot** (×1, ×10, ×max) se fait par appui long sur le bouton d'amélioration.
 - L'**arbre** s'affiche en plein écran, zoomable et déplaçable. Les 4 branches partent du tronc en éventail. Un filtre surligne le chemin le moins cher vers la Clé visée.
-- La **frise** montre toutes les ères de gauche à droite, avec les Brevets gagnés ; taper une ère passée ouvre ses Archives.
+- La **frise** montre toutes les ères de gauche à droite, avec les Héritages gagnés ; taper une ère passée ouvre ses Archives.
 - Le **marché** affiche pour chaque ressource le prix courant, une mini-courbe sur 12 h et la tendance (flèche). Vendre et acheter se fait par curseur.
 
 ### Principes d'ergonomie
@@ -430,7 +430,7 @@ Le jeu est gratuit et entièrement finissable sans payer ni regarder de pub ; on
 
 Les Étincelles s'achètent, mais se gagnent aussi en jouant, à un rythme généreux : on ne fait pas payer chaque cosmétique, et un joueur qui ne paie jamais peut quand même s'offrir ce qu'il aime.
 
-- **Sources en jeu** : quêtes principales (petites quantités), fin d'ère (gros montant), chaque Brevet, contrats livrés parfaitement, succès, connexion quotidienne (sans perdre sa série si on rate un jour).
+- **Sources en jeu** : quêtes principales (petites quantités), fin d'ère (gros montant), chaque Héritage, contrats livrés parfaitement, succès, connexion quotidienne (sans perdre sa série si on rate un jour).
 - **Dépenses** : cosmétiques uniquement (skins de stations, thèmes de particules, tenues de PNJ, cadres de frise). Jamais de ressources, de temps ou de progression.
 - **Cible de générosité** (piste) : un joueur régulier gagne de quoi s'offrir environ un cosmétique moyen par ère, et peut débloquer 60 à 70 % du catalogue en finissant la v1 sans payer.
 - **Bonnes pratiques** : packs alignés sur les prix des cosmétiques (pas de reliquat inutilisable), équivalent en argent réel affiché à côté du prix en Étincelles, aucune remise « dernière chance ».
@@ -505,7 +505,7 @@ Les images sont générées avec ChatGPT, élément par élément, puis assembl�
 | Personnages de scène | 10 | Silhouettes d'ouvriers et de passants |
 | Portraits de PNJ | 12 | 4 PNJ × 3 expressions |
 | Icônes de ressources | 16 | Critiques, de base et monnaie |
-| Habillage d'interface | 6 | Cadres, bannière d'ère, icône de Brevet |
+| Habillage d'interface | 6 | Cadres, bannière d'ère, icône d'Héritage |
 | **Total** | **environ 130** | Soit environ 1300 images pour la v1 |
 
 Les textures de particules (une dizaine de formes simples) sont communes à toutes les ères.
@@ -530,14 +530,14 @@ La v1 contient les 10 ères ; les mises à jour ajoutent des « saisons », chac
 | 2 | Exoplanètes | Première colonie stellaire, Économie interstellaire |
 | 3 et + | Autres galaxies | Sphères de Dyson, Économies galactiques |
 
-Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Brevets) et peut ajouter une mécanique propre, comme la gravité ou les délais de communication.
+Chaque saison réutilise la grammaire d'une ère (stations, 4 fins, Héritages) et peut ajouter une mécanique propre, comme la gravité ou les délais de communication.
 
 ## 17. Questions ouvertes
 
 - [x] Taille de l'équipe et calendrier visé : les durées de la section 16 en dépendent. Réponse : pas de contrainte, les durées restent indicatives.
 - [x] Une semaine par ère, soit environ 10 semaines pour la v1 : est-ce que l'ère 1 courte (1 à 2 jours) te convient comme onboarding ? Réponse : oui.
 - [x] La fin hybride secrète à partir de l'ère 3 : on la garde, ou on reste strictement à 4 fins ? Réponse : on la garde.
-- [ ] Les noms de travail des fins et des Brevets sont à valider, ère par ère. Travail en cours dans [Industrimental — Textes de travail](https://claude.ai/artifact/SrEyhPwfVWoBEWxoScEeiS).
+- [ ] Les noms de travail des fins et des Héritages sont à valider, ère par ère. Travail en cours dans [Industrimental — Textes de travail](https://claude.ai/artifact/SrEyhPwfVWoBEWxoScEeiS).
 - [x] Une sauvegarde cloud multiplateforme (iOS ↔ Android) demanderait un petit serveur : en v1 ou plus tard ? Réponse : solution sans coût en v1 (voir section 14, Sauvegarde et temps).
 - [x] Marchés du soft launch à choisir. Le soft launch est une sortie discrète dans un ou deux petits pays avant le lancement mondial, pour mesurer la rétention et ajuster l'équilibrage. Réponse : Canada et États-Unis.
 - [x] Nom définitif du jeu : Industrimental est-il le titre final ? Réponse : oui.
