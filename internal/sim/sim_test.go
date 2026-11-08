@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/morialkar/industrimental/internal/content"
+	"github.com/morialkar/industrimental/internal/save"
 )
 
 func era1(t *testing.T) *content.Era {
@@ -234,7 +235,7 @@ func TestEra1OpensLikeTheDesign(t *testing.T) {
 		t.Errorf("no berries yet: %v", err)
 	}
 	for i := 0; i < 5; i++ {
-		if err := s.Harvest("cueillette"); err != nil {
+		if _, err := s.Harvest("cueillette"); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -340,5 +341,101 @@ func TestDeliverContractPaysAndCloses(t *testing.T) {
 	}
 	if len(s.Contracts()) != len(open)-1 {
 		t.Error("the contract should be closed")
+	}
+}
+
+func TestRanksScaleEffectsAndCosts(t *testing.T) {
+	e := era1(t)
+	s := New(e, 1)
+	s.Grant("baies", 1e6)
+	s.Grant("silex", 1e6)
+	n := s.nodes["main-habile"]
+	if n.Ranks() != 5 {
+		t.Fatalf("main-habile has %d ranks, want 5", n.Ranks())
+	}
+	if got := s.NextRankCost("main-habile")["baies"]; math.Abs(got-n.Cost["baies"]/15) > 1e-9 {
+		t.Errorf("rank 1 costs %g baies, want %g", got, n.Cost["baies"]/15)
+	}
+	if err := s.BuyNode("main-habile"); err != nil {
+		t.Fatal(err)
+	}
+	if got := s.NextRankCost("main-habile")["baies"]; math.Abs(got-2*n.Cost["baies"]/15) > 1e-9 {
+		t.Errorf("rank 2 costs %g baies, want %g", got, 2*n.Cost["baies"]/15)
+	}
+	if got, want := s.HarvestShare(), e.HarvestShare+0.05; math.Abs(got-want) > 1e-9 {
+		t.Errorf("harvest share after one rank = %g, want %g", got, want)
+	}
+	if err := s.BuyNodeFully("main-habile"); err != nil {
+		t.Fatal(err)
+	}
+	if !s.NodeMaxed("main-habile") || s.BuyNode("main-habile") != ErrBuilt {
+		t.Error("main-habile should be maxed")
+	}
+	if got, want := s.HarvestShare(), e.HarvestShare+0.25; math.Abs(got-want) > 1e-9 {
+		t.Errorf("harvest share at rank 5 = %g, want %g", got, want)
+	}
+}
+
+func TestOldSavesKeepTheirNodesFullyRanked(t *testing.T) {
+	e := era1(t)
+	s := Restore(e, &save.EraState{Nodes: []string{"main-habile"}})
+	if !s.NodeMaxed("main-habile") {
+		t.Errorf("an old save's node should be maxed, rank = %d", s.Rank("main-habile"))
+	}
+}
+
+func TestRowsOpenWithBuiltStations(t *testing.T) {
+	e := era1(t)
+	s := New(e, 1)
+	for _, id := range []string{"baies", "silex", "bois", "coquillages", "sel", "poteries-crues", "outils-silex", "peaux-tannees", "parures"} {
+		s.Grant(id, 1e7)
+	}
+	for _, id := range []string{"main-habile", "feu-apprivoise", "premiers-paniers", "langage-troc", "sedentarisation", "le-cercle"} {
+		if err := s.BuyNode(id); err != nil {
+			t.Fatalf("%s: %v", id, err)
+		}
+	}
+	if !s.NodeAvailable("foires") {
+		t.Error("row 1 is open from the start")
+	}
+	if s.NodeAvailable("marche-grains") {
+		t.Error("row 2 needs 2 stations")
+	}
+	_ = s.Build("cueillette", "juteuses")
+	_ = s.Build("carriere-silex", "silex-fin")
+	if err := s.BuyNode("foires"); err != nil {
+		t.Fatal(err)
+	}
+	if !s.RowOpen(2) || !s.NodeAvailable("marche-grains") {
+		t.Errorf("row 2 should open with %d stations", s.StationsBuilt())
+	}
+}
+
+func TestHarvestGrowsWithProduction(t *testing.T) {
+	e := era1(t)
+	s := New(e, 1)
+	got, err := s.Harvest("cueillette")
+	if err != nil || got["baies"] != 1 {
+		t.Fatalf("first tap = %v, %v; want 1 baie", got, err)
+	}
+	for _, r := range e.Resources {
+		s.Grant(r.ID, 1e12)
+	}
+	if err := s.Build("cueillette", "juteuses"); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Upgrade("cueillette", 60); err != nil {
+		t.Fatal(err)
+	}
+	s.Step(1)
+	rate := 0.0
+	for _, r := range e.Resources {
+		if r.Kind != content.KindCurrency && s.Rate(r.ID) > 0 {
+			rate += s.Rate(r.ID)
+		}
+	}
+	want := math.Round(e.HarvestShare*rate*10) / 10
+	if v := s.HarvestValue("cueillette")["baies"]; rate < 40 || v != want {
+		t.Errorf("tap = %g for %g units/s, want %g", v, rate, want)
 	}
 }

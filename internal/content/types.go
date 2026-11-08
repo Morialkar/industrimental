@@ -48,7 +48,21 @@ type Era struct {
 	NPCs      []NPC      `json:"npcs"`
 	Contracts []Contract `json:"contracts"`
 	Endings   []Ending   `json:"endings"`
+	// RowStations[r] is how many stations must be built to open row r of the
+	// branch boards (index 0 unused). Missing rows are always open.
+	RowStations []int `json:"rowStations,omitempty"`
+	// HarvestShare is the share of the production per second that one tap on
+	// the harvest button gives, before the tree's bonuses.
+	HarvestShare float64 `json:"harvestShare,omitempty"`
 }
+
+// Board grid of a branch: 3 columns by 6 rows. The trunk uses 4 by 2.
+const (
+	BoardCols = 3
+	BoardRows = 6
+	TrunkCols = 4
+	TrunkRows = 2
+)
 
 // Resource is anything the player can hold, produce or sell.
 type Resource struct {
@@ -109,6 +123,7 @@ const (
 	EffectContractReward EffectKind = "contractReward" // contract rewards +Value
 	EffectQuestReward    EffectKind = "questReward"    // quest rewards +Value
 	EffectRetoolDiscount EffectKind = "retoolDiscount" // retooling cost and time -Value (at most 75 %)
+	EffectHarvestShare   EffectKind = "harvestShare"   // share of production per tap +Value (points)
 )
 
 // Effect is a passive bonus granted by a tree node or a running variant.
@@ -123,7 +138,12 @@ type Effect struct {
 // Node is one upgrade of the era tree.
 //
 // RequiresAll must all be bought; if RequiresAny is non-empty, at least one of
-// them must be bought too. RequiresAny is how parallel paths converge.
+// them must be bought too. RequiresAny is how parallel paths converge. A
+// prerequisite counts as bought from its first rank.
+//
+// A node has MaxRank ranks (1 when unset). Cost and Effects are the totals of
+// all ranks: each rank gives Effects/MaxRank, and rank r (from 1) costs
+// Cost x r / (1+2+...+MaxRank), so later ranks cost more.
 type Node struct {
 	ID          string   `json:"id"`
 	NameKey     string   `json:"nameKey"`
@@ -135,7 +155,27 @@ type Node struct {
 	RequiresAll []string `json:"requiresAll,omitempty"`
 	RequiresAny []string `json:"requiresAny,omitempty"`
 	Effects     []Effect `json:"effects,omitempty"`
-	EraKey      bool     `json:"eraKey,omitempty"` // final node of a branch
+	EraKey      bool     `json:"eraKey,omitempty"` // final node of a branch: the Historic Turning Point
+	MaxRank     int      `json:"maxRank,omitempty"`
+	// Row and Col place the node on its board, from 1 (see BoardCols).
+	Row int `json:"row"`
+	Col int `json:"col"`
+	// Art names the node's illustration in the interface kit, if it has one.
+	Art string `json:"art,omitempty"`
+}
+
+// Ranks returns the number of ranks of the node.
+func (n *Node) Ranks() int { return max(1, n.MaxRank) }
+
+// RankCost is the cost of rank r (from 1).
+func (n *Node) RankCost(r int) Amounts {
+	m := n.Ranks()
+	share := float64(r) / float64(m*(m+1)/2)
+	out := Amounts{}
+	for id, q := range n.Cost {
+		out[id] = q * share
+	}
+	return out
 }
 
 // QuestKind is the family a quest belongs to.

@@ -12,7 +12,7 @@
 go run ./cmd/desktop
 ```
 
-La fenêtre a le format d'un téléphone. Glisse à la souris pour faire défiler le panorama. La sauvegarde est dans le dossier de configuration de l'utilisateur, sous `Industrimental`.
+La fenêtre a le format d'un téléphone. Glisse à la souris pour faire défiler le monde. La sauvegarde est dans le dossier de configuration de l'utilisateur, sous `Industrimental`.
 
 Capture d'écran sans fenêtre (utilisée par l'intégration continue) :
 
@@ -20,7 +20,7 @@ Capture d'écran sans fenêtre (utilisée par l'intégration continue) :
 go run ./cmd/desktop -screenshot scene.png -frames 20 -warmup 4
 ```
 
-Pour voir un onglet sur une partie avancée sans toucher à la sauvegarde : `-demo -tab 2` (0 stations, 1 marché, 2 arbre, 3 quêtes, 4 ère).
+Pour voir un écran sur une partie avancée sans toucher à la sauvegarde : `-demo -tab 2` (0 monde, 1 marché, 2 capacités, 3 quêtes, 4 frise, 5 clan, 6 boutique, 7 fiche de station).
 
 ## Équilibrage
 

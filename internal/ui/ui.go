@@ -60,6 +60,7 @@ type Kit struct {
 	pressX, pressY float64
 	held           int
 	dragged        bool
+	horizontal     bool // the current drag runs mostly sideways
 	longFired      bool
 	pressOwner     string // the list that captured the current press
 
@@ -119,10 +120,26 @@ func (k *Kit) Feed(x, y float64, down bool) {
 	k.down = down
 	if down {
 		k.held++
-		if math.Hypot(k.x-k.pressX, k.y-k.pressY) > dragSlop {
+		if !k.dragged && math.Hypot(k.x-k.pressX, k.y-k.pressY) > dragSlop {
 			k.dragged = true
+			k.horizontal = math.Abs(k.x-k.pressX) > math.Abs(k.y-k.pressY)
 		}
 	}
+}
+
+// Drag reports the current drag: how far the pointer moved since the press,
+// and whether it runs sideways. ok is false when no drag is under way.
+func (k *Kit) Drag() (dx, dy float64, horizontal, ok bool) {
+	if !k.down || !k.dragged {
+		return 0, 0, false, false
+	}
+	return k.x - k.pressX, k.y - k.pressY, k.horizontal, true
+}
+
+// Released tells whether the pointer was just lifted, and whether that ended
+// a drag that started inside a rectangle.
+func (k *Kit) Released() (released, dragged bool, pressX, pressY float64) {
+	return k.released, k.dragged, k.pressX, k.pressY
 }
 
 // Pointer returns the pointer position and whether it is down.
@@ -156,7 +173,7 @@ func (k *Kit) Text(dst *ebiten.Image, s string, x, y, size float64, c color.Colo
 	}
 	op := &text.DrawOptions{}
 	op.GeoM.Translate(x, y)
-	op.ColorScale.ScaleWithColor(c)
+	op.ColorScale.ScaleWithColor(Straight(c))
 	switch a {
 	case Center:
 		op.PrimaryAlign = text.AlignCenter
@@ -164,6 +181,34 @@ func (k *Kit) Text(dst *ebiten.Image, s string, x, y, size float64, c color.Colo
 		op.PrimaryAlign = text.AlignEnd
 	}
 	text.Draw(dst, s, k.face(size, bold), op)
+}
+
+// Shadowed draws a line with a dark drop shadow, for text laid on wood.
+func (k *Kit) Shadowed(dst *ebiten.Image, s string, x, y, size float64, c color.Color, a Align, bold bool) {
+	k.Text(dst, s, x, y+size*0.08, size, color.RGBA{0x28, 0x12, 0x04, 0xd8}, a, bold)
+	k.Text(dst, s, x, y, size, c, a, bold)
+}
+
+// ShadowedParagraph draws wrapped shadowed text and returns its height.
+func (k *Kit) ShadowedParagraph(dst *ebiten.Image, s string, x, y, size, width float64, c color.Color, bold bool) float64 {
+	lines := k.Wrap(s, size, width, bold)
+	lh := size * 1.3
+	for i, l := range lines {
+		k.Shadowed(dst, l, x, y+float64(i)*lh, size, c, Left, bold)
+	}
+	return float64(len(lines)) * lh
+}
+
+// Fit shortens a line with an ellipsis until it fits a width.
+func (k *Kit) Fit(s string, size, width float64, bold bool) string {
+	if k.Width(s, size, bold) <= width {
+		return s
+	}
+	r := []rune(s)
+	for len(r) > 1 && k.Width(string(r)+"…", size, bold) > width {
+		r = r[:len(r)-1]
+	}
+	return strings.TrimRight(string(r), " ") + "…"
 }
 
 // Width measures a line of text.
@@ -224,7 +269,16 @@ func (k *Kit) Fill(dst *ebiten.Image, r Rect, c color.Color) {
 	if dst == nil {
 		return
 	}
-	vector.FillRect(dst, float32(r.X), float32(r.Y), float32(r.W), float32(r.H), c, false)
+	vector.FillRect(dst, float32(r.X), float32(r.Y), float32(r.W), float32(r.H), Straight(c), false)
+}
+
+// Straight reads a color.RGBA as straight (not premultiplied) alpha, the way
+// the game writes its translucent colors, and converts it for drawing.
+func Straight(c color.Color) color.Color {
+	if rc, ok := c.(color.RGBA); ok && rc.A < 0xff {
+		return color.NRGBA(rc)
+	}
+	return c
 }
 
 // Style is the look of a button.
@@ -239,23 +293,33 @@ type Click struct {
 	Long bool // the finger stayed down (fires once)
 }
 
-// Button draws a button and, during the Update pass, reports presses.
-func (k *Kit) Button(dst *ebiten.Image, r Rect, label string, enabled bool, st Style) Click {
-	var out Click
-	if dst == nil && enabled && k.recorded != nil && k.visible(r.X+r.W/2, r.Y+r.H/2) {
+// Control is the input side of a button whose look the caller paints. In the
+// Update pass (dst nil) it reports presses; in the Draw pass it tells whether
+// the button shows as held down. The label names it for tests.
+func (k *Kit) Control(dst *ebiten.Image, r Rect, label string, enabled bool) (out Click, held bool) {
+	if dst != nil {
+		return out, enabled && k.down && !k.dragged && r.Contains(k.pressX, k.pressY) && k.visible(k.pressX, k.pressY)
+	}
+	if !enabled {
+		return out, false
+	}
+	if k.recorded != nil && k.visible(r.X+r.W/2, r.Y+r.H/2) {
 		if _, dup := k.recorded[label]; !dup {
 			k.recorded[label] = r
 		}
 	}
-	if dst == nil && enabled {
-		out.Tap = k.Tapped(r)
-		if k.down && !k.dragged && !k.longFired && k.held >= longPressTicks &&
-			r.Contains(k.pressX, k.pressY) && r.Contains(k.x, k.y) && k.visible(k.pressX, k.pressY) {
-			k.longFired = true
-			out.Long = true
-		}
-		return out
+	out.Tap = k.Tapped(r)
+	if k.down && !k.dragged && !k.longFired && k.held >= longPressTicks &&
+		r.Contains(k.pressX, k.pressY) && r.Contains(k.x, k.y) && k.visible(k.pressX, k.pressY) {
+		k.longFired = true
+		out.Long = true
 	}
+	return out, false
+}
+
+// Button draws a flat button and, during the Update pass, reports presses.
+func (k *Kit) Button(dst *ebiten.Image, r Rect, label string, enabled bool, st Style) Click {
+	out, held := k.Control(dst, r, label, enabled)
 	if dst == nil {
 		return out
 	}
@@ -264,7 +328,7 @@ func (k *Kit) Button(dst *ebiten.Image, r Rect, label string, enabled bool, st S
 		fill, txt = st.Disabled, st.TextDisabled
 	}
 	k.Fill(dst, r, fill)
-	if enabled && k.down && !k.dragged && r.Contains(k.pressX, k.pressY) && k.visible(k.pressX, k.pressY) {
+	if held {
 		k.Fill(dst, r, color.RGBA{0, 0, 0, 0x30})
 	}
 	k.Text(dst, label, r.X+r.W/2, r.Y+(r.H-st.Size*1.2)/2, st.Size, txt, Center, true)
@@ -309,6 +373,64 @@ func (k *Kit) ScrollOffset(id string) float64 {
 	return 0
 }
 
+// --- images ---------------------------------------------------------------
+
+// Frame is an image cut in 9 pieces: the corners keep their size, the edges
+// and the center stretch. Insets are in source pixels.
+type Frame struct {
+	Img        *ebiten.Image
+	L, T, R, B int
+}
+
+// NewFrame cuts an image with insets given as shares of its width (l, r) and
+// height (t, b), like CSS border-image-slice percentages.
+func NewFrame(img *ebiten.Image, t, r, b, l float64) Frame {
+	w, h := img.Bounds().Dx(), img.Bounds().Dy()
+	return Frame{Img: img, L: int(l * float64(w)), T: int(t * float64(h)), R: int(r * float64(w)), B: int(b * float64(h))}
+}
+
+// Draw paints the frame over a rectangle with the given border widths, in
+// destination pixels. Alpha multiplies the opacity.
+func (f Frame) Draw(dst *ebiten.Image, r Rect, bt, br, bb, bl float64, alpha float32) {
+	if dst == nil || f.Img == nil || r.W <= 0 || r.H <= 0 {
+		return
+	}
+	b := f.Img.Bounds()
+	sx := [4]int{b.Min.X, b.Min.X + f.L, b.Max.X - f.R, b.Max.X}
+	sy := [4]int{b.Min.Y, b.Min.Y + f.T, b.Max.Y - f.B, b.Max.Y}
+	bl, br = math.Min(bl, r.W/2), math.Min(br, r.W/2)
+	bt, bb = math.Min(bt, r.H/2), math.Min(bb, r.H/2)
+	dx := [4]float64{r.X, r.X + bl, r.X + r.W - br, r.X + r.W}
+	dy := [4]float64{r.Y, r.Y + bt, r.Y + r.H - bb, r.Y + r.H}
+	for j := 0; j < 3; j++ {
+		for i := 0; i < 3; i++ {
+			sw, sh := sx[i+1]-sx[i], sy[j+1]-sy[j]
+			dw, dh := dx[i+1]-dx[i], dy[j+1]-dy[j]
+			if sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0 {
+				continue
+			}
+			op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
+			op.GeoM.Scale(dw/float64(sw), dh/float64(sh))
+			op.GeoM.Translate(dx[i], dy[j])
+			op.ColorScale.ScaleAlpha(alpha)
+			dst.DrawImage(f.Img.SubImage(image.Rect(sx[i], sy[j], sx[i+1], sy[j+1])).(*ebiten.Image), op)
+		}
+	}
+}
+
+// Image draws a whole image stretched over a rectangle.
+func Image(dst, img *ebiten.Image, r Rect, cs ebiten.ColorScale) {
+	if dst == nil || img == nil {
+		return
+	}
+	b := img.Bounds()
+	op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
+	op.GeoM.Scale(r.W/float64(b.Dx()), r.H/float64(b.Dy()))
+	op.GeoM.Translate(r.X, r.Y)
+	op.ColorScale = cs
+	dst.DrawImage(img, op)
+}
+
 // --- scrolling list -------------------------------------------------------
 
 // List is a vertically scrolling area: it clips what is drawn through Target
@@ -345,7 +467,7 @@ func (k *Kit) scrollUpdate(st *scrollState, r Rect, contentH float64) {
 		st.offset -= k.wheel * 30
 	}
 	switch {
-	case k.down && r.Contains(k.pressX, k.pressY) && k.dragged:
+	case k.down && r.Contains(k.pressX, k.pressY) && k.dragged && !k.horizontal:
 		if st.dragging {
 			d := k.y - st.lastY
 			st.offset -= d
@@ -381,6 +503,16 @@ func (l *List) Offset() float64 { return l.st.offset }
 
 // End closes the scrolling area.
 func (l *List) End() { l.k.clip = nil }
+
+// ScrollTo moves a list to an offset; the next pass clamps it to the content.
+func (k *Kit) ScrollTo(id string, offset float64) {
+	st := k.scroll[id]
+	if st == nil {
+		st = &scrollState{}
+		k.scroll[id] = st
+	}
+	st.offset, st.vel = offset, 0
+}
 
 // Reset brings a list back to its top.
 func (k *Kit) Reset(id string) {

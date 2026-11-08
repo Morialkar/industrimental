@@ -115,6 +115,13 @@ func Restore(era *content.Era, st *save.EraState) *Sim {
 	for i := range era.Tree {
 		s.nodes[era.Tree[i].ID] = &era.Tree[i]
 	}
+	for _, id := range st.Nodes {
+		if _, ok := st.NodeRanks[id]; !ok {
+			if n, known := s.nodes[id]; known {
+				st.NodeRanks[id] = n.Ranks()
+			}
+		}
+	}
 	for i := range era.Quests {
 		s.quests[era.Quests[i].ID] = &era.Quests[i]
 	}
@@ -152,6 +159,9 @@ func ensureMaps(st *save.EraState) {
 	}
 	if st.QuestRetry == nil {
 		st.QuestRetry = map[string]float64{}
+	}
+	if st.NodeRanks == nil {
+		st.NodeRanks = map[string]int{}
 	}
 }
 
@@ -337,27 +347,32 @@ type bonuses struct {
 	contractReward float64
 	questReward    float64
 	retoolDiscount float64
+	harvestShare   float64
 	retooling      int // stations under works when the bonuses were computed
 }
 
-func (b *bonuses) apply(fx content.Effect) {
+// apply adds an effect, scaled by f (the share of a node's ranks owned).
+func (b *bonuses) apply(fx content.Effect, f float64) {
+	v := fx.Value * f
 	switch fx.Kind {
 	case content.EffectStationRate:
-		b.stationRate[fx.Station] += fx.Value
+		b.stationRate[fx.Station] += v
 	case content.EffectResourceRate:
-		b.resourceRate[fx.Resource] += fx.Value
+		b.resourceRate[fx.Resource] += v
 	case content.EffectInputSaving:
-		b.inputSaving[fx.Resource] += fx.Value
+		b.inputSaving[fx.Resource] += v
 	case content.EffectSellPrice:
-		b.sellPrice[fx.Resource] += fx.Value
+		b.sellPrice[fx.Resource] += v
 	case content.EffectDemand:
-		b.demand[fx.Resource] += fx.Value
+		b.demand[fx.Resource] += v
 	case content.EffectContractReward:
-		b.contractReward += fx.Value
+		b.contractReward += v
 	case content.EffectQuestReward:
-		b.questReward += fx.Value
+		b.questReward += v
 	case content.EffectRetoolDiscount:
-		b.retoolDiscount += fx.Value
+		b.retoolDiscount += v
+	case content.EffectHarvestShare:
+		b.harvestShare += v
 	}
 }
 
@@ -373,8 +388,9 @@ func (s *Sim) recompute() {
 	}
 	for _, id := range s.state.Nodes {
 		if n, ok := s.nodes[id]; ok {
+			f := float64(s.Rank(id)) / float64(n.Ranks())
 			for _, fx := range n.Effects {
-				b.apply(fx)
+				b.apply(fx, f)
 			}
 		}
 	}
@@ -393,7 +409,7 @@ func (s *Sim) recompute() {
 			b.retooling++
 		} else if st.variant != nil {
 			for _, fx := range st.variant.Effects {
-				b.apply(fx)
+				b.apply(fx, 1)
 			}
 		}
 	}
@@ -631,26 +647,116 @@ func (s *Sim) Retool(id, variant string) error {
 	return nil
 }
 
-// Harvest is the tap on a station that can be gathered by hand.
-func (s *Sim) Harvest(id string) error {
+// HarvestValue is what one tap on a station gives: the era's share of the
+// production per second (raised by the tree), never less than the station's
+// own harvest.
+func (s *Sim) HarvestValue(id string) content.Amounts {
+	st, ok := s.byID[id]
+	if !ok || len(st.def.Harvest) == 0 {
+		return nil
+	}
+	rate := 0.0
+	for i, r := range s.Era.Resources {
+		if r.Kind != content.KindCurrency && s.net[i] > 0 {
+			rate += s.net[i]
+		}
+	}
+	share := s.Era.HarvestShare + s.bonus.harvestShare
+	out := content.Amounts{}
+	for res, q := range st.def.Harvest {
+		out[res] = math.Max(q, math.Round(share*rate*10)/10)
+	}
+	return out
+}
+
+// HarvestShare is the share of the production per second that a tap gives.
+func (s *Sim) HarvestShare() float64 { return s.Era.HarvestShare + s.bonus.harvestShare }
+
+// HarvestStation is the station the harvest button gathers from, if any.
+func (s *Sim) HarvestStation() string {
+	for _, st := range s.stations {
+		if len(st.def.Harvest) > 0 {
+			return st.def.ID
+		}
+	}
+	return ""
+}
+
+// Harvest is the tap on a station that can be gathered by hand. It returns
+// what the tap gave.
+func (s *Sim) Harvest(id string) (content.Amounts, error) {
 	st, ok := s.byID[id]
 	if !ok {
-		return fmt.Errorf("%w: %s", ErrUnknown, id)
+		return nil, fmt.Errorf("%w: %s", ErrUnknown, id)
 	}
 	if len(st.def.Harvest) == 0 {
-		return ErrLocked
+		return nil, ErrLocked
 	}
-	s.gain(st.def.Harvest, 1)
-	return nil
+	got := s.HarvestValue(id)
+	s.gain(got, 1)
+	s.updateQuests()
+	return got, nil
 }
 
 // --- tree -----------------------------------------------------------------
 
-// HasNode tells whether a tree node is bought.
-func (s *Sim) HasNode(id string) bool { return slices.Contains(s.state.Nodes, id) }
+// Rank is how many ranks of a node are bought.
+func (s *Sim) Rank(id string) int { return s.state.NodeRanks[id] }
 
-// NodeAvailable tells whether a node's prerequisites are met.
-func (s *Sim) NodeAvailable(id string) bool {
+// HasNode tells whether a tree node has at least one rank.
+func (s *Sim) HasNode(id string) bool { return s.Rank(id) > 0 }
+
+// NodeMaxed tells whether every rank of a node is bought.
+func (s *Sim) NodeMaxed(id string) bool {
+	n, ok := s.nodes[id]
+	return ok && s.Rank(id) >= n.Ranks()
+}
+
+// RowOpen tells whether a row of the branch boards is open: enough stations
+// are built. The trunk is always open.
+func (s *Sim) RowOpen(row int) bool {
+	if row < 0 || row >= len(s.Era.RowStations) {
+		return true
+	}
+	return s.StationsBuilt() >= s.Era.RowStations[row]
+}
+
+// StationsBuilt counts the built stations.
+func (s *Sim) StationsBuilt() int {
+	n := 0
+	for _, st := range s.stations {
+		if st.state != nil {
+			n++
+		}
+	}
+	return n
+}
+
+// RowsOpen counts the open rows of the branch boards.
+func (s *Sim) RowsOpen() int {
+	n := 0
+	for r := 1; r <= content.BoardRows; r++ {
+		if s.RowOpen(r) {
+			n++
+		}
+	}
+	return n
+}
+
+// NodeUnlocked tells whether a node's prerequisites are met and its row is open.
+func (s *Sim) NodeUnlocked(id string) bool {
+	n, ok := s.nodes[id]
+	if !ok {
+		return false
+	}
+	if n.Branch != content.BranchTrunk && !s.RowOpen(n.Row) {
+		return false
+	}
+	return s.NodeReqsMet(id)
+}
+
+// NodeReqsMet tells whether a node's prerequisites are met, whatever its row.
+func (s *Sim) NodeReqsMet(id string) bool {
 	n, ok := s.nodes[id]
 	if !ok {
 		return false
@@ -666,38 +772,71 @@ func (s *Sim) NodeAvailable(id string) bool {
 	return true
 }
 
-// BuyNode buys a tree node.
-func (s *Sim) BuyNode(id string) error {
+// NodeAvailable tells whether the next rank of a node can be bought, given
+// enough resources.
+func (s *Sim) NodeAvailable(id string) bool { return s.NodeUnlocked(id) && !s.NodeMaxed(id) }
+
+// NextRankCost is the price of a node's next rank, nil when it is maxed.
+func (s *Sim) NextRankCost(id string) content.Amounts {
 	n, ok := s.nodes[id]
-	if !ok {
+	if !ok || s.NodeMaxed(id) {
+		return nil
+	}
+	return n.RankCost(s.Rank(id) + 1)
+}
+
+// CanInvest tells whether the next rank of a node can be bought right now.
+func (s *Sim) CanInvest(id string) bool {
+	return s.NodeAvailable(id) && s.CanAfford(s.NextRankCost(id))
+}
+
+// BuyNode buys the next rank of a tree node.
+func (s *Sim) BuyNode(id string) error {
+	if _, ok := s.nodes[id]; !ok {
 		return fmt.Errorf("%w: %s", ErrUnknown, id)
 	}
-	if s.HasNode(id) {
+	if s.NodeMaxed(id) {
 		return ErrBuilt
 	}
-	if !s.NodeAvailable(id) {
+	if !s.NodeUnlocked(id) {
 		return ErrLocked
 	}
-	if err := s.pay(n.Cost); err != nil {
+	if err := s.pay(s.NextRankCost(id)); err != nil {
 		return err
 	}
-	s.state.Nodes = append(s.state.Nodes, id)
+	if !s.HasNode(id) {
+		s.state.Nodes = append(s.state.Nodes, id)
+	}
+	s.state.NodeRanks[id]++
 	s.recompute()
 	s.updateQuests()
 	return nil
 }
 
-// BranchProgress is the share of a branch's nodes bought, bridges counting for
-// both of their branches. It is what will unlock the hybrid endings.
+// BuyNodeFully buys every remaining rank of a node, stopping at the first
+// rank the stock cannot pay.
+func (s *Sim) BuyNodeFully(id string) error {
+	var err error
+	for !s.NodeMaxed(id) {
+		if err = s.BuyNode(id); err != nil {
+			break
+		}
+	}
+	if s.NodeMaxed(id) {
+		return nil
+	}
+	return err
+}
+
+// BranchProgress is the share of a branch's ranks bought, bridges counting
+// for both of their branches. It is what will unlock the hybrid endings.
 func (s *Sim) BranchProgress(axis content.Axis) float64 {
 	total, got := 0, 0
 	for i := range s.Era.Tree {
 		n := &s.Era.Tree[i]
 		if n.Branch == string(axis) || n.BridgeTo == string(axis) {
-			total++
-			if s.HasNode(n.ID) {
-				got++
-			}
+			total += n.Ranks()
+			got += min(s.Rank(n.ID), n.Ranks())
 		}
 	}
 	if total == 0 {

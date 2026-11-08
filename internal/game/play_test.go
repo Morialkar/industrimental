@@ -1,6 +1,7 @@
 package game
 
 import (
+	"math"
 	"path/filepath"
 	"testing"
 	"time"
@@ -37,7 +38,7 @@ func (f *finger) button(label string) ui.Rect {
 	f.t.Helper()
 	r, ok := f.g.kit.Recorded(label)
 	if !ok {
-		f.t.Fatalf("no button %q on screen (tab %d); buttons: %v", label, f.g.tab, f.g.kit.RecordedLabels())
+		f.t.Fatalf("no button %q on screen (screen %q); buttons: %v", label, f.g.screen, f.g.kit.RecordedLabels())
 	}
 	return r
 }
@@ -45,7 +46,11 @@ func (f *finger) button(label string) ui.Rect {
 func (f *finger) tap(label string) {
 	f.t.Helper()
 	r := f.button(label)
-	x, y := r.X+r.W/2, r.Y+r.H/2
+	f.tapAt(r.X+r.W/2, r.Y+r.H/2)
+}
+
+func (f *finger) tapAt(x, y float64) {
+	f.t.Helper()
 	f.tick(x, y, true)
 	f.tick(x, y, false)
 	f.tick(x, y, false) // lets the screen settle and the buttons be listed again
@@ -69,76 +74,83 @@ func (f *finger) settle() {
 	}
 }
 
-// swipe drags the panel upward from its middle.
-func (f *finger) swipe(dy float64) {
-	y := panelY + 300
-	f.tick(360, y, true)
+// swipe drags the finger from (x, y) by (dx, dy).
+func (f *finger) swipe(x, y, dx, dy float64) {
+	f.tick(x, y, true)
 	for i := 1; i <= 10; i++ {
-		f.tick(360, y-dy*float64(i)/10, true)
+		f.tick(x+dx*float64(i)/10, y+dy*float64(i)/10, true)
 	}
-	f.tick(360, y-dy, false)
-	f.tick(360, y-dy, false)
+	f.tick(x+dx, y+dy, false)
+	f.tick(x+dx, y+dy, false)
+}
+
+// openBush taps the plate of the first station in the panorama.
+func (f *finger) openBush() {
+	f.t.Helper()
+	f.tapAt(slotX(0)-f.g.scrollX, groundY+30)
+	f.settle()
+	if f.g.screen != scrStation || f.g.sheet != "cueillette" {
+		f.t.Fatalf("the plate should open the bush's sheet, got %q %q", f.g.screen, f.g.sheet)
+	}
 }
 
 func TestTheOpeningThroughTheInterface(t *testing.T) {
 	f := newFinger(t, Options{})
 	g := f.g
-	f.tick(0, 0, false)
-	gather := "Cueillir : +1 Baies"
 	for i := 0; i < 6; i++ {
-		f.tap(gather)
+		f.tap("Récolter")
 	}
 	if got := g.sim.Stock("baies"); got != 6 {
 		t.Fatalf("after 6 taps: %g berries", got)
 	}
 
-	// Bob's barter, in the market tab, even before the market opens.
+	// Bob's barter, in the market, even before the market opens.
 	f.tap("Marché")
-	if g.tab != tabMarket {
-		t.Fatalf("tab = %d", g.tab)
+	f.settle()
+	if g.screen != scrMarket {
+		t.Fatalf("screen = %q", g.screen)
 	}
-	f.tap("5 Baies → 1 Silex")
+	f.tap("5 baies → 1 silex")
 	if g.sim.Stock("silex") != 1 {
 		t.Fatalf("silex = %g", g.sim.Stock("silex"))
 	}
+	f.tap("Fermer")
+	if g.screen != scrWorld {
+		t.Fatalf("the sheet should close, screen = %q", g.screen)
+	}
 
-	// Build the bush from its sliding sheet: choose a variant, the sheet closes.
-	f.tap("Stations")
 	for i := 0; i < 8; i++ {
-		f.tap(gather)
+		f.tap("Récolter")
 	}
-	if got := g.sim.Stock("baies"); got < 5 {
-		t.Fatalf("not enough berries: %g", got)
-	}
-	f.tap("Construire")
-	f.settle()
-	if g.sheet != "cueillette" {
-		t.Fatalf("the sheet of the bush should be open, got %q", g.sheet)
-	}
-	// The panel below takes no input while a sheet is open.
+	f.openBush()
+	// The main screen takes no input while a sheet is open.
 	if _, ok := g.kit.Recorded("Marché"); ok {
-		t.Error("the tabs should be disabled under a sheet")
+		t.Error("the action bar should be disabled under a sheet")
 	}
+	f.tap("spec herbes")
 	f.tap("Construire")
-	if g.sheet != "" || !g.sim.Station("cueillette").Built {
-		t.Fatalf("the bush should be built, sheet = %q", g.sheet)
+	if st := g.sim.Station("cueillette"); !st.Built || st.Variant != "herbes" {
+		t.Fatalf("the bush should be built with the picked specialization: %+v", st)
 	}
 }
 
 func TestTappingTheBushInThePanorama(t *testing.T) {
 	f := newFinger(t, Options{})
-	f.tick(360, 600, true)
-	f.tick(360, 600, false)
+	f.tapAt(slotX(0), groundY-60)
 	if f.g.sim.Stock("baies") != 1 {
 		t.Errorf("baies = %g", f.g.sim.Stock("baies"))
+	}
+	if len(f.g.floats) == 0 {
+		t.Error("a harvest should show a bubble")
 	}
 }
 
 func TestLongPressBuysAllLevels(t *testing.T) {
 	f := newFinger(t, Options{Demo: true})
 	g := f.g
+	f.openBush()
 	before := g.sim.Station("cueillette").Level
-	label, ok := g.kit.RecordedPrefix("+1 : ")
+	label, ok := g.kit.RecordedPrefix("Améliorer au niveau")
 	if !ok {
 		t.Fatalf("no upgrade button: %v", g.kit.RecordedLabels())
 	}
@@ -146,7 +158,7 @@ func TestLongPressBuysAllLevels(t *testing.T) {
 	if got := g.sim.Station("cueillette").Level; got != before+1 {
 		t.Fatalf("a tap buys one level: %d -> %d", before, got)
 	}
-	label, _ = g.kit.RecordedPrefix("+1 : ")
+	label, _ = g.kit.RecordedPrefix("Améliorer au niveau")
 	f.hold(label)
 	if got := g.sim.Station("cueillette").Level; got <= before+2 {
 		t.Fatalf("a long press should buy many levels: %d -> %d", before+1, got)
@@ -156,16 +168,57 @@ func TestLongPressBuysAllLevels(t *testing.T) {
 func TestSwipeScrollsWithoutPressing(t *testing.T) {
 	f := newFinger(t, Options{Demo: true})
 	g := f.g
-	level := g.sim.Station("cueillette").Level
-	f.swipe(400)
-	if off := g.kit.ScrollOffset("tab0"); off < 300 {
-		t.Errorf("the list should have scrolled, offset = %g", off)
+	f.tap("Marché")
+	f.settle()
+	silex := g.sim.Stock("silex")
+	f.swipe(360, 1200, 0, -500)
+	if off := g.kit.ScrollOffset("sheet"); off < 300 {
+		t.Errorf("the sheet should have scrolled, offset = %g", off)
 	}
-	if g.sim.Station("cueillette").Level != level {
+	if got := g.sim.Stock("silex"); got < silex-1 || len(g.sim.State().TotalSold) > 0 {
 		t.Error("a swipe must not press the button under the finger")
 	}
-	f.tap("Arbre")
-	f.tap("Stations")
+}
+
+func TestTheSkillTree(t *testing.T) {
+	f := newFinger(t, Options{Demo: true})
+	g := f.g
+	f.tap("Capacités")
+	f.settle()
+	if g.screen != scrTree {
+		t.Fatalf("screen = %q", g.screen)
+	}
+	f.tap("node etals")
+	if g.selNode != "etals" {
+		t.Fatalf("selected = %q", g.selNode)
+	}
+	f.tap("Investir")
+	if g.sim.Rank("etals") != 1 {
+		t.Fatalf("one tap buys one rank, rank = %d", g.sim.Rank("etals"))
+	}
+	// A sideways swipe moves to the next branch without scrolling the tree.
+	f.swipe(500, 1000, -400, 10)
+	f.settle()
+	if g.treeBoard != 1 {
+		t.Errorf("board = %d after a swipe", g.treeBoard)
+	}
+	if off := g.kit.ScrollOffset("tree"); off != 0 {
+		t.Errorf("a sideways swipe scrolled the tree to %g", off)
+	}
+	f.tap("tab community")
+	f.settle()
+	if g.treeBoard != 3 || math.Abs(g.treePos-3) > 0.05 {
+		t.Errorf("the tab should bring board 3, board = %d at %g", g.treeBoard, g.treePos)
+	}
+	f.tap("▼ Tournant")
+	f.settle()
+	if g.kit.ScrollOffset("tree") < 300 {
+		t.Error("the Turning point shortcut should scroll down")
+	}
+	f.tap("Fermer")
+	if g.screen != scrWorld {
+		t.Error("the tree should close")
+	}
 }
 
 func TestSaveThenComeBackLater(t *testing.T) {
@@ -173,10 +226,9 @@ func TestSaveThenComeBackLater(t *testing.T) {
 	f := newFinger(t, Options{DataDir: dir})
 	g := f.g
 	for i := 0; i < 8; i++ {
-		f.tap("Cueillir : +1 Baies")
+		f.tap("Récolter")
 	}
-	f.tap("Construire")
-	f.settle()
+	f.openBush()
 	f.tap("Construire")
 	if !g.sim.Station("cueillette").Built {
 		t.Fatal("the bush should be built")
@@ -204,10 +256,9 @@ func TestTheClockGoingBackGivesNothing(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "saves")
 	f := newFinger(t, Options{DataDir: dir})
 	for i := 0; i < 8; i++ {
-		f.tap("Cueillir : +1 Baies")
+		f.tap("Récolter")
 	}
-	f.tap("Construire")
-	f.settle()
+	f.openBush()
 	f.tap("Construire")
 	f.g.lastTick.ref = f.g.lastTick.ref.Add(24 * time.Hour) // saved "in the future"
 	f.g.Save()
@@ -222,18 +273,24 @@ func TestTheClockGoingBackGivesNothing(t *testing.T) {
 	}
 }
 
-func TestEverySafeTabLaysOut(t *testing.T) {
+func TestEveryScreenLaysOut(t *testing.T) {
 	f := newFinger(t, Options{Demo: true})
-	for _, tab := range []string{"Marché", "Arbre", "Quêtes", "Ère", "Stations"} {
-		f.tap(tab)
+	for _, label := range []string{"Marché", "Quêtes", "Boutique", "Clan", "era", "quest-pin"} {
+		f.tap(label)
+		f.settle()
+		if f.g.screen == scrWorld {
+			t.Fatalf("%q should open a screen", label)
+		}
+		f.tap("Fermer")
+		if f.g.screen != scrWorld {
+			t.Fatalf("%q should close", label)
+		}
 	}
-	f.tap("Fiche")
+	// Tapping above a sheet closes it too.
+	f.tap("Clan")
 	f.settle()
-	if f.g.sheet == "" {
-		t.Fatal("the details button should open the sheet")
-	}
-	f.tap("Fermer")
-	if f.g.sheet != "" {
-		t.Error("the sheet should close")
+	f.tapAt(360, 150)
+	if f.g.screen != scrWorld {
+		t.Error("a tap on the world above the sheet should close it")
 	}
 }

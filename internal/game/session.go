@@ -112,7 +112,7 @@ func (g *Game) prepareDemo() {
 		s.Grant(id, 2e6)
 	}
 	for _, id := range []string{"main-habile", "feu-apprivoise", "premiers-paniers", "langage-troc", "sedentarisation", "le-cercle", "foires"} {
-		_ = s.BuyNode(id)
+		_ = s.BuyNodeFully(id)
 	}
 	for i := range g.era.Stations {
 		def := &g.era.Stations[i]

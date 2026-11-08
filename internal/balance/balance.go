@@ -242,7 +242,7 @@ func (p *player) missingText() string {
 	}
 	next := ""
 	for _, id := range p.path {
-		if !p.s.HasNode(id) {
+		if !p.s.NodeMaxed(id) {
 			next = id
 			break
 		}
@@ -258,7 +258,7 @@ func (p *player) decide(dt float64) {
 	// The opening: tap the bush until it can be built and Bob can trade.
 	if !s.Station("cueillette").Built || !s.Station("carriere-silex").Built {
 		for i := 0; i < int(dt*3); i++ {
-			_ = s.Harvest("cueillette")
+			_, _ = s.Harvest("cueillette")
 		}
 	}
 	if !s.Station("carriere-silex").Built && s.Stock("silex") < 1 {
@@ -290,7 +290,7 @@ func (p *player) act() bool {
 		}
 	}
 	for _, id := range p.path {
-		if !s.HasNode(id) {
+		if !s.NodeMaxed(id) {
 			if s.BuyNode(id) == nil {
 				return true
 			}
@@ -383,10 +383,10 @@ func (p *player) computeNeeds() {
 	}
 	bought := 0
 	for _, id := range p.path {
-		if s.HasNode(id) {
+		if s.NodeMaxed(id) {
 			continue
 		}
-		add(nodeDef(s.Era, id).Cost)
+		add(remainingCost(s, id))
 		if bought++; bought == 2 {
 			break
 		}
@@ -438,7 +438,7 @@ func (p *player) goalNeeds(g content.Goal, needs map[string]float64) {
 	}
 	for _, id := range g.Nodes {
 		if !s.HasNode(id) {
-			for r, c := range nodeDef(s.Era, id).Cost {
+			for r, c := range nodeDef(s.Era, id).RankCost(1) {
 				needs[r] += c
 			}
 		}
@@ -670,4 +670,16 @@ func sortedKeys(m map[string]float64) []string {
 	}
 	sort.Strings(keys)
 	return keys
+}
+
+// remainingCost is the price of every rank of a node not bought yet.
+func remainingCost(s *sim.Sim, id string) content.Amounts {
+	n := nodeDef(s.Era, id)
+	out := content.Amounts{}
+	for r := s.Rank(id) + 1; r <= n.Ranks(); r++ {
+		for res, q := range n.RankCost(r) {
+			out[res] += q
+		}
+	}
+	return out
 }

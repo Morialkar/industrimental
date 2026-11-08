@@ -45,8 +45,11 @@ type GameState struct {
 type EraState struct {
 	Resources map[string]float64       `json:"resources"`
 	Stations  map[string]*StationState `json:"stations"`
-	Nodes     []string                 `json:"nodes"`  // bought tree nodes
+	Nodes     []string                 `json:"nodes"`  // tree nodes with at least one rank
 	Quests    []string                 `json:"quests"` // completed quests
+	// NodeRanks is the rank of each node of Nodes. Saves from before ranks
+	// existed lack it: their nodes count as fully ranked.
+	NodeRanks map[string]int `json:"nodeRanks,omitempty"`
 
 	Clock       float64 `json:"clock"`       // seconds lived, offline included
 	MarketClock float64 `json:"marketClock"` // seconds of open market: frozen offline

@@ -7,13 +7,13 @@
     {
       "id": "coquillages",
       "nameKey": "res.coquillages",
-      "descKey": "res.coquillages.desc",
+      "descKey": "desc.res.coquillages",
       "kind": "currency"
     },
     {
       "id": "baies",
       "nameKey": "res.baies",
-      "descKey": "res.baies.desc",
+      "descKey": "desc.res.baies",
       "kind": "base",
       "basePrice": 1,
       "elasticity": 0.6,
@@ -22,7 +22,7 @@
     {
       "id": "silex",
       "nameKey": "res.silex",
-      "descKey": "res.silex.desc",
+      "descKey": "desc.res.silex",
       "kind": "base",
       "basePrice": 1.5,
       "elasticity": 0.6,
@@ -31,7 +31,7 @@
     {
       "id": "bois",
       "nameKey": "res.bois",
-      "descKey": "res.bois.desc",
+      "descKey": "desc.res.bois",
       "kind": "base",
       "basePrice": 1,
       "elasticity": 0.5,
@@ -40,7 +40,7 @@
     {
       "id": "viande",
       "nameKey": "res.viande",
-      "descKey": "res.viande.desc",
+      "descKey": "desc.res.viande",
       "kind": "base",
       "basePrice": 2,
       "elasticity": 0.7,
@@ -49,7 +49,7 @@
     {
       "id": "peaux-brutes",
       "nameKey": "res.peaux-brutes",
-      "descKey": "res.peaux-brutes.desc",
+      "descKey": "desc.res.peaux-brutes",
       "kind": "base",
       "basePrice": 2,
       "elasticity": 0.7,
@@ -58,7 +58,7 @@
     {
       "id": "argile",
       "nameKey": "res.argile",
-      "descKey": "res.argile.desc",
+      "descKey": "desc.res.argile",
       "kind": "base",
       "basePrice": 1.5,
       "elasticity": 0.6,
@@ -67,7 +67,7 @@
     {
       "id": "outils-silex",
       "nameKey": "res.outils-silex",
-      "descKey": "res.outils-silex.desc",
+      "descKey": "desc.res.outils-silex",
       "kind": "critical",
       "basePrice": 6,
       "elasticity": 0.8,
@@ -76,7 +76,7 @@
     {
       "id": "peaux-tannees",
       "nameKey": "res.peaux-tannees",
-      "descKey": "res.peaux-tannees.desc",
+      "descKey": "desc.res.peaux-tannees",
       "kind": "critical",
       "basePrice": 8,
       "elasticity": 0.8,
@@ -85,7 +85,7 @@
     {
       "id": "grain",
       "nameKey": "res.grain",
-      "descKey": "res.grain.desc",
+      "descKey": "desc.res.grain",
       "kind": "critical",
       "basePrice": 3,
       "elasticity": 0.5,
@@ -94,7 +94,7 @@
     {
       "id": "sel",
       "nameKey": "res.sel",
-      "descKey": "res.sel.desc",
+      "descKey": "desc.res.sel",
       "kind": "critical",
       "basePrice": 5,
       "elasticity": 0.4,
@@ -103,7 +103,7 @@
     {
       "id": "parures",
       "nameKey": "res.parures",
-      "descKey": "res.parures.desc",
+      "descKey": "desc.res.parures",
       "kind": "critical",
       "basePrice": 10,
       "elasticity": 1.1,
@@ -112,7 +112,7 @@
     {
       "id": "ocre",
       "nameKey": "res.ocre",
-      "descKey": "res.ocre.desc",
+      "descKey": "desc.res.ocre",
       "kind": "critical",
       "basePrice": 7,
       "elasticity": 0.9,
@@ -121,7 +121,7 @@
     {
       "id": "poteries-crues",
       "nameKey": "res.poteries-crues",
-      "descKey": "res.poteries-crues.desc",
+      "descKey": "desc.res.poteries-crues",
       "kind": "critical",
       "basePrice": 9,
       "elasticity": 0.9,
@@ -130,7 +130,7 @@
     {
       "id": "fresques",
       "nameKey": "res.fresques",
-      "descKey": "res.fresques.desc",
+      "descKey": "desc.res.fresques",
       "kind": "critical",
       "basePrice": 12,
       "elasticity": 1.2,
@@ -141,7 +141,7 @@
     {
       "id": "cueillette",
       "nameKey": "st.cueillette",
-      "descKey": "st.cueillette.desc",
+      "descKey": "desc.st.cueillette",
       "unlockCost": {
         "baies": 5
       },
@@ -198,7 +198,7 @@
     {
       "id": "carriere-silex",
       "nameKey": "st.carriere-silex",
-      "descKey": "st.carriere-silex.desc",
+      "descKey": "desc.st.carriere-silex",
       "unlockCost": {
         "silex": 1
       },
@@ -259,7 +259,7 @@
     {
       "id": "camp-chasse",
       "nameKey": "st.camp-chasse",
-      "descKey": "st.camp-chasse.desc",
+      "descKey": "desc.st.camp-chasse",
       "unlockCost": {
         "baies": 120,
         "silex": 50
@@ -311,7 +311,7 @@
     {
       "id": "atelier-taille",
       "nameKey": "st.atelier-taille",
-      "descKey": "st.atelier-taille.desc",
+      "descKey": "desc.st.atelier-taille",
       "unlockCost": {
         "silex": 100
       },
@@ -379,7 +379,7 @@
     {
       "id": "cercle-troc",
       "nameKey": "st.cercle-troc",
-      "descKey": "st.cercle-troc.desc",
+      "descKey": "desc.st.cercle-troc",
       "unlockCost": {
         "baies": 60,
         "silex": 30
@@ -454,7 +454,7 @@
     {
       "id": "feu-camp",
       "nameKey": "st.feu-camp",
-      "descKey": "st.feu-camp.desc",
+      "descKey": "desc.st.feu-camp",
       "requiresNode": "main-habile",
       "unlockCost": {
         "bois": 100
@@ -511,7 +511,7 @@
     {
       "id": "source-salee",
       "nameKey": "st.source-salee",
-      "descKey": "st.source-salee.desc",
+      "descKey": "desc.st.source-salee",
       "requiresNode": "feu-apprivoise",
       "unlockCost": {
         "bois": 400,
@@ -562,7 +562,7 @@
     {
       "id": "tannerie",
       "nameKey": "st.tannerie",
-      "descKey": "st.tannerie.desc",
+      "descKey": "desc.st.tannerie",
       "requiresNode": "premiers-paniers",
       "unlockCost": {
         "coquillages": 150,
@@ -620,7 +620,7 @@
     {
       "id": "fosse-argile",
       "nameKey": "st.fosse-argile",
-      "descKey": "st.fosse-argile.desc",
+      "descKey": "desc.st.fosse-argile",
       "requiresNode": "langage-troc",
       "unlockCost": {
         "coquillages": 250,
@@ -679,7 +679,7 @@
     {
       "id": "champ",
       "nameKey": "st.champ",
-      "descKey": "st.champ.desc",
+      "descKey": "desc.st.champ",
       "requiresNode": "sedentarisation",
       "unlockCost": {
         "outils-silex": 25
@@ -730,6 +730,10 @@
       "id": "main-habile",
       "nameKey": "node.main-habile",
       "branch": "trunk",
+      "row": 1,
+      "col": 1,
+      "maxRank": 5,
+      "art": "main-habile",
       "cost": {
         "baies": 30,
         "silex": 15
@@ -739,6 +743,10 @@
           "kind": "stationRate",
           "value": 0.1,
           "station": "cueillette"
+        },
+        {
+          "kind": "harvestShare",
+          "value": 0.25
         }
       ]
     },
@@ -746,6 +754,10 @@
       "id": "feu-apprivoise",
       "nameKey": "node.feu-apprivoise",
       "branch": "trunk",
+      "row": 1,
+      "col": 2,
+      "maxRank": 5,
+      "art": "feu",
       "cost": {
         "bois": 320
       },
@@ -757,6 +769,10 @@
       "id": "premiers-paniers",
       "nameKey": "node.premiers-paniers",
       "branch": "trunk",
+      "row": 1,
+      "col": 3,
+      "maxRank": 3,
+      "art": "paniers",
       "cost": {
         "baies": 1600,
         "bois": 640
@@ -776,6 +792,10 @@
       "id": "langage-troc",
       "nameKey": "node.langage-troc",
       "branch": "trunk",
+      "row": 1,
+      "col": 4,
+      "maxRank": 5,
+      "art": "langage",
       "cost": {
         "coquillages": 800
       },
@@ -794,6 +814,10 @@
       "id": "sedentarisation",
       "nameKey": "node.sedentarisation",
       "branch": "trunk",
+      "row": 2,
+      "col": 4,
+      "maxRank": 3,
+      "art": "sedentarisation",
       "cost": {
         "outils-silex": 240,
         "coquillages": 1200
@@ -813,6 +837,9 @@
       "id": "le-cercle",
       "nameKey": "node.le-cercle",
       "branch": "trunk",
+      "row": 2,
+      "col": 2,
+      "art": "cercle",
       "cost": {
         "coquillages": 4000,
         "sel": 320,
@@ -827,6 +854,9 @@
       "nameKey": "node.porteurs",
       "branch": "trade",
       "path": "porteurs",
+      "row": 1,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "peaux-tannees": 750
       },
@@ -845,6 +875,9 @@
       "nameKey": "node.ballots",
       "branch": "trade",
       "path": "porteurs",
+      "row": 2,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "peaux-tannees": 2200,
         "coquillages": 9000
@@ -865,6 +898,9 @@
       "nameKey": "node.piste-longue",
       "branch": "trade",
       "path": "porteurs",
+      "row": 3,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "peaux-tannees": 6000,
         "sel": 3600
@@ -884,6 +920,9 @@
       "nameKey": "node.caravane",
       "branch": "trade",
       "path": "porteurs",
+      "row": 4,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "peaux-tannees": 15000,
         "parures": 6000
@@ -909,6 +948,9 @@
       "nameKey": "node.foires",
       "branch": "trade",
       "path": "foires",
+      "row": 1,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "parures": 750
       },
@@ -928,6 +970,9 @@
       "nameKey": "node.etals",
       "branch": "trade",
       "path": "foires",
+      "row": 2,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "parures": 2200,
         "coquillages": 9000
@@ -948,6 +993,9 @@
       "nameKey": "node.crieur",
       "branch": "trade",
       "path": "foires",
+      "row": 3,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "parures": 6000,
         "sel": 3600
@@ -968,6 +1016,9 @@
       "nameKey": "node.foire-saison",
       "branch": "trade",
       "path": "foires",
+      "row": 4,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "parures": 15000,
         "peaux-tannees": 6000
@@ -987,6 +1038,9 @@
       "id": "marche-grains",
       "nameKey": "node.marche-grains",
       "branch": "trade",
+      "row": 2,
+      "col": 2,
+      "maxRank": 3,
       "bridgeTo": "throughput",
       "cost": {
         "grain": 6000,
@@ -1012,6 +1066,9 @@
       "id": "grand-marche",
       "nameKey": "node.grand-marche",
       "branch": "trade",
+      "row": 5,
+      "col": 2,
+      "maxRank": 5,
       "cost": {
         "coquillages": 180000,
         "sel": 12000
@@ -1031,7 +1088,11 @@
     {
       "id": "grand-cercle",
       "nameKey": "node.grand-cercle",
+      "descKey": "desc.node.grand-cercle",
       "branch": "trade",
+      "row": 6,
+      "col": 2,
+      "art": "pacte",
       "cost": {
         "parures": 900000,
         "sel": 900000,
@@ -1047,6 +1108,9 @@
       "nameKey": "node.champs",
       "branch": "throughput",
       "path": "champs",
+      "row": 1,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "grain": 1500
       },
@@ -1066,6 +1130,9 @@
       "nameKey": "node.irrigation",
       "branch": "throughput",
       "path": "champs",
+      "row": 2,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "grain": 4500,
         "coquillages": 7200
@@ -1086,6 +1153,9 @@
       "nameKey": "node.saline",
       "branch": "throughput",
       "path": "champs",
+      "row": 3,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "grain": 12000,
         "sel": 6000
@@ -1106,6 +1176,9 @@
       "nameKey": "node.moisson",
       "branch": "throughput",
       "path": "champs",
+      "row": 4,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "grain": 30000,
         "outils-silex": 9000
@@ -1131,6 +1204,9 @@
       "nameKey": "node.ateliers",
       "branch": "throughput",
       "path": "ateliers",
+      "row": 1,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "outils-silex": 900
       },
@@ -1150,6 +1226,9 @@
       "nameKey": "node.etabli",
       "branch": "throughput",
       "path": "ateliers",
+      "row": 2,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "outils-silex": 2700,
         "coquillages": 7200
@@ -1170,6 +1249,9 @@
       "nameKey": "node.compagnons",
       "branch": "throughput",
       "path": "ateliers",
+      "row": 3,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "outils-silex": 7200,
         "sel": 3600
@@ -1190,6 +1272,9 @@
       "nameKey": "node.serie",
       "branch": "throughput",
       "path": "ateliers",
+      "row": 4,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "outils-silex": 18000,
         "grain": 15000
@@ -1209,6 +1294,9 @@
       "id": "outillage-fin",
       "nameKey": "node.outillage-fin",
       "branch": "throughput",
+      "row": 2,
+      "col": 2,
+      "maxRank": 3,
       "bridgeTo": "ingenuity",
       "cost": {
         "outils-silex": 4500,
@@ -1234,6 +1322,9 @@
       "id": "cadence-max",
       "nameKey": "node.cadence-max",
       "branch": "throughput",
+      "row": 5,
+      "col": 2,
+      "maxRank": 5,
       "cost": {
         "coquillages": 180000,
         "grain": 24000
@@ -1253,7 +1344,11 @@
     {
       "id": "village-agricole",
       "nameKey": "node.village-agricole",
+      "descKey": "desc.node.village-agricole",
       "branch": "throughput",
+      "row": 6,
+      "col": 2,
+      "art": "revolution",
       "cost": {
         "sel": 1500000,
         "grain": 3000000,
@@ -1269,6 +1364,9 @@
       "nameKey": "node.four",
       "branch": "ingenuity",
       "path": "four",
+      "row": 1,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "poteries-crues": 600
       },
@@ -1288,6 +1386,9 @@
       "nameKey": "node.cuisson",
       "branch": "ingenuity",
       "path": "four",
+      "row": 2,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "poteries-crues": 1800,
         "coquillages": 11000
@@ -1308,6 +1409,9 @@
       "nameKey": "node.foyer-ferme",
       "branch": "ingenuity",
       "path": "four",
+      "row": 3,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "poteries-crues": 4800,
         "ocre": 3600
@@ -1328,6 +1432,9 @@
       "nameKey": "node.tour-potier",
       "branch": "ingenuity",
       "path": "four",
+      "row": 4,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "poteries-crues": 12000,
         "outils-silex": 9000
@@ -1348,6 +1455,9 @@
       "nameKey": "node.pigments",
       "branch": "ingenuity",
       "path": "pigments",
+      "row": 1,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "ocre": 750
       },
@@ -1367,6 +1477,9 @@
       "nameKey": "node.broyage",
       "branch": "ingenuity",
       "path": "pigments",
+      "row": 2,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "ocre": 2200,
         "coquillages": 11000
@@ -1387,6 +1500,9 @@
       "nameKey": "node.melanges",
       "branch": "ingenuity",
       "path": "pigments",
+      "row": 3,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "ocre": 6000,
         "poteries-crues": 2400
@@ -1407,6 +1523,9 @@
       "nameKey": "node.palette",
       "branch": "ingenuity",
       "path": "pigments",
+      "row": 4,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "ocre": 15000,
         "outils-silex": 9000
@@ -1426,6 +1545,9 @@
       "id": "couleurs-rituelles",
       "nameKey": "node.couleurs-rituelles",
       "branch": "ingenuity",
+      "row": 2,
+      "col": 2,
+      "maxRank": 3,
       "bridgeTo": "community",
       "cost": {
         "ocre": 4500,
@@ -1451,6 +1573,9 @@
       "id": "atelier-amna",
       "nameKey": "node.atelier-amna",
       "branch": "ingenuity",
+      "row": 5,
+      "col": 2,
+      "maxRank": 5,
       "cost": {
         "coquillages": 180000,
         "ocre": 15000
@@ -1470,7 +1595,11 @@
     {
       "id": "maitrise-feu",
       "nameKey": "node.maitrise-feu",
+      "descKey": "desc.node.maitrise-feu",
       "branch": "ingenuity",
+      "row": 6,
+      "col": 2,
+      "art": "maitrise-feu",
       "cost": {
         "outils-silex": 900000,
         "poteries-crues": 900000,
@@ -1486,6 +1615,9 @@
       "nameKey": "node.veillees",
       "branch": "community",
       "path": "veillees",
+      "row": 1,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "fresques": 450
       },
@@ -1505,6 +1637,9 @@
       "nameKey": "node.chants",
       "branch": "community",
       "path": "veillees",
+      "row": 2,
+      "col": 1,
+      "maxRank": 5,
       "cost": {
         "fresques": 1400,
         "coquillages": 11000
@@ -1525,6 +1660,9 @@
       "nameKey": "node.grande-grotte",
       "branch": "community",
       "path": "veillees",
+      "row": 3,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "fresques": 3600,
         "ocre": 4800
@@ -1545,6 +1683,9 @@
       "nameKey": "node.legendes",
       "branch": "community",
       "path": "veillees",
+      "row": 4,
+      "col": 1,
+      "maxRank": 3,
       "cost": {
         "fresques": 9000,
         "parures": 6000
@@ -1569,6 +1710,9 @@
       "nameKey": "node.anciens",
       "branch": "community",
       "path": "anciens",
+      "row": 1,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "ocre": 600
       },
@@ -1587,6 +1731,9 @@
       "nameKey": "node.conseil-sages",
       "branch": "community",
       "path": "anciens",
+      "row": 2,
+      "col": 3,
+      "maxRank": 5,
       "cost": {
         "ocre": 1800,
         "coquillages": 11000
@@ -1606,6 +1753,9 @@
       "nameKey": "node.transmission",
       "branch": "community",
       "path": "anciens",
+      "row": 3,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "ocre": 4800,
         "parures": 2400
@@ -1626,6 +1776,9 @@
       "nameKey": "node.memoire",
       "branch": "community",
       "path": "anciens",
+      "row": 4,
+      "col": 3,
+      "maxRank": 3,
       "cost": {
         "ocre": 12000,
         "fresques": 4800
@@ -1648,6 +1801,9 @@
       "id": "parures-conteuses",
       "nameKey": "node.parures-conteuses",
       "branch": "community",
+      "row": 2,
+      "col": 2,
+      "maxRank": 3,
       "bridgeTo": "trade",
       "cost": {
         "parures": 4500,
@@ -1673,6 +1829,9 @@
       "id": "grand-recit",
       "nameKey": "node.grand-recit",
       "branch": "community",
+      "row": 5,
+      "col": 2,
+      "maxRank": 5,
       "cost": {
         "coquillages": 180000,
         "fresques": 9000
@@ -1692,7 +1851,11 @@
     {
       "id": "clan-conteurs",
       "nameKey": "node.clan-conteurs",
+      "descKey": "desc.node.clan-conteurs",
       "branch": "community",
+      "row": 6,
+      "col": 2,
+      "art": "conteurs",
       "cost": {
         "ocre": 450000,
         "fresques": 220000,
@@ -2673,30 +2836,40 @@
     {
       "axis": "trade",
       "nameKey": "node.grand-cercle",
-      "descKey": "end.trade.desc",
-      "patentKey": "patent.bouche-a-oreille",
-      "patentDescKey": "patent.bouche-a-oreille.desc"
+      "descKey": "desc.legacy.e01.trade",
+      "patentKey": "legacy.e01.trade",
+      "patentDescKey": "legacy.e01.trade.effect"
     },
     {
       "axis": "throughput",
       "nameKey": "node.village-agricole",
-      "descKey": "end.throughput.desc",
-      "patentKey": "patent.greniers-pleins",
-      "patentDescKey": "patent.greniers-pleins.desc"
+      "descKey": "desc.legacy.e01.throughput",
+      "patentKey": "legacy.e01.throughput",
+      "patentDescKey": "legacy.e01.throughput.effect"
     },
     {
       "axis": "ingenuity",
       "nameKey": "node.maitrise-feu",
-      "descKey": "end.ingenuity.desc",
-      "patentKey": "patent.brouillon-genie",
-      "patentDescKey": "patent.brouillon-genie.desc"
+      "descKey": "desc.legacy.e01.ingenuity",
+      "patentKey": "legacy.e01.ingenuity",
+      "patentDescKey": "legacy.e01.ingenuity.effect"
     },
     {
       "axis": "community",
       "nameKey": "node.clan-conteurs",
-      "descKey": "end.community.desc",
-      "patentKey": "patent.memoire-clan",
-      "patentDescKey": "patent.memoire-clan.desc"
+      "descKey": "desc.legacy.e01.community",
+      "patentKey": "legacy.e01.community",
+      "patentDescKey": "legacy.e01.community.effect"
     }
-  ]
+  ],
+  "rowStations": [
+    0,
+    0,
+    2,
+    4,
+    6,
+    8,
+    10
+  ],
+  "harvestShare": 0.05
 }

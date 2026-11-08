@@ -19,3 +19,16 @@ L'essai a porté sur la même liste de stations et la même fiche à 3 variantes
 Le vrai coût du kit maison est la mise en page : `internal/game/panel.go` place tout à la main. La phase 2 doit y ajouter un conteneur ligne/colonne avant que l'interface finale grossisse.
 
 Limite de l'essai : seul le kit maison a été lancé sur un téléphone. Le comportement d'`ebitenui` au doigt vient de la lecture de son code et d'un lancement sur desktop.
+
+## Intégration de la maquette (8 novembre)
+
+L'interface du jeu suit maintenant la [maquette](assets/maquette-interface.html) et son kit d'interface de l'ère 1 :
+
+- Le monde occupe tout l'écran. Par-dessus : le nom de l'ère (qui ouvre la frise), le bandeau des ressources, la quête épinglée, le bouton Récolter et la barre de 5 actions (Capacités, Marché, Quêtes, Boutique, Clan). Toucher une station ouvre sa fiche.
+- Les cadres, boutons, onglets, cases, barres et icônes viennent du kit (`internal/assets/ui/e01`, les mêmes WebP que la maquette). Le kit les dessine en 9 morceaux (`ui.Frame`) avec les découpes de la maquette.
+- Les capacités reprennent la grille de la maquette : tronc commun fixe, une planche de 3 × 6 par branche dans un carrousel, rangées ouvertes selon le nombre de bâtiments construits (`rowStations`), rangs payés en ressources de l'ère.
+- Le défilement se verrouille sur un axe : un glissement de côté fait tourner le carrousel sans faire défiler la liste.
+
+Pour garder l'équilibrage, les rangs se partagent le coût et l'effet de l'ancien nœud : acheter tous les rangs revient au même qu'avant (voir `content.Node`). La récolte au toucher vaut 5 % de la production par seconde, +5 points par rang de Main habile.
+
+Reste provisoire : les polices (Go au lieu d'Alegreya), les icônes de ressources (pentagones de couleur), le décor du monde et les stations (formes géométriques), et les nœuds sans illustration (glyphes).

@@ -1,6 +1,6 @@
 // Package game is the Ebitengine entry point shared by the desktop and mobile
-// builds: the panorama on top, the management panel below, and the link to the
-// simulation, the saves and the clock.
+// builds: the world full screen, the HUD and the sheets over it, and the link
+// to the simulation, the saves and the clock.
 package game
 
 import (
@@ -48,11 +48,14 @@ type Options struct {
 	Warmup float64
 	// DataDir is where saves go. Empty: nothing is saved.
 	DataDir string
-	// Demo starts from an advanced game, Tab on the given panel tab: it shows
+	// Demo starts from an advanced game, Tab on the given screen: it shows
 	// every screen in a capture without playing for two days.
 	Demo bool
 	Tab  int
 }
+
+// DemoScreens names the screens Options.Tab opens, by index.
+var DemoScreens = []string{scrWorld, scrMarket, scrTree, scrQuests, scrEra, scrClan, scrShop, scrStation}
 
 // Game implements ebiten.Game.
 type Game struct {
@@ -61,6 +64,7 @@ type Game struct {
 	era    *content.Era
 	sim    *sim.Sim
 	kit    *ui.Kit
+	th     *theme
 	locale string
 
 	mu       sync.Mutex // guards the save, which the native shell can request
@@ -75,13 +79,28 @@ type Game struct {
 	dragX   float64
 	drag    bool
 
-	tab      int
-	contentH [tabCount]float64
-	sheet    string // station whose sheet is open
-	sheetT   float64
+	screen   string  // what lies over the world, scrWorld for nothing
+	openedAt int     // frame at which the screen opened
+	sheet    string  // station whose sheet is open
+	pick     string  // specialization picked in the station sheet
+	sheetT   float64 // opening animation, 0 to 1
+	sheetH   float64 // height of the sheet's body at the last pass
 	report   *sim.OfflineReport
 	toast    string
 	toastT   int
+	floats   []floatText
+	bubbleT  float64
+	bubbleN  int
+
+	resScroll, resBase float64 // resource bar, scrolled sideways
+	resDrag            bool
+
+	selNode           string  // node shown in the tree's info panel
+	treeBoard         int     // branch board the carousel rests on
+	treePos, treeBase float64 // carousel position, in boards
+	treeDrag          bool
+	sparkFx           *fx.System
+	sparks            fx.Emitter
 
 	sky       *ebiten.Image
 	hills     [3]ridge
@@ -108,14 +127,19 @@ func New(opts Options) (*Game, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ui: %w", err)
 	}
+	th, err := loadTheme(currentEra)
+	if err != nil {
+		return nil, err
+	}
 	g := &Game{
 		opts:      opts,
 		bundle:    b,
 		era:       era,
 		kit:       kit,
+		th:        th,
 		locale:    "fr",
-		tab:       opts.Tab,
 		particles: fx.NewSystem(2000, 1),
+		sparkFx:   fx.NewSystem(300, 2),
 		sky:       newSky(),
 		puff:      newPuff(64),
 	}
@@ -125,18 +149,28 @@ func New(opts Options) (*Game, error) {
 
 	rng := rand.New(rand.NewPCG(3, 5))
 	g.hills = [3]ridge{
-		newRidge(rng, 0.15, 520, 140, rgb(0x8e, 0xa8, 0x8f)),
-		newRidge(rng, 0.45, 650, 110, rgb(0x9c, 0x8a, 0x55)),
-		newRidge(rng, 1.00, 780, 60, rgb(0x7b, 0x6a, 0x3e)),
+		newRidge(rng, 0.15, groundY-300, 150, rgb(0x8e, 0xa8, 0x8f)),
+		newRidge(rng, 0.45, groundY-150, 110, rgb(0xa8, 0x92, 0x5c)),
+		newRidge(rng, 1.00, groundY, 50, rgb(0x7b, 0x6a, 0x3e)),
 	}
 	g.smoke = fx.Emitter{
 		Spread: 10, Direction: -math.Pi / 2, Cone: 0.25,
-		SpeedMin: 40, SpeedMax: 80, LifeMin: 2.5, LifeMax: 3.5,
-		SizeMin: 18, SizeMax: 30, Grow: 22, Gravity: -6,
+		SpeedMin: 25, SpeedMax: 50, LifeMin: 2.5, LifeMax: 3.5,
+		SizeMin: 11, SizeMax: 19, Grow: 14, Gravity: -4,
+	}
+	g.sparks = fx.Emitter{
+		Spread: 6, Direction: -math.Pi / 2, Cone: math.Pi,
+		SpeedMin: 120, SpeedMax: 260, LifeMin: 0.35, LifeMax: 0.6,
+		SizeMin: 9, SizeMax: 14, Grow: -12, Gravity: 300,
 	}
 	g.sim = sim.New(era, 1)
 	if opts.Demo {
 		g.prepareDemo()
+		if opts.Tab > 0 && opts.Tab < len(DemoScreens) {
+			g.screen = DemoScreens[opts.Tab]
+			g.sheet = era.Stations[1].ID
+			g.sheetT = 1
+		}
 	}
 	for i := 0; i < int(opts.Warmup*tps); i++ {
 		g.step()
@@ -188,16 +222,17 @@ func (g *Game) step() {
 	n := int(g.emitAcc)
 	g.emitAcc -= float64(n)
 	if slot, ok := g.visibleWorkshop(); ok {
-		g.smoke.X, g.smoke.Y = slotX(slot)-g.scrollX+120, groundY-330
+		g.smoke.X, g.smoke.Y = slotX(slot)-g.scrollX+120*stationScale, groundY-330*stationScale
 		g.particles.Emit(g.smoke, n)
 	}
 	g.particles.Update(dt)
+	g.sparkFx.Update(dt)
 }
 
 // moveCamera lets the finger scroll the panorama, with inertia.
 func (g *Game) moveCamera() {
 	x, _, down := g.kit.Pointer()
-	inPanorama := down && g.sheet == "" && g.report == nil && g.kit.PressedIn(panoramaRect)
+	inPanorama := down && g.screen == scrWorld && g.report == nil && g.kit.PressedIn(worldRect) && !g.kit.PressedIn(harvestRect)
 	switch {
 	case inPanorama && !g.drag:
 		g.drag, g.dragX, g.velX = true, x, 0
@@ -212,7 +247,7 @@ func (g *Game) moveCamera() {
 		g.scrollX += g.velX * dt
 		g.velX *= math.Pow(0.05, dt) // inertia decays to 5% per second
 	}
-	limit := slotX(len(g.era.Stations)-1) - slotX(0)
+	limit := slotX(len(g.era.Stations)-1) + 200 - ScreenW
 	if g.scrollX < 0 {
 		g.scrollX, g.velX = 0, 0
 	}
@@ -229,8 +264,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	g.drawStations(screen)
 	g.drawParticles(screen)
+	g.drawStationLabels(screen)
 	g.layout(screen)
-	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("FPS %.0f  TPS %.0f  P %d", ebiten.ActualFPS(), ebiten.ActualTPS(), g.particles.Len()), 16, 128)
+	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("FPS %.0f  TPS %.0f  P %d", ebiten.ActualFPS(), ebiten.ActualTPS(), g.particles.Len()), 16, 40)
 
 	if g.opts.ScreenshotPath != "" && g.frame >= g.opts.ScreenshotFrame && !g.done {
 		g.done = true
@@ -246,18 +282,19 @@ func (g *Game) Layout(_, _ int) (int, int) { return ScreenW, ScreenH }
 // --- stations of the panorama ---------------------------------------------
 
 const (
-	groundY     = 780.0
-	slotSpacing = 760.0
+	groundY      = 1150.0
+	stationScale = 0.62 // the placeholder drawings are made for a scale of 1
+	slotSpacing  = 420.0
 )
 
-func slotX(i int) float64 { return 360 + float64(i)*slotSpacing }
+func slotX(i int) float64 { return 200 + float64(i)*slotSpacing }
 
 func (g *Game) visibleWorkshop() (int, bool) {
 	for i := range g.era.Stations {
 		if i == 0 || !g.sim.Station(g.era.Stations[i].ID).Built {
 			continue // the first slot holds the bush: no chimney
 		}
-		if x := slotX(i) - g.scrollX; x > -250 && x < ScreenW+250 {
+		if x := slotX(i) - g.scrollX; x > 40 && x < ScreenW-40 {
 			return i, true
 		}
 	}
@@ -280,63 +317,91 @@ func (g *Game) drawStations(dst *ebiten.Image) {
 		default:
 			g.drawEmptySlot(dst, x)
 		}
-		g.kit.Text(dst, g.text(def.NameKey), x, groundY+24, 26, rgb(0xff, 0xf4, 0xdc), ui.Center, true)
-		if st.Built {
-			g.kit.Text(dst, fmt.Sprintf("%s %d", g.tr("ui.level"), st.Level), x, groundY+56, 22, rgb(0xff, 0xf4, 0xdc), ui.Center, false)
-		}
 	}
+}
+
+// at converts a point of a station drawing (made at scale 1, origin at the
+// foot of the station) to the screen.
+func at(x, dx, dy float64) (float64, float64) {
+	return x + dx*stationScale, groundY + dy*stationScale
+}
+
+func (g *Game) sQuad(dst *ebiten.Image, x float64, pts [8]float64, c color.RGBA) {
+	var out []float64
+	for i := 0; i < 8; i += 2 {
+		px, py := at(x, pts[i], pts[i+1])
+		out = append(out, px, py)
+	}
+	g.poly(dst, out, c)
+}
+
+func (g *Game) sTri(dst *ebiten.Image, x float64, pts [6]float64, c color.RGBA) {
+	var out []float64
+	for i := 0; i < 6; i += 2 {
+		px, py := at(x, pts[i], pts[i+1])
+		out = append(out, px, py)
+	}
+	g.poly(dst, out, c)
+}
+
+func (g *Game) sEllipse(dst *ebiten.Image, x, dx, dy, rx, ry float64, c color.RGBA) {
+	px, py := at(x, dx, dy)
+	g.ellipse(dst, px, py, rx*stationScale, ry*stationScale, c)
+}
+
+func (g *Game) sLine(dst *ebiten.Image, x, x0, y0, x1, y1, w float64, c color.RGBA) {
+	ax, ay := at(x, x0, y0)
+	bx, by := at(x, x1, y1)
+	g.thickLine(dst, ax, ay, bx, by, w*stationScale, c)
 }
 
 // drawBush is the first station: the bush the player taps at the very start.
 func (g *Game) drawBush(dst *ebiten.Image, x float64) {
-	y := groundY
 	sway := 4 * math.Sin(g.t*1.3)
-	g.ellipse(dst, x, y+6, 130, 16, rgba(0x30, 0x24, 0x10, 0x55))
-	g.ellipse(dst, x-60+sway, y-70, 80, 70, rgb(0x5f, 0x7f, 0x4a))
-	g.ellipse(dst, x+60+sway, y-65, 85, 65, rgb(0x54, 0x72, 0x42))
-	g.ellipse(dst, x+sway*1.5, y-120, 95, 80, rgb(0x6c, 0x8c, 0x55))
+	g.sEllipse(dst, x, 0, 6, 130, 16, rgba(0x30, 0x24, 0x10, 0x55))
+	g.sEllipse(dst, x, -60+sway, -70, 80, 70, rgb(0x5f, 0x7f, 0x4a))
+	g.sEllipse(dst, x, 60+sway, -65, 85, 65, rgb(0x54, 0x72, 0x42))
+	g.sEllipse(dst, x, sway*1.5, -120, 95, 80, rgb(0x6c, 0x8c, 0x55))
 	for i, p := range [][2]float64{{-70, -90}, {-20, -140}, {40, -110}, {80, -60}, {-40, -50}, {10, -70}} {
-		g.ellipse(dst, x+p[0]+sway*1.5, y+p[1]+2*math.Sin(g.t*2+float64(i)), 11, 11, rgb(0xb0, 0x3a, 0x48))
+		g.sEllipse(dst, x, p[0]+sway*1.5, p[1]+2*math.Sin(g.t*2+float64(i)), 11, 11, rgb(0xb0, 0x3a, 0x48))
 	}
 }
 
 func (g *Game) drawEmptySlot(dst *ebiten.Image, x float64) {
-	y := groundY
-	g.quad(dst, x-150, y, x+150, y, x+130, y-24, x-130, y-24, rgba(0x8d, 0x84, 0x77, 0x80))
-	g.thickLine(dst, x-120, y-24, x-120, y-90, 8, rgba(0x5c, 0x40, 0x28, 0x90))
-	g.thickLine(dst, x+120, y-24, x+120, y-90, 8, rgba(0x5c, 0x40, 0x28, 0x90))
+	g.sQuad(dst, x, [8]float64{-150, 0, 150, 0, 130, -24, -130, -24}, rgba(0x8d, 0x84, 0x77, 0x80))
+	g.sLine(dst, x, -120, -24, -120, -90, 8, rgba(0x5c, 0x40, 0x28, 0x90))
+	g.sLine(dst, x, 120, -24, 120, -90, 8, rgba(0x5c, 0x40, 0x28, 0x90))
 }
 
 // drawWorkshop draws a flat-shaded placeholder made of separate layers: base,
 // chimney, a rotating wheel and an oscillating hammer arm, both slowed down
 // when a bottleneck holds the station back.
 func (g *Game) drawWorkshop(dst *ebiten.Image, x, speed float64) {
-	y := groundY
-
 	// Ground shadow (drawn in code, never baked into assets).
-	g.ellipse(dst, x, y+6, 230, 22, rgba(0x30, 0x24, 0x10, 0x55))
+	g.sEllipse(dst, x, 0, 6, 230, 22, rgba(0x30, 0x24, 0x10, 0x55))
 
 	// Base: stone platform + walls + two-facet roof.
-	g.quad(dst, x-210, y, x+210, y, x+190, y-40, x-190, y-40, rgb(0x8d, 0x84, 0x77))
-	g.quad(dst, x-170, y-40, x+170, y-40, x+170, y-200, x-170, y-200, rgb(0xb0, 0x83, 0x52))
-	g.quad(dst, x-170, y-200, x, y-200, x, y-40, x-170, y-40, rgb(0xa0, 0x74, 0x46)) // shaded half
-	g.tri(dst, x-200, y-200, x, y-310, x, y-200, rgb(0x9a, 0x5b, 0x3a))
-	g.tri(dst, x, y-310, x+200, y-200, x, y-200, rgb(0x7f, 0x47, 0x2c))
-	g.quad(dst, x-40, y-40, x+40, y-40, x+40, y-130, x-40, y-130, rgb(0x4a, 0x35, 0x22)) // door
+	g.sQuad(dst, x, [8]float64{-210, 0, 210, 0, 190, -40, -190, -40}, rgb(0x8d, 0x84, 0x77))
+	g.sQuad(dst, x, [8]float64{-170, -40, 170, -40, 170, -200, -170, -200}, rgb(0xb0, 0x83, 0x52))
+	g.sQuad(dst, x, [8]float64{-170, -200, 0, -200, 0, -40, -170, -40}, rgb(0xa0, 0x74, 0x46)) // shaded half
+	g.sTri(dst, x, [6]float64{-200, -200, 0, -310, 0, -200}, rgb(0x9a, 0x5b, 0x3a))
+	g.sTri(dst, x, [6]float64{0, -310, 200, -200, 0, -200}, rgb(0x7f, 0x47, 0x2c))
+	g.sQuad(dst, x, [8]float64{-40, -40, 40, -40, 40, -130, -40, -130}, rgb(0x4a, 0x35, 0x22)) // door
 
 	// Chimney.
-	g.quad(dst, x+95, y-230, x+145, y-230, x+140, y-330, x+100, y-330, rgb(0x6e, 0x66, 0x5d))
+	g.sQuad(dst, x, [8]float64{95, -230, 145, -230, 140, -330, 100, -330}, rgb(0x6e, 0x66, 0x5d))
 
 	// Wheel: rotating part with its own pivot.
-	g.wheel(dst, x-245, y-120, 85, g.t*1.2*speed)
+	wx, wy := at(x, -245, -120)
+	g.wheel(dst, wx, wy, 85*stationScale, g.t*1.2*speed)
 
 	// Hammer arm: oscillates around its pivot.
 	a := -0.6 + 0.5*math.Sin(g.t*4*speed)
-	px, py := x+215, y-150
+	px, py := 215.0, -150.0
 	ex, ey := px+130*math.Cos(a), py+130*math.Sin(a)
-	g.thickLine(dst, px, py, ex, ey, 14, rgb(0x5c, 0x40, 0x28))
-	g.ellipse(dst, ex, ey, 26, 20, rgb(0x8a, 0x8a, 0x84))
-	g.ellipse(dst, px, py, 10, 10, rgb(0x3b, 0x2a, 0x1a))
+	g.sLine(dst, x, px, py, ex, ey, 14, rgb(0x5c, 0x40, 0x28))
+	g.sEllipse(dst, x, ex, ey, 26, 20, rgb(0x8a, 0x8a, 0x84))
+	g.sEllipse(dst, x, px, py, 10, 10, rgb(0x3b, 0x2a, 0x1a))
 }
 
 func (g *Game) wheel(dst *ebiten.Image, cx, cy, r, angle float64) {
@@ -350,9 +415,9 @@ func (g *Game) wheel(dst *ebiten.Image, cx, cy, r, angle float64) {
 	}
 	for i := 0; i < 4; i++ {
 		a := angle + float64(i)*math.Pi/2
-		g.thickLine(dst, cx, cy, cx+r*0.9*math.Cos(a), cy+r*0.9*math.Sin(a), 8, rgb(0x5c, 0x40, 0x28))
+		g.thickLine(dst, cx, cy, cx+r*0.9*math.Cos(a), cy+r*0.9*math.Sin(a), 8*stationScale, rgb(0x5c, 0x40, 0x28))
 	}
-	g.ellipse(dst, cx, cy, 14, 14, rgb(0x3b, 0x2a, 0x1a))
+	g.ellipse(dst, cx, cy, 14*stationScale, 14*stationScale, rgb(0x3b, 0x2a, 0x1a))
 }
 
 func (g *Game) drawParticles(dst *ebiten.Image) {
@@ -366,6 +431,22 @@ func (g *Game) drawParticles(dst *ebiten.Image) {
 		op.GeoM.Translate(p.X, p.Y)
 		a := float32(p.Alpha() * 0.55)
 		op.ColorScale.Scale(0.93*a, 0.92*a, 0.9*a, a)
+		dst.DrawImage(g.puff, op)
+	})
+}
+
+// drawSparks draws the golden sparks of a harvest or an investment.
+func (g *Game) drawSparks(dst *ebiten.Image) {
+	size := float64(g.puff.Bounds().Dx())
+	g.sparkFx.Each(func(p *fx.Particle) {
+		op := &ebiten.DrawImageOptions{}
+		s := p.Size / size
+		op.GeoM.Translate(-size/2, -size/2)
+		op.GeoM.Scale(s, s)
+		op.GeoM.Translate(p.X, p.Y)
+		a := float32(p.Alpha())
+		op.ColorScale.Scale(1*a, 0.8*a, 0.3*a, a)
+		op.Blend = ebiten.BlendLighter
 		dst.DrawImage(g.puff, op)
 	})
 }

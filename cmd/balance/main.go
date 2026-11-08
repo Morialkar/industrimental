@@ -35,7 +35,7 @@ func main() {
 	for _, strat := range balance.Strategies() {
 		r := balance.Play(era, strat, balance.Regular(), *seed)
 		if r.Reached {
-			fmt.Printf("%-11s portail à %5.1f h (Clé à %5.1f h), %d sessions\n", r.Axis, r.Hours, r.KeyHours, r.Sessions)
+			fmt.Printf("%-11s passage à %5.1f h (Tournant à %5.1f h), %d sessions\n", r.Axis, r.Hours, r.KeyHours, r.Sessions)
 		} else {
 			failed = true
 			fmt.Printf("%-11s NON ATTEINT : %s\n", r.Axis, r.Left)

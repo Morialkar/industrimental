@@ -107,7 +107,7 @@ func validateEra(e Era, add func(string, ...any), checkKey func(string, string))
 				if _, ok := res[fx.Resource]; !ok && fx.Resource != "*" {
 					add("%s: effect on unknown resource %q", ctx, fx.Resource)
 				}
-			case EffectContractReward, EffectQuestReward, EffectRetoolDiscount:
+			case EffectContractReward, EffectQuestReward, EffectRetoolDiscount, EffectHarvestShare:
 			default:
 				add("%s: unknown effect kind %q", ctx, fx.Kind)
 			}
@@ -163,6 +163,17 @@ func validateEra(e Era, add func(string, ...any), checkKey func(string, string))
 	}
 
 	validateTree(e, where, add, checkKey, checkAmounts, checkEffects)
+	if len(e.RowStations) > BoardRows+1 {
+		add("%s: rowStations has %d entries, at most %d", where, len(e.RowStations), BoardRows+1)
+	}
+	for i, n := range e.RowStations {
+		if n < 0 || n > len(e.Stations) || (i > 0 && n < e.RowStations[i-1]) {
+			add("%s: rowStations[%d] = %d must grow and stay within the %d stations", where, i, n, len(e.Stations))
+		}
+	}
+	if e.HarvestShare < 0 {
+		add("%s: harvestShare must not be negative", where)
+	}
 
 	npcs := map[string]bool{}
 	for _, n := range e.NPCs {
@@ -304,8 +315,24 @@ func validateTree(e Era, where string, add func(string, ...any), checkKey func(s
 	}
 
 	keys := map[string]int{}
+	cells := map[string]string{}
 	for _, n := range e.Tree {
 		nw := where + " node " + n.ID
+		cols, rows := BoardCols, BoardRows
+		if n.Branch == BranchTrunk {
+			cols, rows = TrunkCols, TrunkRows
+		}
+		if n.Row < 1 || n.Row > rows || n.Col < 1 || n.Col > cols {
+			add("%s: cell %d,%d is outside its %dx%d board", nw, n.Row, n.Col, cols, rows)
+		}
+		cell := fmt.Sprintf("%s/%d/%d", n.Branch, n.Row, n.Col)
+		if other, ok := cells[cell]; ok {
+			add("%s: shares its cell with %q", nw, other)
+		}
+		cells[cell] = n.ID
+		if n.MaxRank < 0 || (n.EraKey && n.Ranks() != 1) {
+			add("%s: invalid maxRank %d", nw, n.MaxRank)
+		}
 		checkKey(nw, n.NameKey)
 		checkAmounts(nw+" cost", n.Cost, false)
 		checkEffects(nw, n.Effects)
