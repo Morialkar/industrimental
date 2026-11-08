@@ -31,7 +31,7 @@ Its pivot point (the elbow end of the forearm) must sit at the exact center of t
 Transparent background, PNG, square 1024x1024.
 ```
 
-## 4 — e01_station_feu-camp_n1.png
+## 4 — e01_station_feu-camp_n1.png (Foyer du clan)
 
 ```
 Match the style of the attached reference image exactly.
